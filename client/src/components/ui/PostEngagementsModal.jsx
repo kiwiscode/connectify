@@ -19,13 +19,12 @@ function PostEngagements({
 }) {
   const {
     subscription,
-    remainingTimeSubscriptions,
+
     remainingTimeSubscriptionsOwnerIds,
   } = useContext(SubcsriptionStatusContext);
   const [show, setShow] = useState(false);
 
   const { userInfo, getToken } = useContext(UserContext);
-  const [showLikes, setshowLikes] = useState(true);
   const [showReposts, setshowReposts] = useState(false);
   const [activeTab, setActiveTab] = useState("forYou");
 
@@ -36,7 +35,6 @@ function PostEngagements({
     // handleShowDetailedPostReposts();
     setActiveTab("reposts");
     setshowReposts(true);
-    setshowLikes(false);
   };
   const {
     getFontSizeAndLineHeight31,
@@ -59,12 +57,10 @@ function PostEngagements({
     // handleShowDetailedPostLikes();
     setActiveTab("likes");
     setshowReposts(false);
-    setshowLikes(true);
   };
 
   const [isHovered, setIsHovered] = useState(false);
 
-  const [hoveredTab, setHoveredTab] = useState(null);
   const getTabStyle = (tab) => {
     return {
       // textDecoration: activeTab === tab ? "underline" : "none",
@@ -85,13 +81,6 @@ function PostEngagements({
       textAlign: "center",
       transition: "background 0.3s", // Hover efekti için geçiş efekti
     };
-  };
-  const handleHover = (tab) => {
-    setHoveredTab(tab);
-  };
-
-  const handleLeave = () => {
-    setHoveredTab(null);
   };
 
   const checkMap = detailedPost.reposted
@@ -299,19 +288,12 @@ function PostEngagements({
           }}
         >
           <span
-            onMouseEnter={() => handleHover("reposts")}
-            onMouseLeave={handleLeave}
             onClick={() => handleShowReposts()}
             style={getTabStyle("reposts")}
           >
             Reposts
           </span>
-          <span
-            onMouseEnter={() => handleHover("likes")}
-            onMouseLeave={handleLeave}
-            onClick={() => handleShowLikes()}
-            style={getTabStyle("likes")}
-          >
+          <span onClick={() => handleShowLikes()} style={getTabStyle("likes")}>
             Likes
           </span>
         </div>
@@ -378,8 +360,7 @@ function PostEngagements({
                           : "white",
                     };
 
-                    const handleFollow = (clickedUser) => {
-                      console.log("Clicked user =>", clickedUser);
+                    const handleFollow = () => {
                       axios
                         .post(
                           `${API_URL}/follow`,
@@ -727,7 +708,7 @@ function PostEngagements({
                           : "white",
                     };
 
-                    const handleFollow = (clickedUser) => {
+                    const handleFollow = () => {
                       axios
                         .post(
                           `${API_URL}/follow`,

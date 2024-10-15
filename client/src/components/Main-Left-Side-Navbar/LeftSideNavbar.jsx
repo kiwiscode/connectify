@@ -23,7 +23,7 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 const FRONTEND_URL = import.meta.env.VITE_APP_FRONTEND_URL;
 
 function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const {
     getFontSizeAndLineHeight20,
     getFontSizeAndLineHeight11,

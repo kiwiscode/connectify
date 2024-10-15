@@ -22,19 +22,7 @@ function NotificationsPage() {
   const { getToken } = useContext(UserContext);
   const { width } = useWindowDimensions();
 
-  const [isSubModalOpened, setIsSubModalOpened] = useState(false);
-  const [tabIndexValue, settabIndexValue] = useState(null);
-
-  const handleModalToggle = (modalOpen) => {
-    setIsSubModalOpened(modalOpen);
-  };
-  const handleReceiveTabIndexValue = (value) => {
-    settabIndexValue(value);
-  };
-
-  const [subscriptionCompletedStatus, setsubscriptionCompletedStatus] =
-    useState(null);
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
 
   const [allNotifications, setAllNotifications] = useState([]);
 
@@ -59,11 +47,9 @@ function NotificationsPage() {
       );
     }
   };
-  const {
-    subscription,
-    remainingTimeSubscriptions,
-    remainingTimeSubscriptionsOwnerIds,
-  } = useContext(SubcsriptionStatusContext);
+  const { subscription, remainingTimeSubscriptionsOwnerIds } = useContext(
+    SubcsriptionStatusContext
+  );
 
   useEffect(() => {
     getAllNotifications();
@@ -92,96 +78,6 @@ function NotificationsPage() {
     return `${months[getMonth]} ${createdAt.getDate()}`;
   };
 
-  const { userInfo } = useContext(UserContext);
-
-  const handleRepost = (postId, findedPost) => {
-    axios
-      .post(
-        `${API_URL}/repost`,
-        { postId: postId, userId: userInfo._id },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        setTimeout(() => {
-          getAllNotifications();
-        }, 500);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const handleDeleteRepostNotificationsPage = (postId) => {
-    axios
-      .post(
-        `${API_URL}/repost/delete`,
-        { userId: userInfo._id, postId },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        setTimeout(() => {
-          getAllNotifications();
-        }, 500);
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  };
-
-  const handlePostLikesFromNotificationsPage = (postId, findedPost) => {
-    axios
-      .post(
-        `${API_URL}/favorite`,
-        { postId },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        console.log("We are here !!!");
-        setTimeout(() => {
-          getAllNotifications();
-        }, 500);
-      })
-      .catch((error) => {
-        console.log("Error message =>", error);
-      });
-  };
-
-  const handleDeleteLikeFromNotificationsPage = (postId) => {
-    axios
-      .post(
-        `${API_URL}/favorite/delete-favorite`,
-        {
-          userId: userInfo._id,
-          postId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        setTimeout(() => {
-          getAllNotifications();
-        }, 500);
-      })
-      .catch((err) => {
-        console.log("Error =>", err);
-      });
-  };
-
   const [dataFromCommentModal, setDataFromCommentModal] = useState("");
   function handleDataFromCommentModal(data) {
     console.log("Data =>", data);
@@ -189,8 +85,7 @@ function NotificationsPage() {
   }
   const { isPostModalVisible } = useContext(ModalVisibilityContext);
 
-  const { postSharedMessage, postDeletedMessage, contextHolder } =
-    useAntdMessageHandler();
+  const { postSharedMessage, contextHolder } = useAntdMessageHandler();
   const [headerPosition, setHeaderPosition] = useState(0);
 
   const handleScroll = () => {
@@ -347,7 +242,7 @@ function NotificationsPage() {
 
         {allNotifications.length > 0 ? (
           <div>
-            {allNotifications.map((eachNotification, index) => {
+            {allNotifications.map((eachNotification) => {
               return (
                 <div key={eachNotification._id}>
                   <div>

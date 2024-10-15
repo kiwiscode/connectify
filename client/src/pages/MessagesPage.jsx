@@ -26,24 +26,14 @@ function MessagesPage() {
   const [filteredRooms, setfilteredRooms] = useState([]);
   const [showMessageDeletePopover, setshowMessageDeletePopover] =
     useState(false);
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
   const [showDeleteConversationModal, setShowDeleteConversationModal] =
     useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [content, setContent] = useState("");
 
   const [receivedMessageRoom, setReceivedMessageRoom] = useState(null);
 
-  const [activeUsers, setActiveUsers] = useState([]);
-  const [searchString, setSearchString] = useState("");
-
-  const [filteredUsers, setFilteredUsers] = useState([]);
-
   const [showThreeDots, setShowThreeDots] = useState(false);
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
 
   useEffect(() => {
     axios
@@ -105,7 +95,6 @@ function MessagesPage() {
       });
   };
 
-  const [isHoveredPopoverItem, setisHoveredPopoverItem] = useState(null);
   const {
     getFontSizeAndLineHeight20,
     getFontSizeAndLineHeight15,
@@ -122,7 +111,7 @@ function MessagesPage() {
       centered={true}
       key={0}
       show={showDeleteConversationModal}
-      onHide={handleClose}
+      onHide={handleCloseDeleteConversationModal}
       className="leave-conversation"
       contentClassName={
         themeName === "dark-theme"
@@ -206,46 +195,6 @@ function MessagesPage() {
 
   // finish to check shared post view message
 
-  const filterUsers = (users, term) => {
-    const filtered = users.filter((user) =>
-      user.username.toLowerCase().startsWith(term.toLowerCase())
-    );
-
-    if (searchString !== "") {
-      setFilteredUsers(filtered);
-    } else {
-      setFilteredUsers([]);
-    }
-  };
-
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/all-users`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        const allUsersFromDB = response.data;
-
-        const spliceActiveUser = allUsersFromDB.filter((eachUser) => {
-          return eachUser.username !== userInfo.username;
-        });
-        setActiveUsers(spliceActiveUser);
-      })
-      .catch((err) => {
-        return err;
-      });
-  }, []);
-
-  useEffect(() => {
-    if (searchString !== "") {
-      filterUsers(activeUsers, searchString);
-    } else {
-      filterUsers([], searchString);
-    }
-  }, [searchString]);
-
   const navigate = useNavigate();
 
   const redirectToChatDetailPage = (chatRoomId) => {
@@ -258,7 +207,7 @@ function MessagesPage() {
       const filteredArray = array.filter((eachRoom) => {
         return (
           eachRoom.room.startsWith(searchTerm.toLowerCase()) ||
-          eachRoom.room.split("_")[1].startsWith(searchTerm.toLowerCase())
+          eachRoom.room.split("_")[1]?.startsWith(searchTerm.toLowerCase())
         );
       });
       setfilteredRooms(filteredArray);
@@ -266,6 +215,8 @@ function MessagesPage() {
       setfilteredRooms(messageRooms);
     }
   };
+
+  console.log("filtered messages:", filteredRooms);
 
   const handleSearchTerm = (term) => {
     const searchTerm = term.target.value.toLowerCase();
@@ -291,21 +242,6 @@ function MessagesPage() {
     );
 
     return sum;
-  };
-
-  const handleShowPostsMessagePage = () => {
-    axios
-      .get(`${API_URL}/posts`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        setPosts(response.data);
-      })
-      .catch((err) => {
-        return err;
-      });
   };
 
   const getCreatedRoomDate = (chatFirstMessageTimeStamp) => {
@@ -377,11 +313,6 @@ function MessagesPage() {
     useState(null);
 
   function handleDataFromTopNavigationComponentOpenedStatus(data) {
-    console.log("Data =>", data);
-    setDataFromTopNavigationComponent(data);
-  }
-
-  function handleDataFromTopNavigationComponentClosedStatus(data) {
     console.log("Data =>", data);
     setDataFromTopNavigationComponent(data);
   }
@@ -1106,16 +1037,6 @@ function MessagesPage() {
                                                       </Stack>
                                                     </List.Item>
                                                     <List.Item
-                                                      onMouseEnter={() =>
-                                                        setisHoveredPopoverItem(
-                                                          index
-                                                        )
-                                                      }
-                                                      onMouseLeave={() =>
-                                                        setisHoveredPopoverItem(
-                                                          null
-                                                        )
-                                                      }
                                                       className={`message-popoover message-popoover-${themeName}`}
                                                       style={{
                                                         padding: "12px 16px",

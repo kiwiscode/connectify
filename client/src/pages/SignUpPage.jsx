@@ -24,7 +24,7 @@ import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function SignUpPage() {
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const {
     getFontSizeAndLineHeight64,
     getFontSizeAndLineHeight31,
@@ -53,9 +53,6 @@ function SignUpPage() {
   const [success, setSuccess] = useState("");
   const { getToken, updateUser } = useContext(UserContext);
   const navigate = useNavigate();
-
-  const [signedUpWithGoogle, setsignedUpWithGoogle] = useState(false);
-  const [signedUpWithVariantOne, setsignedUpWithVariantOne] = useState(false);
 
   // google auth
   const handleGoogleSignUp = () => {
@@ -216,13 +213,10 @@ function SignUpPage() {
     setStyleOfBoxYear(true);
   };
 
-  const [yearSelectedShow, setYearSelectedShow] = useState(false);
-
   const handleYearSelect = (year) => {
     // setTimeout(() => {
     setselectedYear(year);
     setdisplayedYear(year);
-    setYearSelectedShow(true);
     setshowYearPicker(false);
     setStyleOfBoxYear(false);
     // }, 300);
@@ -467,8 +461,6 @@ function SignUpPage() {
     setconfirmEmailVerificationCode(e.target.value);
   };
 
-  const [clickedReceiveEmail, setclickedReceiveEmail] = useState(false);
-
   const sendEmailVerificationCode = (recipientEmail) => {
     axios
       .post(
@@ -605,7 +597,6 @@ function SignUpPage() {
     };
   }, []);
 
-  const [passwordError, setpasswordError] = useState(false);
   const [passwordIsValid, setpasswordIsValid] = useState(false);
 
   const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
@@ -644,11 +635,6 @@ function SignUpPage() {
         const { token, user } = response.data;
 
         console.log("Response data =>", response.data);
-        if (signedUpWithGoogle) {
-          console.log("Signed up with google !");
-        } else if (signedUpWithVariantOne) {
-          ("Signed up with variant one !");
-        }
 
         localStorage.setItem("userInfo", JSON.stringify(user));
         localStorage.setItem("token", token);
@@ -678,7 +664,6 @@ function SignUpPage() {
         const { status } = err.response;
 
         if (status === 402) {
-          setpasswordError(true);
           setSuccess("");
           setpasswordIsValid(false);
         }
@@ -1864,16 +1849,6 @@ function SignUpPage() {
                     style={{ overflowX: "hidden" }}
                     className="signin-modal-body-child-non-reactivate mt-4"
                   >
-                    <div
-                      style={{
-                        position: "absolute",
-                        right: "0px",
-                        top: "0px",
-                        display: clickedReceiveEmail ? "block" : "none",
-                      }}
-                    >
-                      Test
-                    </div>
                     <div
                       className="mb-4 chirp-bold-font"
                       style={{
@@ -3433,16 +3408,6 @@ function SignUpPage() {
                     style={{ overflowX: "hidden" }}
                     className="signin-modal-body-child-non-reactivate"
                   >
-                    <div
-                      style={{
-                        position: "absolute",
-                        right: "0px",
-                        top: "0px",
-                        display: clickedReceiveEmail ? "block" : "none",
-                      }}
-                    >
-                      Test
-                    </div>
                     <div
                       className="mb-4 chirp-bold-font"
                       style={{

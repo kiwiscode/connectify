@@ -16,11 +16,9 @@ import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 function FollowerDetailPage() {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const {
-    subscription,
-    remainingTimeSubscriptions,
-    remainingTimeSubscriptionsOwnerIds,
-  } = useContext(SubcsriptionStatusContext);
+  const { subscription, remainingTimeSubscriptionsOwnerIds } = useContext(
+    SubcsriptionStatusContext
+  );
   const { getToken, userInfo } = useContext(UserContext);
   const {
     getFontSizeAndLineHeight31,
@@ -95,7 +93,6 @@ function FollowerDetailPage() {
   const [showUnfollowModal, setshowUnfollowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState("");
   const [followers, setFollowers] = useState([]);
-  const [showFollowers, setShowFollowers] = useState(true);
 
   const handleClose = () => setshowUnfollowModal(false);
 
@@ -121,20 +118,10 @@ function FollowerDetailPage() {
     };
   }, []);
 
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { width } = useWindowDimensions();
 
   const { isPostModalVisible } = useContext(ModalVisibilityContext);
-
-  const [hoveredTab, setHoveredTab] = useState(null);
-
-  const handleHover = (tab) => {
-    setHoveredTab(tab);
-  };
-
-  const handleLeave = () => {
-    setHoveredTab(null);
-  };
 
   const handleShowRequests = () => {
     setActiveTab("requests");
@@ -352,8 +339,6 @@ function FollowerDetailPage() {
                           ? "hover-effect-light-theme-pointer-plus"
                           : null
                       }
-                      onMouseEnter={() => handleHover("requests")}
-                      onMouseLeave={handleLeave}
                       onClick={handleShowRequests}
                       style={{
                         color:
@@ -444,8 +429,6 @@ function FollowerDetailPage() {
                         ? "hover-effect-light-theme-pointer-plus"
                         : null
                     }
-                    onMouseEnter={() => handleHover("followers")}
-                    onMouseLeave={handleLeave}
                     onClick={handleShowFollowers}
                     style={{
                       color:
@@ -519,8 +502,6 @@ function FollowerDetailPage() {
                         ? "hover-effect-light-theme-pointer-plus "
                         : null
                     }
-                    onMouseEnter={() => handleHover("following")}
-                    onMouseLeave={handleLeave}
                     onClick={handleShowFollowing}
                     style={{
                       color:
@@ -685,8 +666,6 @@ function FollowerDetailPage() {
                           ? "hover-effect-light-theme-pointer-plus"
                           : null
                       }
-                      onMouseEnter={() => handleHover("requests")}
-                      onMouseLeave={handleLeave}
                       onClick={handleShowRequests}
                       style={{
                         color:
@@ -777,8 +756,6 @@ function FollowerDetailPage() {
                         ? "hover-effect-light-theme-pointer-plus"
                         : null
                     }
-                    onMouseEnter={() => handleHover("followers")}
-                    onMouseLeave={handleLeave}
                     onClick={handleShowFollowers}
                     style={{
                       color:
@@ -850,8 +827,6 @@ function FollowerDetailPage() {
                         ? "hover-effect-light-theme-pointer-plus "
                         : null
                     }
-                    onMouseEnter={() => handleHover("following")}
-                    onMouseLeave={handleLeave}
                     onClick={handleShowFollowing}
                     style={{
                       color:
@@ -941,7 +916,7 @@ function FollowerDetailPage() {
                 user._id
               );
 
-              const handleFollow = (selectedUser) => {
+              const handleFollow = () => {
                 axios
                   .post(
                     `${API_URL}/follow`,
@@ -1224,7 +1199,7 @@ function FollowerDetailPage() {
                           onClick={() =>
                             isFollowing
                               ? openUnfollowModal(user)
-                              : handleFollow(user)
+                              : handleFollow()
                           }
                           className="follow-following-section-followers ms-auto"
                           style={

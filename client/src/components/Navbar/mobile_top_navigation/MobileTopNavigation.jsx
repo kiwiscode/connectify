@@ -8,7 +8,7 @@ import { useFontSizeHandler } from "../../../utils/useFontSizeHandler";
 
 function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
   const { userInfo } = useContext(UserContext);
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const [openNavigationBar, setOpenNavigationBar] = useState(false);
   const {
     getFontSizeAndLineHeight20,
@@ -1496,10 +1496,7 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                 </div>
               </div>
             </div>{" "}
-            <LogoutModal
-              isResponsiveNavigationBarTop={false}
-              isMobileNavigationBarTop={true}
-            />
+            <LogoutModal isMobileNavigationBarTop={true} />
             <div
               style={{
                 display: "inline-block",

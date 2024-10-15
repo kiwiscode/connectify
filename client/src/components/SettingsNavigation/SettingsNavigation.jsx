@@ -9,7 +9,7 @@ import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 function SettingsNavigation() {
   const { width } = useWindowDimensions();
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const navigate = useNavigate();
   const {
     getFontSizeAndLineHeight20,
@@ -20,7 +20,6 @@ function SettingsNavigation() {
   const font15 = getFontSizeAndLineHeight15();
   const font14 = getFontSizeAndLineHeight14();
   const [onFocus, setOnFocus] = useState(null);
-  const [onFocusXBtn, setOnFocusXBtn] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchStart, setSearchStart] = useState(null);
   const [showNotificationMessage, setShowNotificationMessage] = useState(null);
@@ -175,7 +174,6 @@ function SettingsNavigation() {
                     height={22}
                     viewBox="0 0 24 24"
                     aria-hidden="true"
-                    class="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18yzcnr r-yc9v9c r-18jsvk2"
                   >
                     <g>
                       <path d="M12 1.75C6.34 1.75 1.75 6.34 1.75 12S6.34 22.25 12 22.25 22.25 17.66 22.25 12 17.66 1.75 12 1.75zm3.71 12.54l-1.42 1.42-2.29-2.3-2.29 2.3-1.42-1.42 2.3-2.29-2.3-2.29 1.42-1.42 2.29 2.3 2.29-2.3 1.42 1.42-2.3 2.29 2.3 2.29z"></path>
@@ -187,12 +185,10 @@ function SettingsNavigation() {
                 className="chirp-regular-font"
                 onFocus={() => {
                   onFocusActive();
-                  setOnFocusXBtn(true);
                   setShowNotificationMessage(true);
                 }}
                 onBlur={() => {
                   setOnFocus(false);
-                  setOnFocusXBtn(false);
                 }}
                 onClick={() => {
                   setShowNotificationMessage(true);
@@ -285,11 +281,7 @@ function SettingsNavigation() {
                 Your account
               </div>
               <div>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -328,11 +320,7 @@ function SettingsNavigation() {
                 Monetization
               </div>
               <div>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -359,11 +347,7 @@ function SettingsNavigation() {
                 Premium
               </div>
               <div>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -404,11 +388,7 @@ function SettingsNavigation() {
                 Creator Subscriptions
               </div>
               <div>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -450,11 +430,7 @@ function SettingsNavigation() {
                 Security and account access
               </div>
               <div>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -494,11 +470,7 @@ function SettingsNavigation() {
                 Privacy and safety
               </div>
               <div>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -537,11 +509,7 @@ function SettingsNavigation() {
                 Notifications
               </div>
               <div>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -583,11 +551,7 @@ function SettingsNavigation() {
                 Accessibility, display, and languages
               </div>
               <div>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -626,11 +590,7 @@ function SettingsNavigation() {
                 Additional resources
               </div>
               <div>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -657,11 +617,7 @@ function SettingsNavigation() {
                 Help Center
               </div>
               <div>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                   </g>

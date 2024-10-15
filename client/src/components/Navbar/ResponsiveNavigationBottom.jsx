@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Stack } from "react-bootstrap";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./navbar.css";
 import PostModal from "../Main-Left-Side-Navbar/PostModal";
 import axios from "axios";
@@ -30,13 +30,11 @@ function ResponsiveNavigationBarBottom({
   const location = useLocation();
   const path = location.pathname;
   // start to check shared post view message
-  const [currentCreatedPost, setcurrentCreatedPost] = useState(null);
 
   const { postSharedMessage, contextHolder } = useAntdMessageHandler();
 
   const handleCallback = (childData) => {
     // Update the name in the component's state
-    setcurrentCreatedPost(childData);
     postSharedMessage(childData.authorUserName, childData._id);
   };
 
@@ -62,7 +60,7 @@ function ResponsiveNavigationBarBottom({
 
   const { userInfo } = useContext(UserContext);
 
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const [unReadNotifications, setUnReadNotifications] = useState([]);
   const getActiveUserInfo = async () => {
     try {
@@ -117,13 +115,6 @@ function ResponsiveNavigationBarBottom({
         error
       );
     }
-  };
-  const checkHowManyUnReadMessages = () => {
-    const allUnReadedMessages = userInfo?.messages?.filter((allMessages) => {
-      return allMessages.readed === false;
-    });
-
-    return allUnReadedMessages;
   };
 
   const { getFontSizeAndLineHeight11 } = useFontSizeHandler();

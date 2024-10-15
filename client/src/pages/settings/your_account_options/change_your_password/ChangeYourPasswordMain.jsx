@@ -14,7 +14,7 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function ChangeYourPasswordMain() {
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { contextHolder, showCustomMessage } = useAntdMessageHandler();
   const navigate = useNavigate();
   const { userInfo, getToken } = useContext(UserContext);

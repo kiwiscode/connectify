@@ -15,10 +15,9 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 function Gender() {
   const { contextHolder, showCustomMessage } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { userInfo, getToken, updateUser } = useContext(UserContext);
   const navigate = useNavigate();
-  const [showGenderInput, setShowGenderInput] = useState(false);
 
   const [wasChosen, setWasChosen] = useState(null);
 
@@ -62,7 +61,9 @@ function Gender() {
       }
 
       console.log("Response =>", response);
-    } catch (error) {}
+    } catch (error) {
+      console.error("error:", error);
+    }
   };
 
   useEffect(() => {

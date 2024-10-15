@@ -33,14 +33,11 @@ import lightThemeCoverBG from "../assets/cover-backgrounds/ligh-theme-no-cover.p
 import darkThemeCoverBG from "../assets/cover-backgrounds/dark-theme-no-cover.png";
 import lightThemeCoverBGEditMODALin from "../assets/cover-backgrounds/light-theme-opened-edit-modal-cover-bg.png";
 import darkThemeCoverBGEditMODALin from "../assets/cover-backgrounds/dark-theme-opened-edit-modal-cover-bg.png";
-
 function UserProfile({ isNewPostShared }) {
-  const [{ theme, themeName }] = useContext(ThemeContext);
-  const {
-    subscription,
-    remainingTimeSubscriptions,
-    remainingTimeSubscriptionsOwnerIds,
-  } = useContext(SubcsriptionStatusContext);
+  const [{ themeName }] = useContext(ThemeContext);
+  const { subscription, remainingTimeSubscriptionsOwnerIds } = useContext(
+    SubcsriptionStatusContext
+  );
   const extraDetailedDate = (dateStr) => {
     const date = new Date(dateStr);
 
@@ -127,8 +124,6 @@ function UserProfile({ isNewPostShared }) {
   const [favoriteWindow, setFavoriteWindow] = useState("hide");
   const [postsWindow, setPostWindow] = useState("");
   const [favorites, setFavorites] = useState([]);
-  const [error, setError] = useState("");
-  const [postId, setpostId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [profileImage, setprofileImage] = useState(null);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -206,8 +201,6 @@ function UserProfile({ isNewPostShared }) {
       handleShowPostsProfilePage();
       postDeletedMessage();
     }
-
-    setError("");
   };
 
   const months = [
@@ -412,15 +405,7 @@ function UserProfile({ isNewPostShared }) {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [headerPosition]);
-  const [hoveredTab, setHoveredTab] = useState(null);
   const [activeTab, setActiveTab] = useState("forYou");
-  const handleHover = (tab) => {
-    setHoveredTab(tab);
-  };
-
-  const handleLeave = () => {
-    setHoveredTab(null);
-  };
 
   const {
     getFontSizeAndLineHeight31,
@@ -467,15 +452,6 @@ function UserProfile({ isNewPostShared }) {
       getFollowingArray();
     }
   }, []);
-
-  // edit form general scenario
-  const [checkFields, setcheckFields] = useState({
-    nameInput: false,
-    bioInput: false,
-    locationInput: false,
-    websiteInput: false,
-    birthDateInput: false,
-  });
 
   const [onFocusedToFullNameField, setonFocusedToFullNameField] =
     useState(false);
@@ -530,37 +506,21 @@ function UserProfile({ isNewPostShared }) {
     if (e.target.value.length <= 50) {
       setFullName(e.target.value);
       setFirstAppearance(false);
-      setcheckFields((prevState) => ({
-        ...prevState,
-        nameInput: true,
-      }));
     }
   };
   const handleChangeBio = (e) => {
     if (e.target.value.length <= 160) {
       setBioOnEdit(e.target.value);
-      setcheckFields((prevState) => ({
-        ...prevState,
-        bioInput: true,
-      }));
     }
   };
   const handleChangeLocation = (e) => {
     if (e.target.value.length <= 30) {
       setLocationOnEdit(e.target.value);
-      setcheckFields((prevState) => ({
-        ...prevState,
-        locationInput: true,
-      }));
     }
   };
   const handleChangeWebsite = (e) => {
     if (e.target.value.length <= 100) {
       setWebsiteOnEdit(e.target.value);
-      setcheckFields((prevState) => ({
-        ...prevState,
-        websiteInput: true,
-      }));
     }
   };
 
@@ -601,7 +561,7 @@ function UserProfile({ isNewPostShared }) {
   const yearPickerRef = useRef(null);
 
   const [showYearPicker, setshowYearPicker] = useState(false);
-  const [selectedYear, setselectedYear] = useState(new Date().getFullYear());
+  const selectedYear = new Date().getFullYear();
   const [displayedYear, setdisplayedYear] = useState("");
 
   const monthsBirthDate = [
@@ -1079,8 +1039,7 @@ function UserProfile({ isNewPostShared }) {
   };
 
   const restrictionYearRef = useRef(null);
-  const [selectedRestrictionForYear, setSelectedRestrictionForYear] =
-    useState("Only you");
+  const selectedRestrictionForYear = "Only you";
   const [showYearRestrictionPicker, setshowYearRestrictionPicker] =
     useState(false);
   const [styleOfRestrictionsYearBox, setStyleOfRestrictionsYear] =
@@ -1168,12 +1127,6 @@ function UserProfile({ isNewPostShared }) {
     setSelectedMonth("");
     setselectedDay("");
     setdisplayedYear("");
-    setcheckFields({
-      nameInput: "",
-      bioInput: "",
-      locationInput: "",
-      websiteInput: "",
-    });
     setBirthDateOnEdit({
       month: "",
       day: "",
@@ -3612,6 +3565,7 @@ function UserProfile({ isNewPostShared }) {
                 </svg>
 
                 <a
+                  rel="noreferrer"
                   style={{
                     textDecoration: "none",
                     fontSize: font15.fontSize,
@@ -3840,8 +3794,6 @@ function UserProfile({ isNewPostShared }) {
                 ? "hover-effect-light-theme-pointer-plus"
                 : null
             }
-            onMouseEnter={() => handleHover("posts")}
-            onMouseLeave={handleLeave}
             onClick={() => handleShowPostsProfilePage()}
             style={{
               color:
@@ -3912,8 +3864,6 @@ function UserProfile({ isNewPostShared }) {
                 ? "hover-effect-light-theme-pointer-plus "
                 : null
             }
-            onMouseEnter={() => handleHover("likes")}
-            onMouseLeave={handleLeave}
             onClick={() => handleGetFavorites()}
             style={{
               color:
@@ -4005,7 +3955,6 @@ function UserProfile({ isNewPostShared }) {
           {pinnedPost ? (
             <div
               onClick={() => {
-                console.log("Post box parent class =>", post);
                 setclickedPostBox(pinnedPost);
               }}
               className={
@@ -4495,7 +4444,7 @@ function UserProfile({ isNewPostShared }) {
           ) : null}
           {userprofiledata?.length ? (
             <>
-              {userprofiledata.slice(0, visibleTweets).map((post, index) => (
+              {userprofiledata.slice(0, visibleTweets).map((post) => (
                 <div
                   onClick={() => {
                     console.log("Post box parent class =>", post);
@@ -5083,7 +5032,7 @@ function UserProfile({ isNewPostShared }) {
         >
           {favorites.length && hasFalse ? (
             <>
-              {favorites.slice(0, visibleLikedTweets).map((favorite, index) => (
+              {favorites.slice(0, visibleLikedTweets).map((favorite) => (
                 <div
                   onClick={() => {
                     console.log("Post box parent class =>", favorite);

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import {
   Col,
@@ -24,8 +24,6 @@ import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 import io from "socket.io-client";
 const socket = io(import.meta.env.VITE_APP_API_URL);
 
-import defaultImageUrl from "../assets/default_profile_400x400.png";
-
 function ChatDetailsPage() {
   const scrollRef = useRef();
   const { chatRoomId } = useParams();
@@ -33,8 +31,6 @@ function ChatDetailsPage() {
   const [selectedUser, setselectedUser] = useState([]);
   const roomIds = chatRoomId.split("-");
   const otherUserId = roomIds.find((id) => id !== userInfo._id);
-  const location = useLocation();
-  const path = location.pathname;
 
   const getSelectedUser = async () => {
     try {
@@ -166,7 +162,7 @@ function ChatDetailsPage() {
     };
   }, []);
 
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
 
   const { width } = useWindowDimensions();
 
@@ -195,16 +191,9 @@ function ChatDetailsPage() {
     };
   }, [header_ref]);
 
-  // type indicator state
-  const [typingIndicatorShown, settypingIndicatorShown] = useState(null);
-  let typingTimeout;
   // Odaya katılma işlemi
   function joinRoom(roomName, userName) {
     socket.emit("joinRoom", roomName, userName);
-  }
-  // Odadan ayrılma işlemi
-  function leftRoom(roomName, userName) {
-    socket.emit("userLeft", roomName, userName);
   }
 
   const [arrivalMessage, setArrivalMessage] = useState(null);
@@ -217,27 +206,6 @@ function ChatDetailsPage() {
   const handleCurrentMessageChange = (e) => {
     setCurrentMessage(e.target.value);
   };
-
-  // Yazıyor durumunu başlatma
-  function startTyping(roomName, user) {
-    if (!typingIndicatorShown) {
-      // Eğer 5 saniye geçerse ve kullanıcı yazmaya devam ediyorsa göstergesi gösterilsin
-      typingTimeout = setTimeout(() => {
-        socket.emit("typing", roomName, user.username);
-        console.log("typing:", user);
-        settypingIndicatorShown(user); // Göstergenin gösterildiğini işaretle
-      }, 5000); // 5 saniye bekle
-    }
-  }
-
-  // Yazmayı durdurma
-  function stopTyping(roomName, userName) {
-    clearTimeout(typingTimeout); // 5 saniyelik timeout'u iptal et
-    if (typingIndicatorShown) {
-      socket.emit("stopTyping", roomName, userName);
-      settypingIndicatorShown(null); // Göstergenin kapatıldığını işaretle
-    }
-  }
 
   useEffect(() => {
     if (chatRoomId) {
@@ -519,7 +487,6 @@ function ChatDetailsPage() {
             overflowY: "auto",
             minHeight: "auto",
             width: "100%",
-            height: "100vh",
             height: "100dvh",
           }}
         >
@@ -783,109 +750,6 @@ function ChatDetailsPage() {
                   </div>
                 </div>
               ))}{" "}
-              {typingIndicatorShown && (
-                <div
-                  className="mb-2"
-                  style={{
-                    padding: "0px 12px 0px 12px",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "inline-flex",
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    {typingIndicatorShown.imageUrl?.slice(0, 3) !== "../" ? (
-                      <img
-                        style={{
-                          borderRadius: "50%",
-                        }}
-                        src={typingIndicatorShown.imageUrl}
-                        alt=""
-                        width={40}
-                        height={40}
-                      />
-                    ) : (
-                      <img
-                        style={{
-                          borderRadius: "50%",
-                        }}
-                        src={defaultImageUrl}
-                        alt=""
-                        width={40}
-                        height={40}
-                      />
-                    )}
-                    <div
-                      className={
-                        themeName === "dark-theme"
-                          ? "typing_indicator-dark-theme"
-                          : "typing_indicator-light-theme"
-                      }
-                      style={{
-                        position: "relative",
-                        padding: "12px 16px",
-                        left: "8px",
-                        width: "90px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <div
-                          className={
-                            themeName === "dark-theme"
-                              ? "first-div-dark-theme"
-                              : "first-div-light-theme"
-                          }
-                          style={{
-                            backgroundColor: "#71767a",
-                            borderRadius: "50%",
-                            height: "14px",
-                            width: "14px",
-                          }}
-                        ></div>
-                        <div
-                          className={
-                            themeName === "dark-theme"
-                              ? "second-div-dark-theme"
-                              : "second-div-light-theme"
-                          }
-                          style={{
-                            marginLeft: "5px",
-                            backgroundColor: "#71767a",
-                            borderRadius: "50%",
-                            height: "14px",
-                            width: "14px",
-                          }}
-                        ></div>
-                        <div
-                          className={
-                            themeName === "dark-theme"
-                              ? "third-div-dark-theme"
-                              : "third-div-light-theme"
-                          }
-                          style={{
-                            marginLeft: "5px",
-                            backgroundColor: "#71767a",
-                            borderRadius: "50%",
-                            height: "14px",
-                            width: "14px",
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                    {/* test */}
-                  </div>
-                </div>
-              )}{" "}
             </div>
           </div>
         </div>

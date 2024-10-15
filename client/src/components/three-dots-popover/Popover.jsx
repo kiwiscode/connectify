@@ -21,7 +21,7 @@ function PostPopover({
   notificationPageComment,
   refreshPosts,
 }) {
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
 
   const { userInfo, getToken } = useContext(UserContext);
   const { getFontSizeAndLineHeight20, getFontSizeAndLineHeight15 } =
@@ -55,14 +55,12 @@ function PostPopover({
     setshowDeletePostModal(true);
   };
   const [threeDotsColor, setThreeDotsColor] = useState(null);
-  const [postId, setPostId] = useState(null);
 
   const { contextHolder, pinnedMessage, unpinnedMessage } =
     useAntdMessageHandler();
 
   const handlePostDelete = (postId) => {
     handleClose();
-    setPostId(postId);
     axios
       .post(
         `${API_URL}/posts/delete-post`,
@@ -93,7 +91,6 @@ function PostPopover({
         },
       })
       .then((response) => {
-        const { posts } = response.data;
         const { user } = response.data;
 
         setPinnedPost(user.pinnedPosts[0]);

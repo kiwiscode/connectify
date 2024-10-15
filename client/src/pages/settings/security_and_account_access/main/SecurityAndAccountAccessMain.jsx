@@ -1,103 +1,24 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { Col } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SettingsNavigation from "../../../../components/SettingsNavigation/SettingsNavigation";
 import { ModalVisibilityContext } from "../../../../context/ModalVisibilityContext";
 import ResponsiveNavigationBarBottom from "../../../../components/Navbar/ResponsiveNavigationBottom";
 import { useAntdMessageHandler } from "../../../../utils/useAntdMessageHandler";
 import useWindowDimensions from "../../../../hooks/getWindowDimensions";
 import { ThemeContext } from "../../../../context/ThemeContext";
-import { UserContext } from "../../../../context/UserContext";
 import { useFontSizeHandler } from "../../../../utils/useFontSizeHandler";
-const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function SecurityAndAccountAccessMain() {
-  const { getToken, userInfo } = useContext(UserContext);
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { width } = useWindowDimensions();
 
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "June",
-    "July",
-    "Aug",
-    "Sept",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-
-  const getCreatedDate = (date) => {
-    const createdAt = new Date(date);
-    const getMonth = createdAt.getMonth();
-    return `${months[getMonth]} ${createdAt.getDate()}`;
-  };
-
-  const extraDetailedDate = (dateStr) => {
-    const date = new Date(dateStr);
-
-    const optionsTime = {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    };
-    const optionsDate = {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    };
-    const formattedTime = new Intl.DateTimeFormat("en-US", optionsTime).format(
-      date
-    );
-    const formattedDate = new Intl.DateTimeFormat("en-US", optionsDate).format(
-      date
-    );
-
-    return `${formattedTime} \u00B7 ${formattedDate}`;
-  };
-
-  const {
-    postSharedMessage,
-    contextHolder,
-    showCustomMessage,
-    postDeletedMessage,
-  } = useAntdMessageHandler();
-
-  const [dataFromCommentModal, setDataFromCommentModal] = useState("");
-  function handleDataFromCommentModal(data) {
-    console.log("Data =>", data);
-    setDataFromCommentModal(data);
-  }
+  const { contextHolder } = useAntdMessageHandler();
 
   const { isPostModalVisible } = useContext(ModalVisibilityContext);
 
-  const [onFocus, setOnFocus] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const setSearchTermEmpty = () => {
-    setSearchTerm("");
-  };
-  const [onFocusXBtn, setOnFocusXBtn] = useState(true);
-  const onFocusInActiveForXBtn = () => {
-    setOnFocusXBtn(false);
-  };
-  const handleSetSearchTerm = (e) => {
-    setSearchTerm(e.target.value);
-  };
-  const onFocusActive = () => {
-    setOnFocus(true);
-  };
-
   const navigate = useNavigate();
-  const location = useLocation();
-  const path = location.pathname;
 
-  const [isSearchStart, setSearchStart] = useState(null);
-
-  const [showNotificationMessage, setShowNotificationMessage] = useState(null);
   const {
     getFontSizeAndLineHeight20,
     getFontSizeAndLineHeight15,
@@ -108,9 +29,7 @@ function SecurityAndAccountAccessMain() {
   const font13 = getFontSizeAndLineHeight13();
   return (
     <>
-      {!isPostModalVisible && !dataFromCommentModal && (
-        <ResponsiveNavigationBarBottom />
-      )}
+      {!isPostModalVisible && <ResponsiveNavigationBarBottom />}
       {contextHolder}
 
       <SettingsNavigation />
@@ -259,11 +178,7 @@ function SecurityAndAccountAccessMain() {
                     : "settings-icon-light-theme"
                 }
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
                   </g>
@@ -299,7 +214,7 @@ function SecurityAndAccountAccessMain() {
                     lineHeight: font13.lineHeight,
                   }}
                 >
-                  Manage your account's security.
+                  {"Manage your account's security."}
                 </div>
               </div>
               <div
@@ -310,11 +225,7 @@ function SecurityAndAccountAccessMain() {
                 }
               >
                 {" "}
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -344,11 +255,7 @@ function SecurityAndAccountAccessMain() {
                     : "settings-icon-light-theme"
                 }
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M19.5 2C20.88 2 22 3.12 22 4.5v11c0 1.21-.86 2.22-2 2.45V4.5c0-.28-.22-.5-.5-.5H6.05c.23-1.14 1.24-2 2.45-2h11zm-4 4C16.88 6 18 7.12 18 8.5v11c0 1.38-1.12 2.5-2.5 2.5h-11C3.12 22 2 20.88 2 19.5v-11C2 7.12 3.12 6 4.5 6h11zM4 19.5c0 .28.22.5.5.5h11c.28 0 .5-.22.5-.5v-11c0-.28-.22-.5-.5-.5h-11c-.28 0-.5.22-.5.5v11z"></path>
                   </g>
@@ -396,11 +303,7 @@ function SecurityAndAccountAccessMain() {
                 }
               >
                 {" "}
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -430,11 +333,7 @@ function SecurityAndAccountAccessMain() {
                     : "settings-icon-light-theme"
                 }
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M15.96 1.54L21.41 7l-5.45 5.46-1.42-1.42L17.59 8H3V6h14.59l-3.05-3.04 1.42-1.42zM6.41 18l3.05 3.04-1.42 1.42L2.59 17l5.45-5.46 1.42 1.42L6.41 16H21v2H6.41z"></path>
                   </g>
@@ -481,11 +380,7 @@ function SecurityAndAccountAccessMain() {
                 }
               >
                 {" "}
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -515,11 +410,7 @@ function SecurityAndAccountAccessMain() {
                     : "settings-icon-light-theme"
                 }
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M6.866 18H.846l.075-1.069C1.33 11.083 4.335 9 7.011 9c1.457 0 2.734.576 3.743 1.615-.515.378-1.003.826-1.45 1.355-.562-.569-1.305-.97-2.293-.97-2.074 0-3.522 1.847-3.981 5h4.225c-.169.616-.295 1.288-.389 2zM4 5c0-1.654 1.343-3 3-3s3 1.346 3 3-1.343 3-3 3-3-1.346-3-3zm2 0c0 .551.448 1 1 1s1-.449 1-1-.448-1-1-1-1 .449-1 1zm9.5 5c-.778 0-1.49-.263-2.071-.693C12.566 8.669 12 7.653 12 6.5 12 4.57 13.567 3 15.5 3S19 4.57 19 6.5c0 1.111-.53 2.092-1.34 2.733-.596.472-1.341.767-2.16.767zM14 6.5c0 .827.673 1.5 1.5 1.5S17 7.327 17 6.5 16.327 5 15.5 5 14 5.673 14 6.5zm1.5 4.496c3.264 0 6.816 2.358 7 8.977L22.529 21H8.472l.029-1.027c.184-6.618 3.736-8.977 7-8.977zm0 2c-2.767 0-4.57 2.223-4.938 6.004h9.875c-.367-3.781-2.17-6.004-4.938-6.004z"></path>
                   </g>
@@ -566,11 +457,7 @@ function SecurityAndAccountAccessMain() {
                 }
               >
                 {" "}
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>

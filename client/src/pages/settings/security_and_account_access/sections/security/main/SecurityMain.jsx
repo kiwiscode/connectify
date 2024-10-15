@@ -1,5 +1,5 @@
-import { Button, Col, Modal } from "react-bootstrap";
-import { useContext, useEffect, useState } from "react";
+import { Col } from "react-bootstrap";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAntdMessageHandler } from "../../../../../../utils/useAntdMessageHandler";
 import useWindowDimensions from "../../../../../../hooks/getWindowDimensions";
@@ -8,12 +8,10 @@ import { NavigationHistoryContext } from "../../../../../../context/NavigationHi
 import { ThemeContext } from "../../../../../../context/ThemeContext";
 import { useFontSizeHandler } from "../../../../../../utils/useFontSizeHandler";
 
-const API_URL = import.meta.env.VITE_APP_API_URL;
-
 function SecurityMain() {
   const { contextHolder } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const navigate = useNavigate();
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
 
@@ -189,7 +187,6 @@ function SecurityMain() {
                 height={`${1.25}em`}
                 viewBox="0 0 24 24"
                 aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
               >
                 <g>
                   <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
@@ -276,7 +273,6 @@ function SecurityMain() {
                 height={`${1.25}em`}
                 viewBox="0 0 24 24"
                 aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
               >
                 <g>
                   <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>

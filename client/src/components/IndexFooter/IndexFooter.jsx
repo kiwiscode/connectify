@@ -3,7 +3,7 @@ import { ThemeContext } from "../../context/ThemeContext";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 
 function IndexFooter() {
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { getFontSizeAndLineHeight13 } = useFontSizeHandler();
   const font13 = getFontSizeAndLineHeight13();
 

@@ -7,7 +7,7 @@ const LoadingSpinner = ({
   isSuspense,
   fontSize,
 }) => {
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   return (
     <>
       <div

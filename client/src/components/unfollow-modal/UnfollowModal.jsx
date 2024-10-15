@@ -9,12 +9,7 @@ function UnfollowModal({
   showUnfollowModal,
   handleClose,
 }) {
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
 
   const { getFontSizeAndLineHeight20, getFontSizeAndLineHeight15 } =
     useFontSizeHandler();
@@ -57,7 +52,7 @@ function UnfollowModal({
                 color: themeName === "dark-theme" ? "white" : "",
               }}
             >
-              @{selectedUser.username}?
+              {selectedUser.username}?
             </span>
           </div>
 

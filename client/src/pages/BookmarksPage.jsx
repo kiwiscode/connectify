@@ -25,7 +25,7 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 function Bookmarks() {
   const [bookmarks, setBookmarks] = useState([]);
   const { getToken, userInfo } = useContext(UserContext);
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { width } = useWindowDimensions();
   const [clearBookMarksPopover, setShowClearBookmarksPopover] = useState(null);
   const [isLoading, setIsLoading] = useState(null);
@@ -96,10 +96,7 @@ function Bookmarks() {
     return `${formattedTime} \u00B7 ${formattedDate}`;
   };
 
-  const [visibleTweets, setVisibleTweets] = useState(25);
-  const handleShowMorePosts = () => {
-    setVisibleTweets((prevVisibleTweets) => prevVisibleTweets + 25);
-  };
+  const visibleTweets = 25;
 
   const {
     postSharedMessage,
@@ -239,11 +236,9 @@ function Bookmarks() {
   }
 
   const { isPostModalVisible } = useContext(ModalVisibilityContext);
-  const {
-    subscription,
-    remainingTimeSubscriptions,
-    remainingTimeSubscriptionsOwnerIds,
-  } = useContext(SubcsriptionStatusContext);
+  const { subscription, remainingTimeSubscriptionsOwnerIds } = useContext(
+    SubcsriptionStatusContext
+  );
 
   const [headerPosition, setHeaderPosition] = useState(0);
   const handleScroll = () => {
@@ -556,13 +551,6 @@ function Bookmarks() {
                   eachBookMark?.bookmarkedPost?.userId._id !==
                     userInfo._id) ? null : (
                   <div
-                    onClick={() => {
-                      console.log(
-                        "Post box parent class =>",
-                        eachBookMark?.bookmarkedPost
-                      );
-                      setclickedPostBox(eachBookMark?.bookmarkedPost);
-                    }}
                     className={
                       themeName === "dark-theme"
                         ? `each-post-${themeName}`
@@ -572,9 +560,6 @@ function Bookmarks() {
                     <div
                       style={{
                         textDecoration: "none",
-                      }}
-                      onClick={() => {
-                        setclickedPostBox(eachBookMark?.bookmarkedPost);
                       }}
                       className="posts-details outside-of-inner-circle-actions"
                     >
@@ -596,9 +581,6 @@ function Bookmarks() {
                             : eachBookMark?.bookmarkedPost
                                 ?.repostedFromThisOriginalPost[0]._id
                         }`}
-                        onClick={() =>
-                          setclickedPostBox(eachBookMark?.bookmarkedPost)
-                        }
                         className="outside-of-inner-circle-post-info-user-info-svg-three-dots"
                         direction="horizontal"
                         gap={1}
@@ -844,9 +826,6 @@ function Bookmarks() {
                             : eachBookMark?.bookmarkedPost
                                 ?.repostedFromThisOriginalPost[0]._id
                         }`}
-                        onClick={() =>
-                          setclickedPostBox(eachBookMark?.bookmarkedPost)
-                        }
                         className="outside-of-inner-circle-action-comment-text"
                         direction="vertical"
                         gap={1}
@@ -923,9 +902,6 @@ function Bookmarks() {
                       {/* new version favorite repost comment start to check */}
                       <Stack
                         className="mt-0 parent-footer-stack"
-                        onClick={() =>
-                          setclickedPostBox(eachBookMark?.bookmarkedPost)
-                        }
                         direction="horizontal"
                         style={{
                           justifyContent: "space-between",
@@ -937,9 +913,6 @@ function Bookmarks() {
                           style={{
                             width: "100px",
                           }}
-                          onClick={() =>
-                            setclickedPostBox(eachBookMark?.bookmarkedPost)
-                          }
                           className="p-1 next-to-comment"
                         >
                           <CommentModal
@@ -959,9 +932,6 @@ function Bookmarks() {
                           style={{
                             width: "100px",
                           }}
-                          onClick={() =>
-                            setclickedPostBox(eachBookMark?.bookmarkedPost)
-                          }
                           className="p-1 next-to-repost"
                         >
                           <RepostAction
@@ -987,9 +957,6 @@ function Bookmarks() {
                               : eachBookMark?.bookmarkedPost
                                   ?.repostedFromThisOriginalPost[0]._id
                           }`}
-                          onClick={() =>
-                            setclickedPostBox(eachBookMark?.bookmarkedPost)
-                          }
                           className="p-1 next-to-like"
                         >
                           <LikeAction
@@ -1015,9 +982,6 @@ function Bookmarks() {
                               : eachBookMark?.bookmarkedPost
                                   ?.repostedFromThisOriginalPost[0]?._id
                           }`}
-                          onClick={() =>
-                            setclickedPostBox(eachBookMark?.bookmarkedPost)
-                          }
                           className="p-1 next-to-like"
                         >
                           {" "}
@@ -1037,13 +1001,6 @@ function Bookmarks() {
                       {/* new version favorite repost comment finish to check */}
                     </div>
                     <div
-                      onClick={() => {
-                        console.log(
-                          "Post box child class =>",
-                          eachBookMark?.bookmarkedPost
-                        );
-                        setclickedPostBox(eachBookMark?.bookmarkedPost);
-                      }}
                       className="border-extra"
                       style={{
                         borderBottom:

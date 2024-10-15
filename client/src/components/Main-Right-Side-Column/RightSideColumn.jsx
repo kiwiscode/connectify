@@ -39,7 +39,6 @@ import RepostAction from "../ui/RepostAction";
 import LikeAction from "../ui/LikeAction";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 import PostPopover from "../three-dots-popover/Popover";
-import BookmarkAction from "../ui/BookmarkAction";
 import { SubcsriptionStatusContext } from "../../context/SubscriptionStatusContext";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 
@@ -57,11 +56,9 @@ function RightSideColumn({
   isSubscriptionEligibilityCheckRouteForIndividualSubscription,
   premiumInfoFromParentAppJsx,
 }) {
-  const {
-    subscription,
-    remainingTimeSubscriptions,
-    remainingTimeSubscriptionsOwnerIds,
-  } = useContext(SubcsriptionStatusContext);
+  const { subscription, remainingTimeSubscriptionsOwnerIds } = useContext(
+    SubcsriptionStatusContext
+  );
 
   const {
     getFontSizeAndLineHeight34,
@@ -125,16 +122,13 @@ function RightSideColumn({
     getActivities();
   }, []);
 
-  const [{ theme, themeName }, toggleThemeBetweenLightDarkMode] =
-    useContext(ThemeContext);
-  const [hoveredThemeName, setHoveredThemeName] = useState(null);
+  const [{ themeName }] = useContext(ThemeContext);
 
   const [onFocus, setOnFocus] = useState(false);
   const [user, setUser] = useState([]);
   const [isHovered, setIsHovered] = useState("");
   const navigate = useNavigate();
-  const [closeDeleteSearchTermBtn, setCloseDeleteSearchTermBtn] =
-    useState(false);
+
   const onFocusActive = () => {
     setOnFocus(true);
   };
@@ -176,8 +170,6 @@ function RightSideColumn({
   const [searchBarAnimation, setSearchBarAnimation] = useState(false);
   const [stopAnimation, setStopAnimation] = useState(false);
   // finish to check search implementation for main component right side column
-
-  const { updateUser } = useContext(UserContext);
 
   const [first3User, setFirst3User] = useState([]);
 
@@ -238,12 +230,6 @@ function RightSideColumn({
         console.log("Error =>", error);
       });
   }, []);
-
-  const [onFocusXBtn, setOnFocusXBtn] = useState(true);
-
-  const onFocusInActiveForXBtn = () => {
-    setOnFocusXBtn(false);
-  };
 
   const refreshActiveUser = () => {
     axios
@@ -1017,11 +1003,6 @@ function RightSideColumn({
   const [displayedOrganizationType, setdisplayedOrganizationType] =
     useState("");
 
-  const [animatedPopover, setanimatedPopover] = useState(false);
-  const handleShowOrganizationTypeClick = () => {
-    setshowOrganizationTypeContent(!showOrganizationTypeContent);
-  };
-
   const [clicked, setClicked] = useState(false);
 
   const [organizationName, setOrganizationName] = useState("");
@@ -1139,10 +1120,6 @@ function RightSideColumn({
     setOrganizationDisplayedOrganizationTypeFilled,
   ] = useState(false);
 
-  // unneccessary !
-  const [verifyPasswordErrorMessage, setverifyPasswordErrorMessage] =
-    // unneccessary !
-    useState(null);
   const [verifyPasswordInput, setverifyPasswordInput] = useState(null);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -1220,8 +1197,6 @@ function RightSideColumn({
   ] = useState(false);
   const selectRef = useRef(null);
 
-  const [onFocusedToPhoneNumberField, setonFocusedToPhoneNumberField] =
-    useState(false);
   const [phoneNumber, setphoneNumber] = useState(null);
   const [validPhoneNumber, setvalidPhoneNumber] = useState(false);
   const handleShowOptions = () => {
@@ -1390,14 +1365,6 @@ function RightSideColumn({
 
   // onhover popover start to check for post detail
 
-  const [showPopoverPostDetail, setShowPostPopoverPostDetail] = useState(null);
-
-  const openPopoverPostDetail = () => {
-    setShowPostPopoverPostDetail(true);
-  };
-  const closePopoverPostDetail = () => {
-    setShowPostPopoverPostDetail(false);
-  };
   // onhover popover finish to check for post detail
   const months = [
     "Jan",
@@ -8788,7 +8755,6 @@ function RightSideColumn({
                                       setshowOrganizationTypeContent(false);
                                       popupState.close();
                                       setTimeout(() => {
-                                        setanimatedPopover(true);
                                         setdisplayedOrganizationType(
                                           "Business"
                                         );
@@ -8818,7 +8784,6 @@ function RightSideColumn({
                                       setshowOrganizationTypeContent(false);
                                       popupState.close();
                                       setTimeout(() => {
-                                        setanimatedPopover(true);
                                         setdisplayedOrganizationType(
                                           "Government"
                                         );
@@ -9155,9 +9120,7 @@ function RightSideColumn({
                                 color:
                                   themeName === "dark-theme" ? "#71767B" : "",
                                 "&.MuiInputLabel-shrink": {
-                                  color: verifyPasswordErrorMessage
-                                    ? "rgb(244, 33, 46)!important"
-                                    : "#1f9cf0 !important",
+                                  color: "#1f9cf0 !important",
                                 },
                               }}
                               htmlFor="outlined-adornment-password"
@@ -9183,9 +9146,7 @@ function RightSideColumn({
                                 },
                                 "&.Mui-focused .MuiOutlinedInput-notchedOutline":
                                   {
-                                    border: verifyPasswordErrorMessage
-                                      ? "2px solid rgb(244, 33, 46)!important"
-                                      : "2px solid #1d9bf0 !important",
+                                    border: "2px solid #1d9bf0 !important",
                                   },
                               }}
                               onChange={(e) => handleNewPasswordChange(e)}
@@ -9486,7 +9447,7 @@ function RightSideColumn({
                             onChange={handleSelectChange}
                           >
                             <option value="">{en["ZZ"]}</option>
-                            {sortedCountries.map((country, index) => (
+                            {sortedCountries.map((country) => (
                               <option key={country._id} value={country}>
                                 +{getCountryCallingCode(country)} {en[country]}
                               </option>
@@ -9495,12 +9456,6 @@ function RightSideColumn({
                           <TextField
                             error={validPhoneNumber && phoneNumber?.length}
                             autoFocus={true}
-                            onMouseEnter={() =>
-                              setonFocusedToPhoneNumberField(true)
-                            }
-                            onMouseLeave={() =>
-                              setonFocusedToPhoneNumberField(false)
-                            }
                             value={phoneNumber}
                             onChange={(e) => setphoneNumber(e.target.value)}
                             type="text"
@@ -17109,7 +17064,6 @@ function RightSideColumn({
                                       setshowOrganizationTypeContent(false);
                                       popupState.close();
                                       setTimeout(() => {
-                                        setanimatedPopover(true);
                                         setdisplayedOrganizationType(
                                           "Business"
                                         );
@@ -17139,7 +17093,6 @@ function RightSideColumn({
                                       setshowOrganizationTypeContent(false);
                                       popupState.close();
                                       setTimeout(() => {
-                                        setanimatedPopover(true);
                                         setdisplayedOrganizationType(
                                           "Government"
                                         );
@@ -17544,9 +17497,7 @@ function RightSideColumn({
                                   themeName === "dark-theme" ? "#71767B" : "",
 
                                 "&.MuiInputLabel-shrink": {
-                                  color: verifyPasswordErrorMessage
-                                    ? "rgb(244, 33, 46)!important"
-                                    : "#1f9cf0 !important",
+                                  color: "#1f9cf0 !important",
                                 },
                               }}
                               htmlFor="outlined-adornment-password"
@@ -17572,9 +17523,7 @@ function RightSideColumn({
                                 },
                                 "&.Mui-focused .MuiOutlinedInput-notchedOutline":
                                   {
-                                    border: verifyPasswordErrorMessage
-                                      ? "2px solid rgb(244, 33, 46)!important"
-                                      : "2px solid #1d9bf0 !important",
+                                    border: "2px solid #1d9bf0 !important",
                                   },
                               }}
                               onChange={(e) => handleNewPasswordChange(e)}
@@ -17878,7 +17827,7 @@ function RightSideColumn({
                             onChange={handleSelectChange}
                           >
                             <option value="">{en["ZZ"]}</option>
-                            {sortedCountries.map((country, index) => (
+                            {sortedCountries.map((country) => (
                               <option key={country._id} value={country}>
                                 +{getCountryCallingCode(country)} {en[country]}
                               </option>
@@ -17887,12 +17836,6 @@ function RightSideColumn({
                           <TextField
                             error={validPhoneNumber && phoneNumber?.length}
                             autoFocus={true}
-                            onMouseEnter={() =>
-                              setonFocusedToPhoneNumberField(true)
-                            }
-                            onMouseLeave={() =>
-                              setonFocusedToPhoneNumberField(false)
-                            }
                             value={phoneNumber}
                             onChange={(e) => setphoneNumber(e.target.value)}
                             type="text"
@@ -18599,13 +18542,11 @@ function RightSideColumn({
                 className="chirp-regular-font"
                 onFocus={() => {
                   onFocusActive();
-                  setOnFocusXBtn(true);
                 }}
                 onBlur={() => {
                   if (!searchBoxClicked) {
                     setTimeout(() => {
                       setOnFocus(false);
-                      setOnFocusXBtn(false);
                     }, 1000);
                   }
                 }}
@@ -18757,7 +18698,6 @@ function RightSideColumn({
                         setTimeout(() => {
                           setSearchBarAnimation(false);
                           setStopAnimation(false);
-                          setOnFocusXBtn(false);
                           setOnFocus(false);
                           navigate(`/profile/${eachUser._doc._id}`);
                         }, 700);
@@ -19351,7 +19291,7 @@ function RightSideColumn({
                 >
                   Recent activities{" "}
                 </div>
-                {activities?.map((eachActivity, index) => {
+                {activities?.map((eachActivity) => {
                   return (
                     <div key={eachActivity._id}>
                       {eachActivity.activityHasBeenInitiatedWith._id !==

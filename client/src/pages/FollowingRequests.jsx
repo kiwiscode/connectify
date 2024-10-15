@@ -2,7 +2,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import { Col, Stack } from "react-bootstrap";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
@@ -13,14 +13,12 @@ import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext"
 import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 
 function FollowingRequests() {
-  const { userId } = useParams();
   const {
     getFontSizeAndLineHeight31,
     getFontSizeAndLineHeight20,
     getFontSizeAndLineHeight17,
     getFontSizeAndLineHeight15,
     getFontSizeAndLineHeight13,
-    getFontSizeAndLineHeight11,
   } = useFontSizeHandler();
   const font31 = getFontSizeAndLineHeight31();
   const font20 = getFontSizeAndLineHeight20();
@@ -33,32 +31,35 @@ function FollowingRequests() {
 
   const [requests, setRequests] = useState([]);
 
-  const [isHovered, setIsHovered] = useState(false);
-  const [showUnfollowModal, setshowUnfollowModal] = useState(false);
-
-  const {
-    subscription,
-    remainingTimeSubscriptions,
-    remainingTimeSubscriptionsOwnerIds,
-  } = useContext(SubcsriptionStatusContext);
+  const { subscription, remainingTimeSubscriptionsOwnerIds } = useContext(
+    SubcsriptionStatusContext
+  );
 
   useEffect(() => {
-    if (userInfo._id) {
-      getReceivedFollowRequests();
-    }
-  }, []);
+    const getReceivedFollowRequests = async () => {
+      try {
+        const result = await axios.get(
+          `${API_URL}/users/${userInfo._id}/received-follow-requests`,
+          {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          }
+        );
 
-  const handleGoBack = () => {
-    navigate(-1);
-  };
-  const [activeTab, setActiveTab] = useState("");
+        console.log("received follow requests:", result);
+        setRequestsOfthemonitoreduser(result.data);
+        setActiveTab("requests");
+        setRequests(result.data.receivedFollowRequests);
+      } catch (error) {
+        console.error("error:", error);
+      }
+    };
 
-  const handleClose = () => setshowUnfollowModal(false);
+    getReceivedFollowRequests();
+  }, [userInfo._id, getToken]);
 
-  const [requestsOfthemonitoreduser, setRequestsOfthemonitoreduser] = useState(
-    []
-  );
-  const getReceivedFollowRequests = async () => {
+  const getReceivedFollowRequestsOutsideOfEffect = async () => {
     try {
       const result = await axios.get(
         `${API_URL}/users/${userInfo._id}/received-follow-requests`,
@@ -78,6 +79,15 @@ function FollowingRequests() {
     }
   };
 
+  function handleGoBack() {
+    navigate(-1);
+  }
+  const [activeTab, setActiveTab] = useState("");
+
+  const [requestsOfthemonitoreduser, setRequestsOfthemonitoreduser] = useState(
+    []
+  );
+
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const handleResize = () => {
@@ -92,19 +102,8 @@ function FollowingRequests() {
     };
   }, []);
 
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
-  const [postModalOpenedFromLeftSide, setPostModalOpenedFromLeftSide] =
-    useState(false);
+  const [{ themeName }] = useContext(ThemeContext);
 
-  const handleCallBackForModalOpenedStateFromChild = (childData) => {
-    console.log("Child data received from child => ", childData);
-    setPostModalOpenedFromLeftSide(childData);
-  };
   const { width } = useWindowDimensions();
   const [headerPosition, setHeaderPosition] = useState(0);
 
@@ -125,16 +124,6 @@ function FollowingRequests() {
     };
   }, [headerPosition]);
 
-  const [hoveredTab, setHoveredTab] = useState(null);
-
-  const handleHover = (tab) => {
-    setHoveredTab(tab);
-  };
-
-  const handleLeave = () => {
-    setHoveredTab(null);
-  };
-
   const handleShowRequests = () => {
     setActiveTab("requests");
     navigate(`/profile/${requestsOfthemonitoreduser._id}/requests`);
@@ -152,7 +141,7 @@ function FollowingRequests() {
 
   return (
     <>
-      {!postModalOpenedFromLeftSide && <ResponsiveNavigationBarBottom />}
+      <ResponsiveNavigationBarBottom />
 
       <Col
         xs={12} // 0px - 576px aralığı
@@ -306,8 +295,6 @@ function FollowingRequests() {
                         ? "hover-effect-light-theme-pointer-plus"
                         : null
                     }
-                    onMouseEnter={() => handleHover("requests")}
-                    onMouseLeave={handleLeave}
                     onClick={handleShowRequests}
                     style={{
                       color:
@@ -398,8 +385,6 @@ function FollowingRequests() {
                         ? "hover-effect-light-theme-pointer-plus"
                         : null
                     }
-                    onMouseEnter={() => handleHover("followers")}
-                    onMouseLeave={handleLeave}
                     onClick={handleShowFollowers}
                     style={{
                       color:
@@ -473,8 +458,6 @@ function FollowingRequests() {
                         ? "hover-effect-light-theme-pointer-plus"
                         : null
                     }
-                    onMouseEnter={() => handleHover("following")}
-                    onMouseLeave={handleLeave}
                     onClick={handleShowFollowing}
                     style={{
                       color:
@@ -637,8 +620,6 @@ function FollowingRequests() {
                         ? "hover-effect-light-theme-pointer-plus"
                         : null
                     }
-                    onMouseEnter={() => handleHover("requests")}
-                    onMouseLeave={handleLeave}
                     onClick={handleShowRequests}
                     style={{
                       color:
@@ -729,8 +710,6 @@ function FollowingRequests() {
                         ? "hover-effect-light-theme-pointer-plus"
                         : null
                     }
-                    onMouseEnter={() => handleHover("followers")}
-                    onMouseLeave={handleLeave}
                     onClick={handleShowFollowers}
                     style={{
                       color:
@@ -803,8 +782,6 @@ function FollowingRequests() {
                         ? "hover-effect-light-theme-pointer-plus "
                         : null
                     }
-                    onMouseEnter={() => handleHover("following")}
-                    onMouseLeave={handleLeave}
                     onClick={handleShowFollowing}
                     style={{
                       color:
@@ -888,17 +865,7 @@ function FollowingRequests() {
           }}
         >
           {requests && requests.length ? (
-            requests.map((request, index) => {
-              const buttonId = `followButton_${index}`;
-
-              const handleMouseEnter = () => {
-                setIsHovered(buttonId);
-              };
-
-              const handleMouseLeave = () => {
-                setIsHovered(false);
-              };
-
+            requests.map((request) => {
               const handleRejectRequest = async (requestId) => {
                 try {
                   await axios.post(
@@ -910,7 +877,7 @@ function FollowingRequests() {
                       },
                     }
                   );
-                  getReceivedFollowRequests();
+                  getReceivedFollowRequestsOutsideOfEffect();
                 } catch (error) {
                   console.error("error:", error);
                 }
@@ -926,7 +893,7 @@ function FollowingRequests() {
                       },
                     }
                   );
-                  getReceivedFollowRequests();
+                  getReceivedFollowRequestsOutsideOfEffect();
                 } catch (error) {
                   console.error("error:", error);
                 }
@@ -1090,8 +1057,6 @@ function FollowingRequests() {
                           <button
                             className="circle_hover_reject"
                             onClick={() => handleRejectRequest(request._id)}
-                            onMouseEnter={handleMouseEnter}
-                            onMouseLeave={handleMouseLeave}
                             style={{
                               display: "inline-flex",
                               justifyContent: "center",
@@ -1115,8 +1080,6 @@ function FollowingRequests() {
                           <button
                             className="circle_hover_accept"
                             onClick={() => handleAcceptRequest(request._id)}
-                            onMouseEnter={handleMouseEnter}
-                            onMouseLeave={handleMouseLeave}
                             style={{
                               justifyContent: "center",
                               alignItems: "center",

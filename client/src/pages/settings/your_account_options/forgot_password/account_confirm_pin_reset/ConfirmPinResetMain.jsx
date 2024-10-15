@@ -13,18 +13,15 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function ConfirmPinResetMain() {
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
-  const { userInfo, getToken } = useContext(UserContext);
+  const [{ themeName }] = useContext(ThemeContext);
+  const { userInfo } = useContext(UserContext);
   const [verificationCodeInput, setVerificationCodeInput] = useState("");
   const { showCustomMessage, contextHolder } = useAntdMessageHandler();
   const [
     receivedVerificationCodeForPasswordChange,
     setReceivedVerificationCodeForPasswordChange,
   ] = useState(null);
-  const [
-    isWaitingForConfirmationCodeSendingProcess,
-    setIsWaitingForConfirmationCodeSendingProcess,
-  ] = useState(false);
+
   const navigate = useNavigate();
   const handleSendForgotPasswordCodeToEmail = () => {
     axios
@@ -37,11 +34,9 @@ function ConfirmPinResetMain() {
         setReceivedVerificationCodeForPasswordChange(
           response.data.result.verificationCode.toString()
         );
-        setIsWaitingForConfirmationCodeSendingProcess(true);
 
         setTimeout(() => {
           setVerificationCodeInput("");
-          setIsWaitingForConfirmationCodeSendingProcess(false);
         }, 500);
       })
       .catch((error) => {
@@ -170,8 +165,9 @@ function ConfirmPinResetMain() {
               lineHeight: "18px",
             }}
           >
-            You'll receive a code to verify here so you can reset your account
-            password.
+            {
+              "You'll receive a code to verify here so you can reset your account password."
+            }
           </div>{" "}
           <TextField
             className="mt-4"
@@ -251,8 +247,9 @@ function ConfirmPinResetMain() {
               lineHeight: "18px",
             }}
           >
-            If you don't see the email, check other places it might be, like
-            your junk, spam, social, or other folders.
+            {
+              "If you don't see the email, check other places it might be, like your junk, spam, social, or other folders."
+            }
           </div>{" "}
           <div
             onClick={() => {

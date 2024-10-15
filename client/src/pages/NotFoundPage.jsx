@@ -6,7 +6,7 @@ import { ThemeContext } from "../context/ThemeContext";
 
 function NotFoundPage() {
   const navigate = useNavigate();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
 
   return (
     <>

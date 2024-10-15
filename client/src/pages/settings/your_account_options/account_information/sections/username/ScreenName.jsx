@@ -6,12 +6,7 @@ import { UserContext } from "../../../../../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { Button, Col } from "react-bootstrap";
 import SettingsNavigation from "../../../../../../components/SettingsNavigation/SettingsNavigation";
-import {
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  TextField,
-} from "@mui/material";
+
 import axios from "axios";
 import LoadingSpinner from "../../../../../../components/ui/LoadingSpinner";
 import { useFontSizeHandler } from "../../../../../../utils/useFontSizeHandler";
@@ -20,8 +15,8 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function ScreenName() {
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
-  const { contextHolder, showCustomMessage } = useAntdMessageHandler();
+  const [{ themeName }] = useContext(ThemeContext);
+  const { contextHolder } = useAntdMessageHandler();
   const navigate = useNavigate();
   const { userInfo, getToken, updateUser } = useContext(UserContext);
 
@@ -45,18 +40,7 @@ function ScreenName() {
     };
   }, []);
 
-  const [nextButtonActive, setnextButtonActive] = useState(false);
-  const [skipButtonActive, setskipButtonActive] = useState(true);
-
   const checkUsernameDuplicate = () => {
-    if (username.length >= 4 || username.length <= 15) {
-      setnextButtonActive(true);
-      setskipButtonActive(false);
-    } else {
-      setnextButtonActive(true);
-      setskipButtonActive(false);
-    }
-
     axios
       .post(
         `${API_URL}/auth/username-check`,
@@ -71,7 +55,6 @@ function ScreenName() {
         console.log("Response =>", response);
         if (response.status === 200) {
           setusernameValidated(true);
-          setnextButtonActive(true);
           setusernameDuplicateError("");
           console.log("Hello world !");
         } else {
@@ -81,8 +64,6 @@ function ScreenName() {
       .catch((error) => {
         if (error.response.data.errorMessage && username.length) {
           console.log("Something went wrong during the process !");
-          setnextButtonDisabled(true);
-          setnextButtonActive(false);
           setusernameValidated(false);
           setusernameDuplicateError(error.response.data.errorMessage);
           if (
@@ -108,9 +89,6 @@ function ScreenName() {
             );
           }
         } else {
-          setskipButtonActive(true);
-          setnextButtonDisabled(false);
-          setnextButtonActive(false);
           setusernameValidated(false);
           setusernameDuplicateError("");
         }
@@ -146,8 +124,6 @@ function ScreenName() {
   useEffect(() => {
     checkUsernameDuplicate();
   }, [username]);
-  const [nextButtonDisabled, setnextButtonDisabled] = useState(false);
-  const [user, setUser] = useState([]);
 
   const refreshActiveUser = () => {
     axios
@@ -158,7 +134,6 @@ function ScreenName() {
       })
       .then((response) => {
         console.log("Response data =>", response.data.user);
-        setUser(response.data.user);
 
         const userInfoRefreshed = response.data.user;
         localStorage.setItem("userInfo", JSON.stringify(userInfoRefreshed));

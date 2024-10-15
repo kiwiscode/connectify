@@ -1,13 +1,13 @@
 import { Tooltip, tooltipClasses } from "@mui/material";
 import { styled } from "@mui/system";
 
-const BootstrapTooltip = styled(({ className, themeName, ...props }) => (
+const BootstrapTooltip = styled(({ className, ...props }) => (
   <Tooltip
     {...props}
     classes={{ popper: className }}
     TransitionProps={{ timeout: { enter: 250, exit: 50 } }}
   />
-))(({ theme, themeName }) => ({
+))(({ themeName }) => ({
   [`& .${tooltipClasses.arrow}`]: {
     color: "white",
   },

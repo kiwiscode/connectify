@@ -22,11 +22,10 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function DownloadAnArchiveOfYourDataMain() {
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { contextHolder, showCustomMessage } = useAntdMessageHandler();
   const navigate = useNavigate();
   const { userInfo, getToken } = useContext(UserContext);
-  const [showModal, setShowModal] = useState(true);
 
   const [tabIndex, setTabIndex] = useState(1);
 
@@ -199,7 +198,7 @@ function DownloadAnArchiveOfYourDataMain() {
                 ? "white"
                 : "",
           }}
-          show={showModal}
+          show={true}
           centered={true}
           dialogClassName={
             width <= 700 ? "modal-fullscreen" : "modal_center_with_width"

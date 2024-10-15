@@ -11,20 +11,20 @@ import BootstrapTooltip from "../../../../../components/BootstrapToolTip/Bootstr
 import { ColorContext } from "../../../../../context/ColorContext";
 import { useFontSizeHandler } from "../../../../../utils/useFontSizeHandler";
 
-const API_URL = import.meta.env.VITE_APP_API_URL;
-
 function Display() {
   const { contextHolder } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
   const { fontSize, setFontSize } = useContext(FontSizeContext);
   const { colorType, setColorType } = useContext(ColorContext);
-  const [{ theme, themeName }, toggleThemeBetweenLightDarkMode] =
+  const [{ themeName }, toggleThemeBetweenLightDarkMode] =
     useContext(ThemeContext);
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
   const [activeSizeNumber, setActiveSizeNumber] = useState(12);
   const navigate = useNavigate();
-  const { getFontSizeAndLineHeight20 } = useFontSizeHandler();
+  const { getFontSizeAndLineHeight15, getFontSizeAndLineHeight20 } =
+    useFontSizeHandler();
   const font20 = getFontSizeAndLineHeight20();
+  const font15 = getFontSizeAndLineHeight15();
   useEffect(() => {
     if (fontSize === "Extra small") {
       setActiveSizeNumber(-2);
@@ -256,31 +256,8 @@ function Display() {
                     : "very-dark-gray-light-theme-text-variant-1 chirp-bold-font"
                 }
                 style={{
-                  fontSize:
-                    fontSize === "Default"
-                      ? "15px"
-                      : fontSize === "Small"
-                      ? "14px"
-                      : fontSize === "Extra small"
-                      ? "14px"
-                      : fontSize === "Large"
-                      ? "17px"
-                      : fontSize === "Extra large"
-                      ? "18px"
-                      : null,
-                  lineHeight:
-                    fontSize === "Default"
-                      ? "20px"
-                      : fontSize === "Small"
-                      ? "19px"
-                      : fontSize === "Extra small"
-                      ? "18px"
-                      : fontSize === "Large"
-                      ? "22px"
-                      : fontSize === "Extra large"
-                      ? "24px"
-                      : null,
-                  lineHeight: "20px",
+                  fontSize: font15.fontSize,
+                  lineHeight: font15.lineHeight,
                   marginRight: "5px",
                 }}
               >

@@ -6,13 +6,12 @@ import { useNavigate } from "react-router-dom";
 import SettingsNavigation from "../../../components/SettingsNavigation/SettingsNavigation";
 import { useAntdMessageHandler } from "../../../utils/useAntdMessageHandler";
 import { useFontSizeHandler } from "../../../utils/useFontSizeHandler";
-
+import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 function VerifiedChooseMain() {
-  const [showSubscriptionModal, setShowSubscriptionModal] = useState(true);
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { width } = useWindowDimensions();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(null);
+  const loading = false;
 
   const [activeIndividualOptionTabStyle, setactiveIndividualOptionTabStyle] =
     useState(true);
@@ -26,19 +25,6 @@ function VerifiedChooseMain() {
     isOrganizationSubscriptionClicked,
     setisOrganizationSubscriptionClicked,
   ] = useState(false);
-  const [premiumRole, setpremiumRole] = useState("Individual");
-  const [tabStyleOrganizationBasicPlan, setTabStyleOrganizationBasicPlan] =
-    useState(true);
-  const [
-    tabStyleOrganizationFullAccessPlan,
-    setTabStyleOrganizationFullAccessPlan,
-  ] = useState(false);
-  const [
-    subTabIndexFromOrganizationSelect,
-    setSubTabIndexFromOrganizationSelect,
-  ] = useState(1);
-  const [organizationSubPremiumRole, setorganizationSubPremiumRole] =
-    useState("Organization");
 
   const { contextHolder } = useAntdMessageHandler();
   const {
@@ -83,7 +69,7 @@ function VerifiedChooseMain() {
           contentClassName={
             themeName === "dark-theme" ? "dark-theme-sub-modal " : ""
           }
-          show={showSubscriptionModal}
+          show={true}
           centered={true}
         >
           <Modal.Header
@@ -186,7 +172,6 @@ function VerifiedChooseMain() {
                         setisIndividualSubscriptionClicked(true);
                         setactiveOrganizationOptionTabStyle(false);
                         setisOrganizationSubscriptionClicked(false);
-                        setpremiumRole("Individual");
                       }}
                       style={
                         ({ activeIndividualOptionTabStyle },
@@ -270,10 +255,6 @@ function VerifiedChooseMain() {
                         setisOrganizationSubscriptionClicked(true);
                         setactiveIndividualOptionTabStyle(false);
                         setisIndividualSubscriptionClicked(false);
-                        setTabStyleOrganizationBasicPlan(false);
-                        setTabStyleOrganizationFullAccessPlan(true);
-                        setSubTabIndexFromOrganizationSelect(2);
-                        setorganizationSubPremiumRole("Organization");
                       }}
                       style={
                         ({ activeOrganizationOptionTabStyle },
@@ -611,7 +592,6 @@ function VerifiedChooseMain() {
                       }}
                       viewBox="0 0 24 24"
                       aria-hidden="true"
-                      class="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-1472mwg r-lrsllp r-jwli3a"
                     >
                       <g>
                         <path d="M16 6c0 2.21-1.79 4-4 4S8 8.21 8 6s1.79-4 4-4 4 1.79 4 4zm-.76 8.57l-3.95.58 2.86 2.78-.68 3.92L17 20l3.53 1.85-.68-3.92 2.86-2.78-3.95-.58L17 11l-1.76 3.57zm-.45-3.09c-.89-.32-1.86-.48-2.89-.48-2.35 0-4.37.85-5.86 2.44-1.48 1.57-2.36 3.8-2.63 6.46l-.11 1.09h8.58l.52-2.49-4.05-4.3 5.59-.99.85-1.73z"></path>
@@ -682,11 +662,7 @@ function VerifiedChooseMain() {
                   }
                 >
                   {" "}
-                  <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                  >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
                     <g>
                       <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                     </g>
@@ -738,7 +714,6 @@ function VerifiedChooseMain() {
                       }}
                       viewBox="0 0 24 24"
                       aria-hidden="true"
-                      class="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-1472mwg r-lrsllp r-jwli3a"
                     >
                       <g>
                         <path d="M14.83 13.82c.14.28.33.67.52 1.12.468 1.013.736 2.106.79 3.22-.073 1.544-.865 2.965-2.14 3.84 3.767-.694 6.513-3.96 6.55-7.79 0-6-4.7-10.25-9.5-13v.09c.143 1.768-.142 3.545-.83 5.18-.473-.722-1.068-1.354-1.76-1.87l-.26-.24c-.541 1.036-1.146 2.038-1.81 3C5 9.5 3.5 11.7 3.5 14.25c-.083 2.252.831 4.426 2.5 5.94 1.038.895 2.282 1.517 3.62 1.81-.11-.097-.211-.204-.3-.32-.465-.645-.704-1.425-.68-2.22.062-1.326.724-2.552 1.8-3.33l.66-.56c.836-.649 1.585-1.402 2.23-2.24l.68-.92.58 1 .24.41z"></path>
@@ -809,11 +784,7 @@ function VerifiedChooseMain() {
                   }
                 >
                   {" "}
-                  <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                  >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
                     <g>
                       <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                     </g>
@@ -864,7 +835,6 @@ function VerifiedChooseMain() {
                       }}
                       viewBox="0 0 24 24"
                       aria-hidden="true"
-                      class="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-1472mwg r-lrsllp r-jwli3a"
                     >
                       <g>
                         <path d="M13.5 8.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5S11.17 7 12 7s1.5.67 1.5 1.5zM13 17v-5h-2v5h2zm-1 5.25c5.66 0 10.25-4.59 10.25-10.25S17.66 1.75 12 1.75 1.75 6.34 1.75 12 6.34 22.25 12 22.25zM20.25 12c0 4.56-3.69 8.25-8.25 8.25S3.75 16.56 3.75 12 7.44 3.75 12 3.75s8.25 3.69 8.25 8.25z"></path>
@@ -913,11 +883,7 @@ function VerifiedChooseMain() {
                   }
                 >
                   {" "}
-                  <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                  >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
                     <g>
                       <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                     </g>

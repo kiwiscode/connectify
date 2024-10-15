@@ -14,7 +14,7 @@ import { useFontSizeHandler } from "../../../../../utils/useFontSizeHandler";
 function PasswordResetSurveyMain() {
   const { width } = useWindowDimensions();
   const navigate = useNavigate();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const {
     getFontSizeAndLineHeight31,
     getFontSizeAndLineHeight15,

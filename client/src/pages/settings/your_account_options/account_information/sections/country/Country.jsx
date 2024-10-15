@@ -18,7 +18,7 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 function Country() {
   const { contextHolder, showCustomMessage } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { userInfo, getToken } = useContext(UserContext);
   const navigate = useNavigate();
   const [country, setCountry] = useState(userInfo.country);
@@ -152,7 +152,6 @@ function Country() {
     getFontSizeAndLineHeight20,
     getFontSizeAndLineHeight17,
     getFontSizeAndLineHeight15,
-    getFontSizeAndLineHeight14,
     getFontSizeAndLineHeight13,
   } = useFontSizeHandler();
   const font31 = getFontSizeAndLineHeight31();
@@ -161,7 +160,6 @@ function Country() {
   const font20 = getFontSizeAndLineHeight20();
   const font17 = getFontSizeAndLineHeight17();
   const font15 = getFontSizeAndLineHeight15();
-  const font14 = getFontSizeAndLineHeight14();
   const font13 = getFontSizeAndLineHeight13();
   return (
     <>
@@ -1236,7 +1234,7 @@ function Country() {
                                   : "very-dark-gray-light-theme-text-variant-1 chirp-regular-font mt-3"
                               }
                             >
-                              Personalize based on places you've been
+                              {"Personalize based on places you've been"}
                             </span>
                             <span
                               style={{
@@ -3157,7 +3155,7 @@ function Country() {
             }}
           >
             <option value="">{en["ZZ"]}</option>
-            {sortedCountries.map((country, index) => (
+            {sortedCountries.map((country) => (
               <option key={country._id} value={country}>
                 {en[country]}
               </option>

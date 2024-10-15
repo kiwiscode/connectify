@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import useWindowDimensions from "../../../../../../hooks/getWindowDimensions";
 import { Button, Modal } from "react-bootstrap";
 import { ThemeContext } from "../../../../../../context/ThemeContext";
@@ -19,7 +19,7 @@ import { UserContext } from "../../../../../../context/UserContext";
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function Flow_Password_Reset() {
-  const { userInfo, getToken, updateUser } = useContext(UserContext);
+  const { getToken, updateUser } = useContext(UserContext);
   const { themeName } = useContext(ThemeContext);
   const { showCustomMessage, contextHolder } = useAntdMessageHandler();
   const {
@@ -824,7 +824,6 @@ function Flow_Password_Reset() {
                         variant="light"
                         onClick={() => {
                           setTabIndex(0);
-                          handleClose();
                         }}
                       >
                         Cancel
@@ -2012,9 +2011,7 @@ function Flow_Password_Reset() {
                             onClick={() => {
                               setTabLoading(true);
                               setTimeout(() => {
-                                setStartForgotPasswordProcess(true);
                                 setTabIndex(1);
-                                setShow(true);
                                 setTabLoading(false);
                               }, 500);
                             }}
@@ -2047,7 +2044,6 @@ function Flow_Password_Reset() {
                               height: "52px",
                               opacity: loginInput.password.length ? "1" : "0.5",
                             }}
-                            onClick={() => handleLoginVariantOneStep2()}
                             className={`login-button mt-5 ${themeName}-white-btn chirp-bold-font`}
                             variant="dark"
                           >
@@ -2072,7 +2068,6 @@ function Flow_Password_Reset() {
                               Don&apos;t have an account?{" "}
                               <span
                                 className="hover-blue-underline "
-                                onClick={handleCloseLoginModal}
                                 style={{
                                   cursor: "pointer",
                                   color: "#1C9BEF",
@@ -2575,7 +2570,6 @@ function Flow_Password_Reset() {
                       variant="light"
                       onClick={() => {
                         setTabIndex(0);
-                        handleClose();
                       }}
                     >
                       Cancel
@@ -3746,9 +3740,7 @@ function Flow_Password_Reset() {
                           onClick={() => {
                             setTabLoading(true);
                             setTimeout(() => {
-                              setStartForgotPasswordProcess(true);
                               setTabIndex(1);
-                              setShow(true);
                               setTabLoading(false);
                             }, 500);
                           }}
@@ -3781,7 +3773,6 @@ function Flow_Password_Reset() {
                             height: "52px",
                             opacity: loginInput.password.length ? "1" : "0.5",
                           }}
-                          onClick={() => handleLoginVariantOneStep2()}
                           className={`login-button mt-5 ${themeName}-white-btn chirp-bold-font`}
                           variant="dark"
                         >
@@ -3806,7 +3797,6 @@ function Flow_Password_Reset() {
                             Don&apos;t have an account?{" "}
                             <span
                               className="hover-blue-underline"
-                              onClick={handleCloseLoginModal}
                               style={{
                                 color: "#1C9BEF",
                                 cursor: "pointer",

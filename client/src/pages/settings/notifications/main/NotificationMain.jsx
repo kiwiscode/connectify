@@ -1,7 +1,6 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { Col } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
-import { UserContext } from "../../../../context/UserContext";
+import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../../../../context/ThemeContext";
 import useWindowDimensions from "../../../../hooks/getWindowDimensions";
 import { useAntdMessageHandler } from "../../../../utils/useAntdMessageHandler";
@@ -9,95 +8,17 @@ import { ModalVisibilityContext } from "../../../../context/ModalVisibilityConte
 import ResponsiveNavigationBarBottom from "../../../../components/Navbar/ResponsiveNavigationBottom";
 import SettingsNavigation from "../../../../components/SettingsNavigation/SettingsNavigation";
 import { useFontSizeHandler } from "../../../../utils/useFontSizeHandler";
-const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function NotificationMain() {
-  const { getToken, userInfo } = useContext(UserContext);
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { width } = useWindowDimensions();
 
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "June",
-    "July",
-    "Aug",
-    "Sept",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-
-  const getCreatedDate = (date) => {
-    const createdAt = new Date(date);
-    const getMonth = createdAt.getMonth();
-    return `${months[getMonth]} ${createdAt.getDate()}`;
-  };
-
-  const extraDetailedDate = (dateStr) => {
-    const date = new Date(dateStr);
-
-    const optionsTime = {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    };
-    const optionsDate = {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    };
-    const formattedTime = new Intl.DateTimeFormat("en-US", optionsTime).format(
-      date
-    );
-    const formattedDate = new Intl.DateTimeFormat("en-US", optionsDate).format(
-      date
-    );
-
-    return `${formattedTime} \u00B7 ${formattedDate}`;
-  };
-
-  const {
-    postSharedMessage,
-    contextHolder,
-    showCustomMessage,
-    postDeletedMessage,
-  } = useAntdMessageHandler();
-
-  const [dataFromCommentModal, setDataFromCommentModal] = useState("");
-  function handleDataFromCommentModal(data) {
-    console.log("Data =>", data);
-    setDataFromCommentModal(data);
-  }
+  const { contextHolder } = useAntdMessageHandler();
 
   const { isPostModalVisible } = useContext(ModalVisibilityContext);
 
-  const [onFocus, setOnFocus] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const setSearchTermEmpty = () => {
-    setSearchTerm("");
-  };
-  const [onFocusXBtn, setOnFocusXBtn] = useState(true);
-  const onFocusInActiveForXBtn = () => {
-    setOnFocusXBtn(false);
-  };
-  const handleSetSearchTerm = (e) => {
-    setSearchTerm(e.target.value);
-  };
-  const onFocusActive = () => {
-    setOnFocus(true);
-  };
-
   const navigate = useNavigate();
-  const location = useLocation();
-  const path = location.pathname;
 
-  const [isSearchStart, setSearchStart] = useState(null);
-
-  const [showNotificationMessage, setShowNotificationMessage] = useState(null);
   const {
     getFontSizeAndLineHeight20,
     getFontSizeAndLineHeight15,
@@ -108,9 +29,7 @@ function NotificationMain() {
   const font13 = getFontSizeAndLineHeight13();
   return (
     <>
-      {!isPostModalVisible && !dataFromCommentModal && (
-        <ResponsiveNavigationBarBottom />
-      )}
+      {!isPostModalVisible && <ResponsiveNavigationBarBottom />}
       {contextHolder}
       <SettingsNavigation />
       <Col
@@ -257,11 +176,7 @@ function NotificationMain() {
                     : "settings-icon-light-theme"
                 }
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14 6V3h2v8h-2V8H3V6h11zm7 2h-3.5V6H21v2zM8 16v-3h2v8H8v-3H3v-2h5zm13 2h-9.5v-2H21v2z"></path>{" "}
                   </g>
@@ -297,8 +212,9 @@ function NotificationMain() {
                     lineHeight: font13.lineHeight,
                   }}
                 >
-                  Choose the notifications you'd like to see — and those you
-                  don't.
+                  {
+                    "Choose the notifications you'd like to see — and those you don't."
+                  }
                 </div>
               </div>
               <div
@@ -309,11 +225,7 @@ function NotificationMain() {
                 }
               >
                 {" "}
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -342,11 +254,7 @@ function NotificationMain() {
                     : "settings-icon-light-theme"
                 }
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M7 17h6v2H7v-2zm7.5-15C15.88 2 17 3.12 17 4.5v15c0 1.38-1.12 2.5-2.5 2.5h-9C4.12 22 3 20.88 3 19.5v-15C3 3.12 4.12 2 5.5 2h9zM5 19.5c0 .28.22.5.5.5h9c.28 0 .5-.22.5-.5v-15c0-.28-.22-.5-.5-.5h-9c-.28 0-.5.22-.5.5v15zm15.74-3.49l1.64 1.15C23.4 15.7 24 13.92 24 12s-.6-3.7-1.62-5.16l-1.64 1.15C21.53 9.13 22 10.51 22 12s-.47 2.87-1.26 4.01zm-.82-7.45l-1.64 1.15c.45.65.72 1.43.72 2.29 0 .85-.27 1.64-.72 2.29l1.64 1.15C20.6 14.47 21 13.28 21 12s-.4-2.47-1.08-3.44z"></path>
                   </g>
@@ -393,11 +301,7 @@ function NotificationMain() {
                 }
               >
                 {" "}
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>

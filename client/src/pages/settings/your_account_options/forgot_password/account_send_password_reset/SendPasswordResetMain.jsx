@@ -1,9 +1,8 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { UserContext } from "../../../../../context/UserContext";
 import BootstrapTooltip from "../../../../../components/BootstrapToolTip/BootstrapToolTip";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Radio } from "@mui/material";
 import { Button, Stack } from "react-bootstrap";
 import useWindowDimensions from "../../../../../hooks/getWindowDimensions";
 import { ThemeContext } from "../../../../../context/ThemeContext";
@@ -14,7 +13,7 @@ function SendPasswordResetMain() {
   const { userInfo } = useContext(UserContext);
   const navigate = useNavigate();
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const getMaskedEmail = (str) => {
     const atIndex = str.indexOf("@");
     const userName = str.slice(0, atIndex);
@@ -27,14 +26,7 @@ function SendPasswordResetMain() {
 
     return maskedUsername + "@" + maskedDomain + "." + maskedDot;
   };
-  const [
-    receivedVerificationCodeForPasswordChange,
-    setReceivedVerificationCodeForPasswordChange,
-  ] = useState(null);
-  const [
-    isWaitingForConfirmationCodeSendingProcess,
-    setIsWaitingForConfirmationCodeSendingProcess,
-  ] = useState(false);
+
   const {
     getFontSizeAndLineHeight31,
     getFontSizeAndLineHeight15,
@@ -52,15 +44,9 @@ function SendPasswordResetMain() {
   `,
         { forgotPasswordInProcessUser: userInfo }
       )
-      .then((response) => {
-        setReceivedVerificationCodeForPasswordChange(
-          response.data.result.verificationCode.toString()
-        );
-        setIsWaitingForConfirmationCodeSendingProcess(true);
-
+      .then(() => {
         setTimeout(() => {
           navigate("/account/confirm_pin_reset");
-          setIsWaitingForConfirmationCodeSendingProcess(false);
         }, 500);
       })
       .catch((error) => {

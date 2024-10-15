@@ -407,7 +407,7 @@ function App() {
                 path !== `/${userInfo?.username}/lists` &&
                 path !== "/i/spaces/start" &&
                 path !== "/i/flow/password_reset" &&
-                !path.endsWith(1) && (
+                !path.endsWith("/photo/1") && (
                   <LeftSideNavBar
                     refreshPosts={handleShareNewPost}
                     setIsPostShared={handlePostSharingIsDone}
@@ -680,7 +680,7 @@ function App() {
                 path !== `/${userInfo?.username}/lists` &&
                 path !== "/i/spaces/start" &&
                 path !== "/i/flow/password_reset" &&
-                !path.endsWith(1) && (
+                !path.endsWith("/photo/1") && (
                   <RightSideColumn
                     isVerifiedOrgsSignUpRoute={
                       openVerifiedOrganizationSubscriptionTypedModal

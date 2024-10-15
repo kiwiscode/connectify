@@ -17,7 +17,7 @@ function HomePage() {
     if (token) {
       navigate("/home");
     }
-  }, [navigate]);
+  }, [navigate, getToken]);
 
   return (
     <>

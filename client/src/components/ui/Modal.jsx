@@ -29,8 +29,9 @@ import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 import { SubcsriptionStatusContext } from "../../context/SubscriptionStatusContext";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
+
 function SigninModal({ deactivatedScreen, widthSmaller700 }) {
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
 
   // google auth
   const handleGoogleSignUp = () => {
@@ -209,8 +210,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
-  const [startForgotPasswordProcess, setStartForgotPasswordProcess] =
-    useState(false);
 
   const [verificationCodeInput, setVerificationCodeInput] = useState("");
 
@@ -299,10 +298,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
     setReceivedVerificationCodeForPasswordChange,
   ] = useState();
 
-  const [
-    isWaitingForConfirmationCodeSendingProcess,
-    setIsWaitingForConfirmationCodeSendingProcess,
-  ] = useState(false);
   const handleSendForgotPasswordCodeToEmail = () => {
     setTabLoading(true);
     // setIsWaitingForConfirmationCodeSendingProcess(true);
@@ -1134,7 +1129,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 onClick={() => {
                                   setTabLoading(true);
                                   setTimeout(() => {
-                                    setStartForgotPasswordProcess(true);
                                     setTabIndex(tabIndex + 1);
                                     setTabLoading(false);
                                   }, 500);
@@ -2879,7 +2873,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   onClick={() => {
                                     setTabLoading(true);
                                     setTimeout(() => {
-                                      setStartForgotPasswordProcess(true);
                                       setTabIndex(1);
                                       setTabLoading(false);
                                     }, 500);
@@ -3224,7 +3217,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             onClick={() => {
                               setTabLoading(true);
                               setTimeout(() => {
-                                setStartForgotPasswordProcess(true);
                                 setTabIndex(tabIndex + 1);
                                 setTabLoading(false);
                               }, 500);
@@ -4931,7 +4923,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 onClick={() => {
                                   setTabLoading(true);
                                   setTimeout(() => {
-                                    setStartForgotPasswordProcess(true);
                                     setTabIndex(1);
                                     setTabLoading(false);
                                   }, 500);
@@ -5100,12 +5091,10 @@ function CommentModal({
   isCutePopoverOnRightSide,
   photoDetailedPost,
 }) {
-  const { getToken, userInfo } = useContext(UserContext);
-  const {
-    subscription,
-    remainingTimeSubscriptions,
-    remainingTimeSubscriptionsOwnerIds,
-  } = useContext(SubcsriptionStatusContext);
+  const { userInfo } = useContext(UserContext);
+  const { subscription, remainingTimeSubscriptionsOwnerIds } = useContext(
+    SubcsriptionStatusContext
+  );
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
 
@@ -5146,7 +5135,9 @@ function CommentModal({
   };
 
   const handleShow = (isModalOpened) => {
-    sendDataToParent(isModalOpened);
+    if (sendDataToParent) {
+      sendDataToParent(isModalOpened);
+    }
     setShow(true);
   };
   const closeImage = () => {
@@ -5241,12 +5232,7 @@ function CommentModal({
     setContent((prevText) => prevText + emoji);
   };
 
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 

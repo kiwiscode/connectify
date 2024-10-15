@@ -8,12 +8,10 @@ import SettingsNavigation from "../../../../../../../components/SettingsNavigati
 import { NavigationHistoryContext } from "../../../../../../../context/NavigationHistoryContext";
 import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandler";
 
-const API_URL = import.meta.env.VITE_APP_API_URL;
-
 function YourTwitterDataLanguage() {
   const { contextHolder } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const navigate = useNavigate();
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
 

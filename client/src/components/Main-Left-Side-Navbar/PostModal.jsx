@@ -23,18 +23,11 @@ function PostModal({
 }) {
   const [show, setShow] = useState(false);
   const [content, setContent] = useState("");
-  const [error, setError] = useState("");
   const { getToken, userInfo } = useContext(UserContext);
   const [chosenEmoji, setChosenEmoji] = useState(null);
-  const [showSecondModal, setShowSecondModal] = useState(false);
   const maxCharacters = 140;
 
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
 
   const [modalImage, setModalImage] = useState("");
   //handle and convert it in base 64
@@ -56,35 +49,16 @@ function PostModal({
     const inputText = event.target.value;
     if (inputText.length <= maxCharacters) {
       setContent(inputText);
-    } else {
-      setError("Tweet length to 140 characters");
     }
   };
 
   const handleClose = () => {
     setShow(false);
-    setShowSecondModal(false);
   };
   const handleShow = () => setShow(true);
 
   const closeImage = () => {
     setModalImage("");
-  };
-
-  const handleMouseOver = (e) => {
-    const shallowCopy = e.target.classList[0];
-
-    if (shallowCopy === "target") {
-      e.target.style.background = "#595b5b";
-    }
-  };
-
-  const handleMouseOut = (e) => {
-    const shallowCopy = e.target.classList[0];
-
-    if (shallowCopy === "target") {
-      e.target.style.background = "#47494a";
-    }
   };
 
   const onEmojiClick = (emojiObject) => {

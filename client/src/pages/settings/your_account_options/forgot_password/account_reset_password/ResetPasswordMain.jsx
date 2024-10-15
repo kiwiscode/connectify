@@ -28,7 +28,7 @@ function ResetPasswordMain() {
   const font14 = getFontSizeAndLineHeight14();
   const font13 = getFontSizeAndLineHeight13();
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { userInfo, getToken } = useContext(UserContext);
   const [errorResetPassword, setErrorResetPassword] = useState("");
   const [errorResetPassword2, setErrorResetPassword2] = useState("");

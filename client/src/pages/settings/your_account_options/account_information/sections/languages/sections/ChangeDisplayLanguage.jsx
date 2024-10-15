@@ -1,4 +1,4 @@
-import { Button, Col, Modal } from "react-bootstrap";
+import { Button, Col } from "react-bootstrap";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAntdMessageHandler } from "../../../../../../../utils/useAntdMessageHandler";
@@ -8,7 +8,6 @@ import SettingsNavigation from "../../../../../../../components/SettingsNavigati
 import { NavigationHistoryContext } from "../../../../../../../context/NavigationHistoryContext";
 import axios from "axios";
 import { UserContext } from "../../../../../../../context/UserContext";
-import LoadingSpinner from "../../../../../../../components/ui/LoadingSpinner";
 import BootstrapTooltip from "../../../../../../../components/BootstrapToolTip/BootstrapToolTip";
 import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandler";
 
@@ -17,7 +16,7 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 function ChangeDisplayLanguage() {
   const { contextHolder } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const navigate = useNavigate();
   const { userInfo, getToken } = useContext(UserContext);
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
@@ -41,7 +40,6 @@ function ChangeDisplayLanguage() {
     refreshActiveUser();
   }, []);
   const [language, setLanguage] = useState("");
-  const [loading, setLoading] = useState();
   const [showPopoverLanguages, setShowPopoverLanguages] = useState(false);
   const selectRef = useRef(null);
 
@@ -120,10 +118,6 @@ function ChangeDisplayLanguage() {
     { code: "cy", name: "Welsh - Cymraeg" },
     { code: "other", name: "Other" },
   ];
-
-  const changeDisplayLanguage = () => {
-    console.log("Hello world we gehts ??");
-  };
 
   const {
     getFontSizeAndLineHeight20,
@@ -344,7 +338,7 @@ function ChangeDisplayLanguage() {
               setLanguage(e.target.value);
             }}
           >
-            {languages.map((language, index) => (
+            {languages.map((language) => (
               <option key={language._id} value={language.name}>
                 {language.name}
               </option>

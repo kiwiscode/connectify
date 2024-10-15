@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
-import { Container, Row, Col, Stack, Accordion, Button } from "react-bootstrap";
+import { Container, Row, Col, Stack, Accordion } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { CommentModal } from "../components/ui/Modal";
 import { UserContext } from "../context/UserContext";
@@ -8,24 +8,20 @@ import PostEngagements from "../components/ui/PostEngagementsModal";
 const API_URL = import.meta.env.VITE_APP_API_URL;
 const FRONTEND_URL = import.meta.env.VITE_APP_FRONTEND_URL;
 
-import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import { ThemeContext } from "../context/ThemeContext";
 import PostPopover from "../components/three-dots-popover/Popover";
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import RepostAction from "../components/ui/RepostAction";
 import LikeAction from "../components/ui/LikeAction";
 import BookmarkAction from "../components/ui/BookmarkAction";
-import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../components/BootstrapToolTip/BootstrapToolTip";
 import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext";
 import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 function PostDetailPageWithPicture() {
-  const {
-    subscription,
-    remainingTimeSubscriptions,
-    remainingTimeSubscriptionsOwnerIds,
-  } = useContext(SubcsriptionStatusContext);
+  const { subscription, remainingTimeSubscriptionsOwnerIds } = useContext(
+    SubcsriptionStatusContext
+  );
 
   const extraDetailedDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -50,7 +46,7 @@ function PostDetailPageWithPicture() {
     return `${formattedTime} \u00B7 ${formattedDate}`;
   };
 
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
 
   const { postOwner, postId } = useParams();
   const [detailedPost, setdetailedPost] = useState([]);
@@ -77,7 +73,7 @@ function PostDetailPageWithPicture() {
     }
   }, [postId]);
 
-  const { userInfo, getToken } = useContext(UserContext);
+  const { userInfo } = useContext(UserContext);
 
   const [commentedForThisPost, setcommentedForThisPost] = useState([]);
   const [commentedForThisUsersPost, setcommentedForThisUsersPost] = useState(
@@ -87,10 +83,6 @@ function PostDetailPageWithPicture() {
   console.log("Commented for this post check =>", commentedForThisPost);
 
   const navigate = useNavigate();
-
-  const handleGoBack = () => {
-    navigate(-1);
-  };
 
   const [deactivatedUser, setdeactivatedUser] = useState(false);
 
@@ -114,55 +106,6 @@ function PostDetailPageWithPicture() {
       });
   };
 
-  const handlePostLikesPostDetailPage = (postId, findedPost) => {
-    axios
-      .post(
-        `${API_URL}/favorite`,
-        { postId },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        setTimeout(() => {
-          refreshPostDetailPage();
-        }, 500);
-      })
-      .catch((error) => {
-        if (error.response) {
-          const { errorMessage } = error.response.data;
-
-          console.log("Error =>", errorMessage);
-        }
-      });
-  };
-
-  const handleDeleteLikePostDetailPage = (postId) => {
-    axios
-      .post(
-        `${API_URL}/favorite/delete-favorite`,
-        {
-          userId: userInfo._id,
-          postId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        setTimeout(() => {
-          console.log("Handle delete like situation works !");
-          refreshPostDetailPage();
-        }, 500);
-      })
-      .catch((err) => {
-        return err;
-      });
-  };
   const { postDeletedMessage, postSharedMessage, contextHolder } =
     useAntdMessageHandler();
   const handleDeletePostPostDetailPage = () => {
@@ -170,13 +113,6 @@ function PostDetailPageWithPicture() {
     refreshPostDetailPage();
   };
 
-  const getLikerIds = (array) => {
-    if (array.likes) {
-      return array.likes.map((eachLiker) => {
-        return eachLiker._id;
-      });
-    }
-  };
   useEffect(() => {
     axios
       .get(`${API_URL}/${postOwner}/status/${postId}`)
@@ -261,29 +197,8 @@ function PostDetailPageWithPicture() {
     } ${inputDate.getDate()}, ${inputDate.getFullYear()}`;
   }
 
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
-  const handleResize = () => {
-    setWindowWidth(window.innerWidth);
-  };
-
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
   const { width } = useWindowDimensions();
 
-  const [dataFromCommentModal, setDataFromCommentModal] = useState("");
-  function handleDataFromCommentModal(data) {
-    console.log("Data =>", data);
-    setDataFromCommentModal(data);
-  }
-
-  const { isPostModalVisible } = useContext(ModalVisibilityContext);
   const [headerPosition, setHeaderPosition] = useState(0);
 
   const handleScroll = () => {
@@ -555,7 +470,6 @@ function PostDetailPageWithPicture() {
                   post={detailedPost}
                   width={`${1.25}em`}
                   height={`${1.25}em`}
-                  sendDataToParent={handleDataFromCommentModal}
                   postSharedMessage={postSharedMessage}
                   photoDetailedPost={true}
                 />
@@ -1089,7 +1003,6 @@ function PostDetailPageWithPicture() {
                             post={commentedForThisPost}
                             width={`${1.25}em`}
                             height={`${1.25}em`}
-                            sendDataToParent={handleDataFromCommentModal}
                             postSharedMessage={postSharedMessage}
                           />
                         </div>
@@ -1582,7 +1495,6 @@ function PostDetailPageWithPicture() {
                       post={detailedPost}
                       width={`${1.25}em`}
                       height={`${1.25}em`}
-                      sendDataToParent={handleDataFromCommentModal}
                       postSharedMessage={postSharedMessage}
                     />
                   </div>
@@ -1751,7 +1663,7 @@ function PostDetailPageWithPicture() {
                   <Accordion.Body>
                     {detailedPost.comments ? (
                       <div>
-                        {detailedPost.comments?.map((eachComment, index) => {
+                        {detailedPost.comments?.map((eachComment) => {
                           return (
                             <div key={eachComment._id}>
                               <div>
@@ -2081,9 +1993,6 @@ function PostDetailPageWithPicture() {
                                                 }
                                                 width={`${1.25}em`}
                                                 height={`${1.25}em`}
-                                                sendDataToParent={
-                                                  handleDataFromCommentModal
-                                                }
                                                 postSharedMessage={
                                                   postSharedMessage
                                                 }
@@ -2203,7 +2112,7 @@ function PostDetailPageWithPicture() {
                   <Accordion.Body>
                     {detailedPost.comments ? (
                       <div>
-                        {detailedPost.comments.map((eachComment, index) => {
+                        {detailedPost.comments.map((eachComment) => {
                           return (
                             <div key={eachComment._id}>
                               <div>
@@ -2540,9 +2449,6 @@ function PostDetailPageWithPicture() {
                                                 }
                                                 width={`${1.25}em`}
                                                 height={`${1.25}em`}
-                                                sendDataToParent={
-                                                  handleDataFromCommentModal
-                                                }
                                                 postSharedMessage={
                                                   postSharedMessage
                                                 }

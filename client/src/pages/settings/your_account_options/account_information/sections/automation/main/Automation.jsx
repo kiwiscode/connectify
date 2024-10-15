@@ -6,12 +6,7 @@ import { ThemeContext } from "../../../../../../../context/ThemeContext";
 import { UserContext } from "../../../../../../../context/UserContext";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FormControl,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-} from "@mui/material";
+import LoadingSpinner from "../../../../../../../components/ui/LoadingSpinner";
 import axios from "axios";
 import { NavigationHistoryContext } from "../../../../../../../context/NavigationHistoryContext";
 import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandler";
@@ -19,41 +14,13 @@ import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandle
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function Automation() {
-  const { contextHolder, showCustomMessage } = useAntdMessageHandler();
+  const { contextHolder } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const navigate = useNavigate();
-  const { userInfo, getToken } = useContext(UserContext);
+  const { getToken } = useContext(UserContext);
 
-  const [showModal, setShowModal] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [tabIndex, setTabIndex] = useState(1);
-  const [passwordInput, setPasswordInput] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleMouseDownPassword = (e) => {
-    e.preventDefault();
-  };
-  const handleTabIndexState = () => {
-    setTabIndex(tabIndex + 1);
-  };
-  const handlePasswordConfirmation = () => {
-    axios
-      .post(`${API_URL}/auth/password-check`, {
-        verifyPasswordInput: passwordInput,
-        userId: userInfo._id,
-      })
-      .then(() => {
-        setLoading(true);
-        setTimeout(() => {
-          setLoading(false);
-          handleTabIndexState();
-        }, 300);
-      })
-      .catch(() => {
-        showCustomMessage("Wrong password!");
-      });
-  };
+  const loading = false;
 
   const [user, setUser] = useState([]);
 
@@ -118,12 +85,13 @@ function Automation() {
     showManagingAccountConnectedMessage,
     setShowManagingAccountConnectedMessage,
   ] = useState(null);
+
   useEffect(() => {
     if (user?.automated_account_connected_message_show) {
       setShowManagingAccountConnectedMessage(true);
 
       const change_connected_message_statu = async () => {
-        const response = await axios.post(
+        await axios.post(
           `${API_URL}/change_show_managing_account_connected_message_status`,
           {},
           {
@@ -138,7 +106,7 @@ function Automation() {
         change_connected_message_statu();
       }, 2500);
     }
-  });
+  }, []);
 
   const {
     getFontSizeAndLineHeight26,
@@ -513,7 +481,6 @@ function Automation() {
                   height={`${1.25}em`}
                   viewBox="0 0 24 24"
                   aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
                 >
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
@@ -665,7 +632,6 @@ function Automation() {
                 height={`${1.25}em`}
                 viewBox="0 0 24 24"
                 aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
               >
                 <g>
                   <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>

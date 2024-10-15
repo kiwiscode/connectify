@@ -13,7 +13,7 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 function DownloadYourDataMain() {
   const { contextHolder, showCustomMessage } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { getToken } = useContext(UserContext);
   const [user, setUser] = useState([]);
   const navigate = useNavigate();

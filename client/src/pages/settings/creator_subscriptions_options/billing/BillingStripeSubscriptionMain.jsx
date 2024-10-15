@@ -14,11 +14,7 @@ function BillingStripeSubscriptionMain() {
   const navigate = useNavigate();
   const { getToken } = useContext(UserContext);
 
-  const {
-    subscription,
-    remainingTimeSubscriptions,
-    remainingTimeSubscriptionsOwnerIds,
-  } = useContext(SubcsriptionStatusContext);
+  const { subscription } = useContext(SubcsriptionStatusContext);
 
   const nextBillingDateForAnnualSub = (originalDate) => {
     let newDate = new Date(originalDate);
@@ -209,7 +205,6 @@ function BillingStripeSubscriptionMain() {
               xmlns="http://www.w3.org/2000/svg"
               width="40"
               height="25"
-              class="UserLogo variant-- "
             >
               <path
                 fill="white"
@@ -558,7 +553,6 @@ function BillingStripeSubscriptionMain() {
                   height={`${1.25}em`}
                   viewBox="0 0 24 24"
                   aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
                 >
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
@@ -713,7 +707,7 @@ function BillingStripeSubscriptionMain() {
                 "very-dark-gray-light-theme-text-variant-2 chirp-regular-font mt-5"
               }
             >
-              By canceling your plan, you agree to Connectify, Inc's{" "}
+              {"By canceling your plan, you agree to Connectify, Inc's"}{" "}
               <span
                 className={
                   "very-dark-gray-light-theme-text-variant-1 chirp-regular-font hover-fullname"

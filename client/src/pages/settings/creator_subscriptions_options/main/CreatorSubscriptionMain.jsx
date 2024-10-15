@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { Col } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SettingsNavigation from "../../../../components/SettingsNavigation/SettingsNavigation";
 import { ModalVisibilityContext } from "../../../../context/ModalVisibilityContext";
 import ResponsiveNavigationBarBottom from "../../../../components/Navbar/ResponsiveNavigationBottom";
@@ -14,92 +14,15 @@ import { useFontSizeHandler } from "../../../../utils/useFontSizeHandler";
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function CreatorSubscriptionMain() {
-  const { getToken, userInfo } = useContext(UserContext);
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const { getToken } = useContext(UserContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { width } = useWindowDimensions();
 
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "June",
-    "July",
-    "Aug",
-    "Sept",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-
-  const getCreatedDate = (date) => {
-    const createdAt = new Date(date);
-    const getMonth = createdAt.getMonth();
-    return `${months[getMonth]} ${createdAt.getDate()}`;
-  };
-
-  const extraDetailedDate = (dateStr) => {
-    const date = new Date(dateStr);
-
-    const optionsTime = {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    };
-    const optionsDate = {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    };
-    const formattedTime = new Intl.DateTimeFormat("en-US", optionsTime).format(
-      date
-    );
-    const formattedDate = new Intl.DateTimeFormat("en-US", optionsDate).format(
-      date
-    );
-
-    return `${formattedTime} \u00B7 ${formattedDate}`;
-  };
-
-  const {
-    postSharedMessage,
-    contextHolder,
-    showCustomMessage,
-    postDeletedMessage,
-  } = useAntdMessageHandler();
-
-  const [dataFromCommentModal, setDataFromCommentModal] = useState("");
-  function handleDataFromCommentModal(data) {
-    console.log("Data =>", data);
-    setDataFromCommentModal(data);
-  }
+  const { contextHolder, showCustomMessage } = useAntdMessageHandler();
 
   const { isPostModalVisible } = useContext(ModalVisibilityContext);
 
-  const [onFocus, setOnFocus] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const setSearchTermEmpty = () => {
-    setSearchTerm("");
-  };
-  const [onFocusXBtn, setOnFocusXBtn] = useState(true);
-  const onFocusInActiveForXBtn = () => {
-    setOnFocusXBtn(false);
-  };
-  const handleSetSearchTerm = (e) => {
-    setSearchTerm(e.target.value);
-  };
-  const onFocusActive = () => {
-    setOnFocus(true);
-  };
-
   const navigate = useNavigate();
-  const location = useLocation();
-  const path = location.pathname;
-
-  const [isSearchStart, setSearchStart] = useState(null);
-
-  const [showNotificationMessage, setShowNotificationMessage] = useState(null);
 
   const [loading, setLoading] = useState(null);
   const [showSubscriptions, setShowSubscriptions] = useState(false);
@@ -175,9 +98,7 @@ function CreatorSubscriptionMain() {
 
   return (
     <>
-      {!isPostModalVisible && !dataFromCommentModal && (
-        <ResponsiveNavigationBarBottom />
-      )}
+      {!isPostModalVisible && <ResponsiveNavigationBarBottom />}
       {contextHolder}
       <SettingsNavigation />
       <Col
@@ -513,7 +434,6 @@ function CreatorSubscriptionMain() {
                       height={`${1.25}em`}
                       viewBox="0 0 24 24"
                       aria-hidden="true"
-                      class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
                     >
                       <g>
                         <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
@@ -578,11 +498,7 @@ function CreatorSubscriptionMain() {
                       : "settings-icon-light-theme"
                   }
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv"
-                  >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
                     <g>
                       <path d="M4.496 9.25c0-4.14 3.358-7.5 7.5-7.5s7.5 3.36 7.5 7.5-3.358 7.5-7.5 7.5-7.5-3.36-7.5-7.5zm7.5 9.5c-1.63 0-3.164-.41-4.505-1.13v5.82l4.498-1.87 4.502 1.87v-5.82c-1.338.72-2.869 1.13-4.495 1.13z"></path>
                     </g>
@@ -631,11 +547,7 @@ function CreatorSubscriptionMain() {
                   }
                 >
                   {" "}
-                  <svg
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                    class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                  >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
                     <g>
                       <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                     </g>

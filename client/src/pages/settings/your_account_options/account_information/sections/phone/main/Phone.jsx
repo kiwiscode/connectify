@@ -16,9 +16,9 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 function Phone() {
   const { contextHolder } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const navigate = useNavigate();
-  const { userInfo, getToken } = useContext(UserContext);
+  const { getToken } = useContext(UserContext);
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
   const [user, setUser] = useState([]);
   const refreshActiveUser = () => {

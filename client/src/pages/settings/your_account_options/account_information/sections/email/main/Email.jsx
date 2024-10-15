@@ -1,4 +1,4 @@
-import { Col, Modal, Button } from "react-bootstrap";
+import { Col } from "react-bootstrap";
 import SettingsNavigation from "../../../../../../../components/SettingsNavigation/SettingsNavigation";
 import { useAntdMessageHandler } from "../../../../../../../utils/useAntdMessageHandler";
 import useWindowDimensions from "../../../../../../../hooks/getWindowDimensions";
@@ -6,12 +6,7 @@ import { ThemeContext } from "../../../../../../../context/ThemeContext";
 import { UserContext } from "../../../../../../../context/UserContext";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FormControl,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-} from "@mui/material";
+
 import axios from "axios";
 import { NavigationHistoryContext } from "../../../../../../../context/NavigationHistoryContext";
 import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandler";
@@ -19,41 +14,11 @@ import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandle
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function Email() {
-  const { contextHolder, showCustomMessage } = useAntdMessageHandler();
+  const { contextHolder } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const navigate = useNavigate();
-  const { userInfo, getToken } = useContext(UserContext);
-
-  const [showModal, setShowModal] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [tabIndex, setTabIndex] = useState(1);
-  const [passwordInput, setPasswordInput] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleMouseDownPassword = (e) => {
-    e.preventDefault();
-  };
-  const handleTabIndexState = () => {
-    setTabIndex(tabIndex + 1);
-  };
-  const handlePasswordConfirmation = () => {
-    axios
-      .post(`${API_URL}/auth/password-check`, {
-        verifyPasswordInput: passwordInput,
-        userId: userInfo._id,
-      })
-      .then(() => {
-        setLoading(true);
-        setTimeout(() => {
-          setLoading(false);
-          handleTabIndexState();
-        }, 300);
-      })
-      .catch(() => {
-        showCustomMessage("Wrong password!");
-      });
-  };
+  const { getToken } = useContext(UserContext);
 
   const [user, setUser] = useState([]);
 

@@ -3,75 +3,19 @@ import { UserContext } from "../context/UserContext";
 import { ThemeContext } from "../context/ThemeContext";
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import { Col, Stack } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import ResponsiveNavigationBarBottom from "../components/Navbar/ResponsiveNavigationBottom";
 import { ModalVisibilityContext } from "../context/ModalVisibilityContext";
 import { NavigationHistoryContext } from "../context/NavigationHistoryContext";
 import { useFontSizeHandler } from "../utils/useFontSizeHandler";
-const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function Settings() {
-  const { getToken, userInfo } = useContext(UserContext);
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const { userInfo } = useContext(UserContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { width } = useWindowDimensions();
 
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "June",
-    "July",
-    "Aug",
-    "Sept",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-
-  const getCreatedDate = (date) => {
-    const createdAt = new Date(date);
-    const getMonth = createdAt.getMonth();
-    return `${months[getMonth]} ${createdAt.getDate()}`;
-  };
-
-  const extraDetailedDate = (dateStr) => {
-    const date = new Date(dateStr);
-
-    const optionsTime = {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    };
-    const optionsDate = {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    };
-    const formattedTime = new Intl.DateTimeFormat("en-US", optionsTime).format(
-      date
-    );
-    const formattedDate = new Intl.DateTimeFormat("en-US", optionsDate).format(
-      date
-    );
-
-    return `${formattedTime} \u00B7 ${formattedDate}`;
-  };
-
-  const {
-    postSharedMessage,
-    contextHolder,
-    showCustomMessage,
-    postDeletedMessage,
-  } = useAntdMessageHandler();
-
-  const [dataFromCommentModal, setDataFromCommentModal] = useState("");
-  function handleDataFromCommentModal(data) {
-    console.log("Data =>", data);
-    setDataFromCommentModal(data);
-  }
+  const { contextHolder } = useAntdMessageHandler();
 
   const { isPostModalVisible } = useContext(ModalVisibilityContext);
 
@@ -80,10 +24,7 @@ function Settings() {
   const setSearchTermEmpty = () => {
     setSearchTerm("");
   };
-  const [onFocusXBtn, setOnFocusXBtn] = useState(true);
-  const onFocusInActiveForXBtn = () => {
-    setOnFocusXBtn(false);
-  };
+
   const handleSetSearchTerm = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -92,8 +33,6 @@ function Settings() {
   };
 
   const navigate = useNavigate();
-  const location = useLocation();
-  const path = location.pathname;
 
   const [isSearchStart, setSearchStart] = useState(null);
 
@@ -117,11 +56,10 @@ function Settings() {
       navigate("/settings/account");
     }
   }, [width]);
+
   return (
     <>
-      {!isPostModalVisible && !dataFromCommentModal && (
-        <ResponsiveNavigationBarBottom />
-      )}
+      {!isPostModalVisible && <ResponsiveNavigationBarBottom />}
       {contextHolder}
       <Col
         xs={width <= 500 ? 12 : 10} // 0px - 576px aralığı
@@ -378,7 +316,7 @@ function Settings() {
                     height={22}
                     viewBox="0 0 24 24"
                     aria-hidden="true"
-                    class="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18yzcnr r-yc9v9c r-18jsvk2"
+                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-18yzcnr r-yc9v9c r-18jsvk2"
                   >
                     <g>
                       <path d="M12 1.75C6.34 1.75 1.75 6.34 1.75 12S6.34 22.25 12 22.25 22.25 17.66 22.25 12 17.66 1.75 12 1.75zm3.71 12.54l-1.42 1.42-2.29-2.3-2.29 2.3-1.42-1.42 2.3-2.29-2.3-2.29 1.42-1.42 2.29 2.3 2.29-2.3 1.42 1.42-2.3 2.29 2.3 2.29z"></path>
@@ -390,12 +328,10 @@ function Settings() {
                 className="chirp-regular-font"
                 onFocus={() => {
                   onFocusActive();
-                  setOnFocusXBtn(true);
                   setShowNotificationMessage(true);
                 }}
                 onBlur={() => {
                   setOnFocus(false);
-                  setOnFocusXBtn(false);
                 }}
                 onClick={() => {
                   setShowNotificationMessage(true);
@@ -482,7 +418,7 @@ function Settings() {
                 <svg
                   viewBox="0 0 24 24"
                   aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
+                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
                 >
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
@@ -514,11 +450,7 @@ function Settings() {
             >
               <div>Monetization</div>
               <div>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -537,11 +469,7 @@ function Settings() {
             >
               <div>Premium</div>
               <div>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -574,11 +502,7 @@ function Settings() {
             >
               <div>Creator Subscriptions</div>
               <div>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -615,7 +539,7 @@ function Settings() {
                 <svg
                   viewBox="0 0 24 24"
                   aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
+                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
                 >
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
@@ -648,11 +572,7 @@ function Settings() {
             >
               <div>Privacy and safety</div>
               <div>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -683,11 +603,7 @@ function Settings() {
             >
               <div>Notifications</div>
               <div>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -721,11 +637,7 @@ function Settings() {
             >
               <div>Accessibility, display, and languages</div>
               <div>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -756,11 +668,7 @@ function Settings() {
             >
               <div>Additional resources</div>
               <div>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>
                   </g>
@@ -776,11 +684,7 @@ function Settings() {
             >
               <div>Help Center</div>
               <div>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-                >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                   </g>

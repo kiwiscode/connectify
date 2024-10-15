@@ -42,30 +42,13 @@ function FollowingDetailPage() {
   // start to check shared post view message
 
   // finish to check shared post view message
-  const {
-    subscription,
-    remainingTimeSubscriptions,
-    remainingTimeSubscriptionsOwnerIds,
-  } = useContext(SubcsriptionStatusContext);
+  const { subscription, remainingTimeSubscriptionsOwnerIds } = useContext(
+    SubcsriptionStatusContext
+  );
   const [activeUserFollowing, setactiveUserFollowing] = useState([]);
   const [activeUserFollowers, setactiveUserFollowers] = useState([]);
 
   const [clicked, setClicked] = useState(false);
-  const getActiveUser = () => {
-    axios
-      .get(`${API_URL}/profile`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        setactiveUserFollowing(response.data.user.following);
-        setactiveUserFollowers(response.data.user.followers);
-      })
-      .catch((error) => {
-        console.log("Error =>", error);
-      });
-  };
 
   const checkActiveUserFollowingIds = () => {
     return activeUserFollowing.map((eachFollowerUser) => {
@@ -80,8 +63,27 @@ function FollowingDetailPage() {
   };
 
   useEffect(() => {
+    const getActiveUser = async () => {
+      try {
+        axios
+          .get(`${API_URL}/profile`, {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          })
+          .then((response) => {
+            setactiveUserFollowing(response.data.user.following);
+            setactiveUserFollowers(response.data.user.followers);
+          })
+          .catch((error) => {
+            console.log("Error =>", error);
+          });
+      } catch (error) {
+        console.error("error:", error);
+      }
+    };
     getActiveUser();
-  }, [clicked]);
+  }, [clicked, getToken]);
 
   useEffect(() => {
     getFollowing();
@@ -133,19 +135,8 @@ function FollowingDetailPage() {
     };
   }, []);
 
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
-  const [postModalOpenedFromLeftSide, setPostModalOpenedFromLeftSide] =
-    useState(false);
+  const [{ themeName }] = useContext(ThemeContext);
 
-  const handleCallBackForModalOpenedStateFromChild = (childData) => {
-    console.log("Child data received from child => ", childData);
-    setPostModalOpenedFromLeftSide(childData);
-  };
   const { width } = useWindowDimensions();
   const [headerPosition, setHeaderPosition] = useState(0);
 
@@ -165,16 +156,6 @@ function FollowingDetailPage() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [headerPosition]);
-
-  const [hoveredTab, setHoveredTab] = useState(null);
-
-  const handleHover = (tab) => {
-    setHoveredTab(tab);
-  };
-
-  const handleLeave = () => {
-    setHoveredTab(null);
-  };
 
   const handleShowRequests = () => {
     setActiveTab("requests");
@@ -218,8 +199,7 @@ function FollowingDetailPage() {
 
   return (
     <>
-      {!postModalOpenedFromLeftSide && <ResponsiveNavigationBarBottom />}
-
+      <ResponsiveNavigationBarBottom />
       <Col
         xs={12} // 0px - 576px aralığı
         sm={12} // 576px - 768px aralığı
@@ -373,8 +353,6 @@ function FollowingDetailPage() {
                           ? "hover-effect-light-theme-pointer-plus"
                           : null
                       }
-                      onMouseEnter={() => handleHover("requests")}
-                      onMouseLeave={handleLeave}
                       onClick={handleShowRequests}
                       style={{
                         color:
@@ -465,8 +443,6 @@ function FollowingDetailPage() {
                         ? "hover-effect-light-theme-pointer-plus"
                         : null
                     }
-                    onMouseEnter={() => handleHover("followers")}
-                    onMouseLeave={handleLeave}
                     onClick={handleShowFollowers}
                     style={{
                       color:
@@ -540,8 +516,6 @@ function FollowingDetailPage() {
                         ? "hover-effect-light-theme-pointer-plus "
                         : null
                     }
-                    onMouseEnter={() => handleHover("following")}
-                    onMouseLeave={handleLeave}
                     onClick={handleShowFollowing}
                     style={{
                       color:
@@ -706,8 +680,6 @@ function FollowingDetailPage() {
                           ? "hover-effect-light-theme-pointer-plus"
                           : null
                       }
-                      onMouseEnter={() => handleHover("requests")}
-                      onMouseLeave={handleLeave}
                       onClick={handleShowRequests}
                       style={{
                         color:
@@ -798,8 +770,6 @@ function FollowingDetailPage() {
                         ? "hover-effect-light-theme-pointer-plus"
                         : null
                     }
-                    onMouseEnter={() => handleHover("followers")}
-                    onMouseLeave={handleLeave}
                     onClick={handleShowFollowers}
                     style={{
                       color:
@@ -872,8 +842,6 @@ function FollowingDetailPage() {
                         ? "hover-effect-light-theme-pointer-plus "
                         : null
                     }
-                    onMouseEnter={() => handleHover("following")}
-                    onMouseLeave={handleLeave}
                     onClick={handleShowFollowing}
                     style={{
                       color:
@@ -967,7 +935,7 @@ function FollowingDetailPage() {
                 user._id
               );
 
-              const handleFollow = (selectedUser) => {
+              const handleFollow = () => {
                 axios
                   .post(
                     `${API_URL}/follow`,
@@ -1266,7 +1234,7 @@ function FollowingDetailPage() {
                           onClick={() =>
                             isFollowing
                               ? openUnfollowModal(user)
-                              : handleFollow(user)
+                              : handleFollow()
                           }
                         >
                           {user._id !== userInfo._id ? (

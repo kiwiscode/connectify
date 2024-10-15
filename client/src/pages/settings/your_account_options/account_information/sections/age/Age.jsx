@@ -11,7 +11,7 @@ import { useFontSizeHandler } from "../../../../../../utils/useFontSizeHandler";
 function Age() {
   const { contextHolder } = useAntdMessageHandler;
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { userInfo } = useContext(UserContext);
   const navigate = useNavigate();
   const { getFontSizeAndLineHeight20, getFontSizeAndLineHeight15 } =

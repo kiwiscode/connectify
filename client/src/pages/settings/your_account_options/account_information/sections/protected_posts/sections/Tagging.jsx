@@ -1,4 +1,4 @@
-import { Button, Col, Modal } from "react-bootstrap";
+import { Col } from "react-bootstrap";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -15,7 +15,7 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 function Tagging() {
   const { contextHolder } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const navigate = useNavigate();
   const { userInfo, getToken, updateUser } = useContext(UserContext);
 

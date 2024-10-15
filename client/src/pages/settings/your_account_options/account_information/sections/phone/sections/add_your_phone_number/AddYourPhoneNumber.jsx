@@ -15,8 +15,6 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import LoadingSpinner from "../../../../../../../../components/ui/LoadingSpinner";
-import BootstrapTooltip from "../../../../../../../../components/BootstrapToolTip/BootstrapToolTip";
-
 import {
   getCountries,
   getCountryCallingCode,
@@ -31,11 +29,10 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 function AddYourPhoneNumber() {
   const { contextHolder, showCustomMessage } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const navigate = useNavigate();
   const { userInfo, getToken } = useContext(UserContext);
 
-  const [showModal, setShowModal] = useState(true);
   const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(1);
   const [passwordInput, setPasswordInput] = useState("");
@@ -164,8 +161,7 @@ function AddYourPhoneNumber() {
   const [validPhoneNumber, setvalidPhoneNumber] = useState(false);
   const [validPhoneNumber2, setvalidPhoneNumber2] = useState(false);
   const [phoneNumber, setphoneNumber] = useState(null);
-  const [onFocusedToPhoneNumberField, setonFocusedToPhoneNumberField] =
-    useState(false);
+
   const [errorPhoneInValidMessage, setErrorPhoneInValidMessage] = useState(" ");
   const [errorPhoneInValidMessage2, setErrorPhoneInValidMessage2] =
     useState(" ");
@@ -190,9 +186,6 @@ function AddYourPhoneNumber() {
   };
   const [clicked, setClicked] = useState(false);
 
-  const [subErrorPhoneVerifiedTabLoading, setsubErrorPhoneVerifiedTabLoading] =
-    useState(false);
-  const [phoneVerified, setphoneVerified] = useState(false);
   const [showSendVerificationModal, setShowSendVerificationModal] =
     useState(false);
 
@@ -373,8 +366,9 @@ function AddYourPhoneNumber() {
                   }}
                   className="mt-2 chirp-regular-font"
                 >
-                  We'll send your verification code to {phoneNumber}. Standard
-                  SMS, call and data fees may apply.
+                  {
+                    "We'll send your verification code to {phoneNumber}. Standard SMS, call and data fees may apply."
+                  }
                 </div>
               </div>
               <div
@@ -519,7 +513,7 @@ function AddYourPhoneNumber() {
                 ? null
                 : 9999,
           }}
-          show={showModal}
+          show={true}
           centered={true}
           dialogClassName={
             width <= 700 ? "modal-fullscreen" : "modal_center_with_width"
@@ -1037,7 +1031,7 @@ function AddYourPhoneNumber() {
                         onChange={handleSelectChange}
                       >
                         <option value="">{en["ZZ"]}</option>
-                        {sortedCountries.map((country, index) => (
+                        {sortedCountries.map((country) => (
                           <option key={country._id} value={country}>
                             +{getCountryCallingCode(country)} {en[country]}
                           </option>
@@ -1058,12 +1052,6 @@ function AddYourPhoneNumber() {
                         }
                         autoFocus={true}
                         onFocus={() => setEditClicked(false)}
-                        onMouseEnter={() => {
-                          setonFocusedToPhoneNumberField(true);
-                        }}
-                        onMouseLeave={() =>
-                          setonFocusedToPhoneNumberField(false)
-                        }
                         value={phoneNumber}
                         onChange={(e) => setphoneNumber(e.target.value)}
                         type="text"
@@ -1277,13 +1265,10 @@ function AddYourPhoneNumber() {
                         }
                         variant="light"
                         onClick={() => {
-                          setsubErrorPhoneVerifiedTabLoading(true);
                           navigate("/settings/phone");
                           setTimeout(() => {
-                            setphoneVerified(false);
                             setTabIndex(null);
                             setCountry("");
-                            setsubErrorPhoneVerifiedTabLoading(false);
                           }, 500);
                         }}
                       >
@@ -1635,13 +1620,6 @@ function AddYourPhoneNumber() {
       >
         <div className="settings-header-with-arrow ">
           <div
-            onClick={() => {
-              if (navigationHistoryArray[1] !== "/i/flow/add_phone") {
-                navigate(-1);
-              } else {
-                navigate("/settings/account");
-              }
-            }}
             className={`arrow arrow-${themeName} mt-2`}
             style={{
               position: "relative",
@@ -1800,9 +1778,6 @@ function AddYourPhoneNumber() {
                   Update phone number
                 </div>
                 <div
-                  onClick={() => {
-                    setShowDeletePhoneNumberModal(true);
-                  }}
                   className={
                     themeName === "dark-theme"
                       ? "deactivate-btn-dark-theme mt-1 chirp-regular-font"

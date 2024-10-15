@@ -22,11 +22,9 @@ import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext"
 import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 
 function PostDetailPage() {
-  const {
-    subscription,
-    remainingTimeSubscriptions,
-    remainingTimeSubscriptionsOwnerIds,
-  } = useContext(SubcsriptionStatusContext);
+  const { subscription, remainingTimeSubscriptionsOwnerIds } = useContext(
+    SubcsriptionStatusContext
+  );
   const extraDetailedDate = (dateStr) => {
     const date = new Date(dateStr);
 
@@ -50,12 +48,12 @@ function PostDetailPage() {
     return `${formattedTime} \u00B7 ${formattedDate}`;
   };
 
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
 
   const { postOwner, postId } = useParams();
   const [detailedPost, setdetailedPost] = useState([]);
 
-  const { userInfo, getToken } = useContext(UserContext);
+  const { userInfo } = useContext(UserContext);
 
   const [commentedForThisPost, setcommentedForThisPost] = useState([]);
   const [commentedForThisUsersPost, setcommentedForThisUsersPost] = useState(
@@ -65,10 +63,6 @@ function PostDetailPage() {
   console.log("Commented for this post check =>", commentedForThisPost);
 
   const navigate = useNavigate();
-
-  const handleGoBack = () => {
-    navigate(-1);
-  };
 
   const [deactivatedUser, setdeactivatedUser] = useState(false);
 
@@ -92,55 +86,6 @@ function PostDetailPage() {
       });
   };
 
-  const handlePostLikesPostDetailPage = (postId, findedPost) => {
-    axios
-      .post(
-        `${API_URL}/favorite`,
-        { postId },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        setTimeout(() => {
-          refreshPostDetailPage();
-        }, 500);
-      })
-      .catch((error) => {
-        if (error.response) {
-          const { errorMessage } = error.response.data;
-
-          console.log("Error =>", errorMessage);
-        }
-      });
-  };
-
-  const handleDeleteLikePostDetailPage = (postId) => {
-    axios
-      .post(
-        `${API_URL}/favorite/delete-favorite`,
-        {
-          userId: userInfo._id,
-          postId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      )
-      .then(() => {
-        setTimeout(() => {
-          console.log("Handle delete like situation works !");
-          refreshPostDetailPage();
-        }, 500);
-      })
-      .catch((err) => {
-        return err;
-      });
-  };
   const { postDeletedMessage, postSharedMessage, contextHolder } =
     useAntdMessageHandler();
   const handleDeletePostPostDetailPage = () => {
@@ -148,13 +93,6 @@ function PostDetailPage() {
     refreshPostDetailPage();
   };
 
-  const getLikerIds = (array) => {
-    if (array.likes) {
-      return array.likes.map((eachLiker) => {
-        return eachLiker._id;
-      });
-    }
-  };
   useEffect(() => {
     axios
       .get(`${API_URL}/${postOwner}/status/${postId}`)
@@ -1390,7 +1328,7 @@ function PostDetailPage() {
               <Accordion.Body>
                 {detailedPost.comments ? (
                   <div>
-                    {detailedPost.comments?.map((eachComment, index) => {
+                    {detailedPost.comments?.map((eachComment) => {
                       return (
                         <div key={eachComment._id}>
                           <div>
@@ -1810,7 +1748,7 @@ function PostDetailPage() {
               <Accordion.Body>
                 {detailedPost.comments ? (
                   <div>
-                    {detailedPost.comments.map((eachComment, index) => {
+                    {detailedPost.comments.map((eachComment) => {
                       return (
                         <div key={eachComment._id}>
                           <div>

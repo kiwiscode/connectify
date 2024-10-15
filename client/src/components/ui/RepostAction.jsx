@@ -7,7 +7,6 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 import { ThemeContext } from "../../context/ThemeContext";
 import { Popover } from "@mui/material";
 import PopupState, { bindPopover, bindTrigger } from "material-ui-popup-state";
-import { Button } from "react-bootstrap";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 
@@ -25,17 +24,9 @@ function RepostAction({
   photoDetailedPost,
 }) {
   const { userInfo, getToken } = useContext(UserContext);
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
-  const handleNotification = (post, userInfo, type) => {
-    console.log("Post =>", post);
-  };
+  const [{ themeName }] = useContext(ThemeContext);
 
-  const handleRepost = (postId, findedPost) => {
+  const handleRepost = (postId) => {
     axios
       .post(
         `${API_URL}/repost`,
@@ -47,8 +38,6 @@ function RepostAction({
         }
       )
       .then(() => {
-        handleNotification(findedPost, userInfo, "repost");
-
         if (setLoadingTrue) {
           setLoadingTrue();
         }
@@ -489,8 +478,7 @@ function RepostAction({
                     <div
                       onClick={() => {
                         handleRepost(
-                          detailedPostComment ? post.postId : post._id,
-                          post
+                          detailedPostComment ? post.postId : post._id
                         );
                         popupState.close();
                       }}

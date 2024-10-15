@@ -60,7 +60,7 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
   console.log("Search string =>", searchString);
   console.log("Search string 2 =>", searchString2);
 
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
 
   const filterUsers = (users, term) => {
     const filtered = users.filter((user) =>
@@ -341,7 +341,7 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
                 </div>
               </div>
             </div>
-            {filteredUsers.map((user, index) => (
+            {filteredUsers.map((user) => (
               <Link
                 onClick={() => createChatRoom(`${user._id}-${userInfo._id}`)}
                 key={user._id}
@@ -551,7 +551,7 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
               </div>
             </div>
           </div>
-          {filteredUsers.map((user, index) => (
+          {filteredUsers.map((user) => (
             <Link
               onClick={() => createChatRoom(`${user._id}-${userInfo._id}`)}
               key={user._id}

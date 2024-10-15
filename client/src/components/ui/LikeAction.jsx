@@ -23,7 +23,7 @@ const LikeAction = ({
   isCutePopoverOnRightSide,
   photoDetailedPost,
 }) => {
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { getFontSizeAndLineHeight13 } = useFontSizeHandler();
   const font13 = getFontSizeAndLineHeight13();
   const { userInfo, getToken } = useContext(UserContext);
@@ -35,7 +35,6 @@ const LikeAction = ({
 
   const [likeIconHovered, setLikeIconHovered] = useState(false);
 
-  const [heartBeatAnimation, setHeartBeatAnimation] = useState(false);
   const [shouldAnimate, setShouldAnimate] = useState(false);
 
   useEffect(() => {
@@ -44,7 +43,7 @@ const LikeAction = ({
     }
   }, []);
 
-  const handlePostLike = (postId, postOwnerId) => {
+  const handlePostLike = (postId) => {
     console.log("Post id =>", postId);
     setShouldAnimate(!shouldAnimate);
     axios

@@ -1,89 +1,16 @@
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  Stack,
-  InputGroup,
-  Modal,
-  Form,
-} from "react-bootstrap";
+import { Container, Row, Col, Button, Stack } from "react-bootstrap";
 
 import { useNavigate } from "react-router-dom";
 import { SigninModal } from "../components/ui/Modal";
-import { useContext, useState } from "react";
-import axios from "axios";
+import { useContext } from "react";
 import { Layout, Flex } from "antd";
 import { ThemeContext } from "../context/ThemeContext";
 import useWindowDimensions from "../hooks/getWindowDimensions";
 import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 const { Footer } = Layout;
 
-const API_URL = import.meta.env.VITE_APP_API_URL;
-
 function DeactivatedPage() {
-  const [fullname, setFullname] = useState("");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [show, setShow] = useState(false);
-
-  const handleSignUp = () => {
-    axios
-      .post(`${API_URL}/auth/signup`, {
-        fullname,
-        username,
-        email,
-        password,
-      })
-      .then((response) => {
-        if (response.status === 201) {
-          setSuccess("Verification email sent");
-          setFullname("");
-          setUsername("");
-        }
-        setError("");
-      })
-      .catch((err) => {
-        const { status } = err.response;
-        const { errorMessage } = err.response.data;
-        setFullname("");
-        setUsername("");
-
-        if (status === 402) {
-          setError(errorMessage);
-          setSuccess("");
-        }
-        if (status === 403) {
-          setError(errorMessage);
-          setSuccess("");
-        }
-        if (status === 405) {
-          setError(errorMessage);
-          setSuccess("");
-        }
-        if (status === 501) {
-          setError(errorMessage);
-          setSuccess("");
-        }
-      });
-  };
-
-  const handleClose = () => {
-    setShow(false);
-  };
-  const handleShow = () => {
-    setShow(true);
-  };
-
-  const [
-    { theme, themeName },
-    lightModeActive,
-    darkModeActive,
-    cyberpunkModeActive,
-  ] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
 
   const navigate = useNavigate();
 
@@ -107,7 +34,6 @@ function DeactivatedPage() {
       <Container fluid>
         <Row
           style={{
-            height: "100vh",
             height: "100dvh",
             borderTop: "none",
             borderBottom: "none",
@@ -574,7 +500,6 @@ function DeactivatedPage() {
                   backgroundColor: "#eff3f4",
                   color: "black",
                 }}
-                onClick={handleShow}
               >
                 Sign up
               </Button>

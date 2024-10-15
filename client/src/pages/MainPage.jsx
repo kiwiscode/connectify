@@ -28,22 +28,14 @@ import MobileTopNavigation from "../components/Navbar/mobile_top_navigation/Mobi
 import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext";
 import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 function MainPage({ isNewPostShared }) {
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { userInfo, getToken, updateUser } = useContext(UserContext);
-  const {
-    subscription,
-    remainingTimeSubscriptions,
-    remainingTimeSubscriptionsOwnerIds,
-  } = useContext(SubcsriptionStatusContext);
+  const { subscription, remainingTimeSubscriptionsOwnerIds } = useContext(
+    SubcsriptionStatusContext
+  );
 
   const location = useLocation();
   const path = location.pathname;
-
-  const [isSubModalOpened, setIsSubModalOpened] = useState(false);
-  const [tabIndexValue, settabIndexValue] = useState(null);
-  const handleModalToggle = (modalOpen) => {
-    setIsSubModalOpened(modalOpen);
-  };
 
   const extraDetailedDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -68,9 +60,6 @@ function MainPage({ isNewPostShared }) {
     return `${formattedTime} \u00B7 ${formattedDate}`;
   };
 
-  const handleReceiveTabIndexValue = (value) => {
-    settabIndexValue(value);
-  };
   // start to check
 
   const navigate = useNavigate();
@@ -91,16 +80,11 @@ function MainPage({ isNewPostShared }) {
   // use effect to grab current mouse click location finish to check
 
   // create account variant 1 flow start to check
-  const [signedUpWithVariantOne, setsignedUpWithVariantOne] = useState(false);
-  const [signedUpWithGoogle, setsignedUpWithGoogle] = useState(false);
   const [
     showModalForProfilePictureOrUsernameOrBoth,
     setshowModalForProfilePictureOrUsernameOrBoth,
   ] = useState(false);
-  const [showPickProfilePictureModal, setshowPickProfilePictureModal] =
-    useState(false);
-  const [showWhatShouldWeCallYouModal, setshowWhatShouldWeCallYouModal] =
-    useState(false);
+
   const [tabIndex, setTabIndex] = useState(0);
   const [tabLoading, setTabLoading] = useState(false);
 
@@ -124,11 +108,8 @@ function MainPage({ isNewPostShared }) {
 
   // create account variant 1 flow finish to check
 
-  const [postId, setpostId] = useState("");
-  const [error, setError] = useState("");
   const [content, setContent] = useState("");
   const [chosenEmoji, setChosenEmoji] = useState(null);
-  const [showSecondModal, setShowSecondModal] = useState(false);
   const maxCharacters = 140;
   const [isLoading, setIsLoading] = useState(false);
   const { width } = useWindowDimensions();
@@ -173,8 +154,6 @@ function MainPage({ isNewPostShared }) {
     const inputText = event.target.value;
     if (inputText.length <= maxCharacters) {
       setContent(inputText);
-    } else {
-      setError("Tweet length to 140 characters");
     }
   };
 
@@ -223,7 +202,6 @@ function MainPage({ isNewPostShared }) {
   const handleDeletePostFromHomePage = () => {
     postDeletedMessage();
     handleShowPostsHomePage();
-    setError("");
   };
 
   const [pulse, setPulse] = useState(false);
@@ -296,31 +274,20 @@ function MainPage({ isNewPostShared }) {
   const closeImage = () => {
     setImage("");
   };
-  const [hoveredTab, setHoveredTab] = useState(null);
   const [activeTab, setActiveTab] = useState("forYou");
-  const handleHover = (tab) => {
-    setHoveredTab(tab);
-  };
-
-  const handleLeave = () => {
-    setHoveredTab(null);
-  };
 
   const [showForYou, setShowForYou] = useState(true);
-  const [showFollowing, setShowFollowing] = useState(false);
 
   const handleShowForYou = () => {
     handleShowPostsHomePage();
     setActiveTab("forYou");
     setShowForYou(true);
-    setShowFollowing(false);
   };
 
   const handleShowFollowing = () => {
     setPostsLoadingSpinner(true);
     getOnlyFollowingPosts();
     setActiveTab("following");
-    setShowFollowing(true);
     setShowForYou(false);
     setTimeout(() => {
       setPostsLoadingSpinner(false);
@@ -495,8 +462,6 @@ function MainPage({ isNewPostShared }) {
         setTimeout(() => {
           setLoading(false);
           setTabLoading(false);
-          setshowPickProfilePictureModal(false);
-          setshowWhatShouldWeCallYouModal(false);
           setshowModalForProfilePictureOrUsernameOrBoth(false);
 
           if (userInfo?.signedUpWithVariantOne?.isSignedUpWithVariantOne) {
@@ -536,8 +501,6 @@ function MainPage({ isNewPostShared }) {
         localStorage.setItem("userInfo", JSON.stringify(response.data.user));
         setTabLoading(true);
         setTimeout(() => {
-          setshowPickProfilePictureModal(false);
-          setshowWhatShouldWeCallYouModal(false);
           setshowModalForProfilePictureOrUsernameOrBoth(false);
         }, 500);
       })
@@ -1788,8 +1751,8 @@ function MainPage({ isNewPostShared }) {
             refreshPosts={() => handleShowPostsHomePage()}
             setLoadingTrue={() => setLoadingTrue()}
             setLoadingFalse={() => setLoadingFalse()}
-            isSubModalOpened={isSubModalOpened}
-            isSubModalTabIndexNull={tabIndexValue}
+            isSubModalOpened={false}
+            isSubModalTabIndexNull={null}
           />
         )}
       <Col
@@ -1877,8 +1840,6 @@ function MainPage({ isNewPostShared }) {
                   ? "hover-effect-light-theme-pointer-plus"
                   : null
               }
-              onMouseEnter={() => handleHover("forYou")}
-              onMouseLeave={handleLeave}
               onClick={() => handleShowForYou()}
               style={{
                 color:
@@ -1949,8 +1910,6 @@ function MainPage({ isNewPostShared }) {
                   ? "hover-effect-light-theme-pointer-plus "
                   : null
               }
-              onMouseEnter={() => handleHover("following")}
-              onMouseLeave={handleLeave}
               onClick={() => handleShowFollowing()}
               style={{
                 color:
@@ -2090,7 +2049,7 @@ function MainPage({ isNewPostShared }) {
                         src={userInfo.imageUrl}
                         width={40}
                         height={40}
-                        alt=""
+                        alt="Pp"
                         style={{
                           borderRadius: "50%",
                         }}

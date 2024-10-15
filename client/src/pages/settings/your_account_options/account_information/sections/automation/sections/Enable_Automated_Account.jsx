@@ -4,7 +4,7 @@ import { useAntdMessageHandler } from "../../../../../../../utils/useAntdMessage
 import useWindowDimensions from "../../../../../../../hooks/getWindowDimensions";
 import { ThemeContext } from "../../../../../../../context/ThemeContext";
 import { UserContext } from "../../../../../../../context/UserContext";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../../../../../../components/ui/LoadingSpinner";
 import {
@@ -23,11 +23,10 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 function Enable_Automated_Account() {
   const { contextHolder, showCustomMessage } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const navigate = useNavigate();
-  const { userInfo, getToken } = useContext(UserContext);
+  const { getToken } = useContext(UserContext);
 
-  const [showModal, setShowModal] = useState(true);
   const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(1);
   const [passwordInput, setPasswordInput] = useState("");
@@ -35,26 +34,6 @@ function Enable_Automated_Account() {
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (e) => {
     e.preventDefault();
-  };
-  const handleTabIndexState = () => {
-    setTabIndex(tabIndex + 1);
-  };
-  const handlePasswordConfirmation = () => {
-    axios
-      .post(`${API_URL}/auth/password-check`, {
-        verifyPasswordInput: passwordInput,
-        userId: userInfo._id,
-      })
-      .then(() => {
-        setLoading(true);
-        setTimeout(() => {
-          setLoading(false);
-          handleTabIndexState();
-        }, 300);
-      })
-      .catch(() => {
-        showCustomMessage("Wrong password!");
-      });
   };
 
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
@@ -172,7 +151,7 @@ function Enable_Automated_Account() {
                 ? "white"
                 : "",
           }}
-          show={showModal}
+          show={true}
           centered={true}
           dialogClassName={
             width <= 700 ? "modal-fullscreen" : "modal_center_with_width"
@@ -899,7 +878,6 @@ function Enable_Automated_Account() {
               height={`${1.25}em`}
               viewBox="0 0 24 24"
               aria-hidden="true"
-              class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
             >
               <g>
                 <path d="M14.586 12L7.543 4.96l1.414-1.42L17.414 12l-8.457 8.46-1.414-1.42L14.586 12z"></path>

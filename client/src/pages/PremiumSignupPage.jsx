@@ -1,16 +1,15 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../context/ThemeContext";
 import { Button, Col, Container, Modal, Row } from "react-bootstrap";
 import useWindowDimensions from "../hooks/getWindowDimensions";
-import { useAntdMessageHandler } from "../utils/useAntdMessageHandler";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import { NavigationHistoryContext } from "../context/NavigationHistoryContext";
 import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 
 function PremiumSignupPage({ sendToAppPlanPrice }) {
   const navigate = useNavigate();
-  const [{ theme, themeName, activeFontSizeOption }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { width } = useWindowDimensions();
   const {
     getFontSizeAndLineHeight36,
@@ -50,12 +49,7 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
     setshowSubscribeModalPremiumSignUpPage(false);
     setSubscriptionModalShowed(false);
   };
-  const getDataFromRightSideColum = (data) => {
-    console.log("Data from child right side column component", data);
-    setSubscriptionModalShowed(data);
-  };
 
-  const [premiumRole, setpremiumRole] = useState("Individual");
   const [premiumType, setpremiumType] = useState(null);
   const [planType, setplanType] = useState(null);
   const [planPrice, setplanPrice] = useState(null);
@@ -99,27 +93,6 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
         : null
     );
   }, [clickedOptionIndex]);
-
-  const { showCustomMessage, contextHolder, postSharedMessage } =
-    useAntdMessageHandler();
-
-  const [isPasswordCorrect, setIsPasswordCorrect] = useState(null);
-
-  const isPasswordCorrectFromChildComponent = (data) => {
-    console.log("Is password correct data from child =>", data);
-
-    setIsPasswordCorrect(data);
-  };
-  console.log("Is password correct =>", isPasswordCorrect);
-
-  // useEffect(() => {
-  //   showCustomMessage("hehe", 4949);
-  // });
-
-  const [
-    organizationSubscribeOptionClicked,
-    setorganizationSubscribeOptionClicked,
-  ] = useState(null);
 
   const handleRedirectOrganizationSignUpRoute = () => {
     navigate("/i/verified-orgs-signup");
@@ -447,10 +420,9 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                   >
                     Cancel anytime
                   </span>
-                  . Cancel at least 24 hours prior to renewal to avoid
-                  additional charges. A verified phone number is required to
-                  subscribe. If you've subscribed on another platform, manage
-                  your subscription through that platform.
+                  {
+                    ". Cancel at least 24 hours prior to renewal to avoid additional charges. A verified phone number is required to subscribe. If you've subscribed on another platform, manage your subscription through that platform."
+                  }
                 </div>
               </div>
             </div>
@@ -794,10 +766,9 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                       >
                         Cancel anytime
                       </span>
-                      . Cancel at least 24 hours prior to renewal to avoid
-                      additional charges. A verified phone number is required to
-                      subscribe. If you've subscribed on another platform,
-                      manage your subscription through that platform.
+                      {
+                        ". Cancel at least 24 hours prior to renewal to avoid additional charges. A verified phone number is required to subscribe. If you've subscribed on another platform, manage your subscription through that platform."
+                      }
                     </div>
                   </div>
                 </div>
@@ -953,7 +924,6 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                       <span
                         onClick={() => {
                           handleRedirectOrganizationSignUpRoute();
-                          setorganizationSubscribeOptionClicked(true);
                         }}
                         className={
                           themeName === "dark-theme"
@@ -1196,7 +1166,6 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                     <div className="mt-3">
                       <Button
                         onClick={() => {
-                          setorganizationSubscribeOptionClicked(false);
                           setClickedOptionIndex(0);
                           setSubscriptionModalShowed(false);
                           setshowSubscribeModalPremiumSignUpPage(true);
@@ -1566,7 +1535,6 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                     <div className="mt-3">
                       <Button
                         onClick={() => {
-                          setorganizationSubscribeOptionClicked(false);
                           setClickedOptionIndex(1);
                           setSubscriptionModalShowed(false);
                           setshowSubscribeModalPremiumSignUpPage(true);
@@ -1920,7 +1888,6 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                     <div className="mt-3">
                       <Button
                         onClick={() => {
-                          setorganizationSubscribeOptionClicked(false);
                           setClickedOptionIndex(2);
                           setSubscriptionModalShowed(false);
                           setshowSubscribeModalPremiumSignUpPage(true);

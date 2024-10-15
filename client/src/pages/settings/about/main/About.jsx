@@ -1,112 +1,31 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { Col } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SettingsNavigation from "../../../../components/SettingsNavigation/SettingsNavigation";
 import ResponsiveNavigationBarBottom from "../../../../components/Navbar/ResponsiveNavigationBottom";
 import { ModalVisibilityContext } from "../../../../context/ModalVisibilityContext";
 import { useAntdMessageHandler } from "../../../../utils/useAntdMessageHandler";
 import useWindowDimensions from "../../../../hooks/getWindowDimensions";
-import { UserContext } from "../../../../context/UserContext";
 import { ThemeContext } from "../../../../context/ThemeContext";
 import { useFontSizeHandler } from "../../../../utils/useFontSizeHandler";
-const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function About() {
-  const { getToken, userInfo } = useContext(UserContext);
-  const [{ theme, themeName }] = useContext(ThemeContext);
+  const [{ themeName }] = useContext(ThemeContext);
   const { width } = useWindowDimensions();
 
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "June",
-    "July",
-    "Aug",
-    "Sept",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-
-  const getCreatedDate = (date) => {
-    const createdAt = new Date(date);
-    const getMonth = createdAt.getMonth();
-    return `${months[getMonth]} ${createdAt.getDate()}`;
-  };
-
-  const extraDetailedDate = (dateStr) => {
-    const date = new Date(dateStr);
-
-    const optionsTime = {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    };
-    const optionsDate = {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    };
-    const formattedTime = new Intl.DateTimeFormat("en-US", optionsTime).format(
-      date
-    );
-    const formattedDate = new Intl.DateTimeFormat("en-US", optionsDate).format(
-      date
-    );
-
-    return `${formattedTime} \u00B7 ${formattedDate}`;
-  };
-
-  const {
-    postSharedMessage,
-    contextHolder,
-    showCustomMessage,
-    postDeletedMessage,
-  } = useAntdMessageHandler();
-
-  const [dataFromCommentModal, setDataFromCommentModal] = useState("");
-  function handleDataFromCommentModal(data) {
-    console.log("Data =>", data);
-    setDataFromCommentModal(data);
-  }
+  const { contextHolder } = useAntdMessageHandler();
 
   const { isPostModalVisible } = useContext(ModalVisibilityContext);
 
-  const [onFocus, setOnFocus] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const setSearchTermEmpty = () => {
-    setSearchTerm("");
-  };
-  const [onFocusXBtn, setOnFocusXBtn] = useState(true);
-  const onFocusInActiveForXBtn = () => {
-    setOnFocusXBtn(false);
-  };
-  const handleSetSearchTerm = (e) => {
-    setSearchTerm(e.target.value);
-  };
-  const onFocusActive = () => {
-    setOnFocus(true);
-  };
-
   const navigate = useNavigate();
-  const location = useLocation();
-  const path = location.pathname;
 
-  const [isSearchStart, setSearchStart] = useState(null);
-
-  const [showNotificationMessage, setShowNotificationMessage] = useState(null);
   const { getFontSizeAndLineHeight20, getFontSizeAndLineHeight13 } =
     useFontSizeHandler();
   const font20 = getFontSizeAndLineHeight20();
   const font13 = getFontSizeAndLineHeight13();
   return (
     <>
-      {!isPostModalVisible && !dataFromCommentModal && (
-        <ResponsiveNavigationBarBottom />
-      )}
+      {!isPostModalVisible && <ResponsiveNavigationBarBottom />}
       {contextHolder}
       <SettingsNavigation />
       <Col
@@ -272,11 +191,7 @@ function About() {
             <div>Privacy center</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -337,11 +252,7 @@ function About() {
             <div>Ads info</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -366,11 +277,7 @@ function About() {
             <div>Cookie Policy</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -395,11 +302,7 @@ function About() {
             <div>Imprint</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -424,11 +327,7 @@ function About() {
             <div>MStV Transparenzangaben</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -453,11 +352,7 @@ function About() {
             <div>Privacy Policy</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -482,11 +377,7 @@ function About() {
             <div>Terms of Service</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -547,11 +438,7 @@ function About() {
             <div>About</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -576,11 +463,7 @@ function About() {
             <div>Accessibility</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -605,11 +488,7 @@ function About() {
             <div>Imprint</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -634,11 +513,7 @@ function About() {
             <div>Advertising</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -663,11 +538,7 @@ function About() {
             <div>Privacy Policy</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -692,11 +563,7 @@ function About() {
             <div>Blog</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -721,11 +588,7 @@ function About() {
             <div>Brand Resources</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -750,11 +613,7 @@ function About() {
             <div>Careers</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -779,11 +638,7 @@ function About() {
             <div>Developers</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -808,11 +663,7 @@ function About() {
             <div>Directory</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -837,11 +688,7 @@ function About() {
             <div>Download the C app</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -866,11 +713,7 @@ function About() {
             <div>Help Center</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -895,11 +738,7 @@ function About() {
             <div>Marketing</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
@@ -924,11 +763,7 @@ function About() {
             <div>C for Business</div>
             <div>
               {" "}
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-14j79pv r-1q142lx r-2dysd3"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g>
                   <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                 </g>
