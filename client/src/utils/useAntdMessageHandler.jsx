@@ -11,7 +11,12 @@ export const useAntdMessageHandler = () => {
       type: "success",
       content: (
         <div>
-          <span style={{ fontSize: font15.fontSize }}>Your post was sent.</span>
+          <span
+            style={{ fontSize: font15.fontSize }}
+            className="chirp-regular-font"
+          >
+            Your post was sent.
+          </span>
           <>
             <Link
               className="chirp-bold-font"

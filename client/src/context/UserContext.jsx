@@ -1,7 +1,4 @@
 import { useState, useEffect, createContext } from "react";
-import PropTypes from "prop-types";
-
-const API_URL = import.meta.env.VITE_APP_API_URL;
 
 const UserContext = createContext();
 
@@ -77,10 +74,6 @@ const UserProvider = ({ children }) => {
       {children}
     </UserContext.Provider>
   );
-};
-
-UserProvider.propTypes = {
-  children: PropTypes.node.isRequired,
 };
 
 export { UserContext, UserProvider };

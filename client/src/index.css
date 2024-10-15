@@ -232,6 +232,12 @@ body {
   outline: none;
 }
 
+@media (max-width: 500px) {
+  .all-posts {
+    margin-bottom: 50px !important;
+  }
+}
+
 .each-post:hover {
   background-color: #f8f8f8 !important;
 }
@@ -1893,6 +1899,12 @@ span > a:hover {
   position: fixed;
   bottom: 20px;
   width: 100%;
+}
+
+@media (max-width: 500px) {
+  .ant-message {
+    bottom: 60px;
+  }
 }
 
 .ant-message-notice-content {
@@ -3906,11 +3918,21 @@ themeName === "dark-theme"
 
 @keyframes postSharingLineAnimation {
   0% {
-    width: 0px;
+    width: 0%;
   }
 
   100% {
-    width: 550px;
+    width: 100%;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
   }
 }
 
@@ -3919,14 +3941,14 @@ themeName === "dark-theme"
   animation-fill-mode: both;
 }
 
-.paused {
-  width: 375px !important;
-  animation-play-state: paused !important;
-  animation-fill-mode: both !important;
+.pulsing {
+  animation: pulse 1s ease-in-out infinite;
+  animation-fill-mode: both;
 }
 
-.running {
-  animation-play-state: running;
+.paused {
+  animation-play-state: paused !important;
+  animation-fill-mode: both !important;
 }
 
 @keyframes pageOpenAnimation {

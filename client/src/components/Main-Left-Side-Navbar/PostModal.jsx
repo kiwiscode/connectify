@@ -1,11 +1,10 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 
 import { Button, Modal, Stack } from "react-bootstrap";
 
 import { UserContext } from "../../context/UserContext";
 import { ThemeContext } from "../../context/ThemeContext";
-import useWindowDimensions from "../../hooks/getWindowDimensions";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
@@ -105,9 +104,12 @@ function PostModal({
   ] = useState(null);
   const [postSharingPausedAnimate, setPostSharingPausedAnimate] =
     useState(null);
+  const [pulse, setPulse] = useState(false);
   const handlePost = () => {
     setPostSharingStartedActivateAnimate(true);
-
+    setTimeout(() => {
+      setPulse(true);
+    }, 700);
     if (content || chosenEmoji || modalImage) {
       axios
         .post(
@@ -124,19 +126,29 @@ function PostModal({
         )
 
         .then((response) => {
-          setTimeout(() => {
-            if (!image) {
+          if (!modalImage || modalImage) {
+            setTimeout(() => {
+              setPulse(false);
+              setPostSharingStartedActivateAnimate(false);
               setPostSharingPausedAnimate(true);
-            }
-          }, 400);
+            }, 700);
+
+            setTimeout(() => {
+              setPostSharingStartedActivateAnimate(false);
+              setPostSharingPausedAnimate(false);
+            }, 700);
+          }
+
+          setTimeout(() => {
+            setModalImage("");
+            setContent("");
+          }, 700);
 
           if (setLoadingTrue) {
             setLoadingTrue();
           }
 
           setTimeout(() => {
-            setPostSharingPausedAnimate(false);
-            setPostSharingStartedActivateAnimate(false);
             parentCallBack(response.data.createdPost);
             if (setLoadingTrue) {
               setLoadingFalse();
@@ -144,10 +156,9 @@ function PostModal({
             if (refreshPosts) {
               refreshPosts();
             }
-            setModalImage("");
-            setContent("");
+
             handleClose();
-          }, 500);
+          }, 750);
         })
         .catch((err) => {
           return err;
@@ -194,9 +205,9 @@ function PostModal({
         <div
           className={
             postSharingStartedActivateAnimate && !postSharingPausedAnimate
-              ? "post_sharing_line_animation"
-              : postSharingPausedAnimate
-              ? "paused"
+              ? `post_sharing_line_animation ${pulse ? "pulsing" : ""}`
+              : postSharingPausedAnimate && !modalImage
+              ? "paused "
               : null
           }
           style={{
@@ -209,6 +220,8 @@ function PostModal({
             height: "0.2rem",
             top: "0px",
             borderTopLeftRadius: "4px",
+            maxWidth: "100%",
+            width: "100%",
           }}
         ></div>
         <Modal.Header
@@ -546,9 +559,9 @@ function PostModal({
                   style={{
                     border: "none",
                     cursor: "default",
+                    pointerEvents: "none",
                   }}
                   variant="primary"
-                  // onClick={() => handlePost()}
                   className={`emptyContent post-btn compose-tweet-textArea chirp-bold-font blue-btn-disabled`}
                 >
                   Post

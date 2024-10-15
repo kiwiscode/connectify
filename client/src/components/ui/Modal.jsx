@@ -5233,9 +5233,12 @@ function CommentModal({
   const [postSharingPausedAnimate, setPostSharingPausedAnimate] =
     useState(null);
 
+  const [pulse, setPulse] = useState(false);
   const handleAddComment = (postId) => {
     setPostSharingStartedActivateAnimate(true);
-
+    setTimeout(() => {
+      setPulse(true);
+    }, 700);
     axios
       .post(`${API_URL}/comment`, {
         userId: userInfo._id,
@@ -5244,17 +5247,25 @@ function CommentModal({
         modalImage,
       })
       .then((response) => {
-        setTimeout(() => {
-          if (!modalImage) {
+        if (!modalImage || modalImage) {
+          setTimeout(() => {
+            setPulse(false);
+            setPostSharingStartedActivateAnimate(false);
             setPostSharingPausedAnimate(true);
-          }
-        }, 400);
-        setModalImage("");
-        setContent("");
+          }, 700);
+
+          setTimeout(() => {
+            setPostSharingStartedActivateAnimate(false);
+            setPostSharingPausedAnimate(false);
+          }, 700);
+        }
 
         setTimeout(() => {
-          setPostSharingPausedAnimate(false);
-          setPostSharingStartedActivateAnimate(false);
+          setModalImage("");
+          setContent("");
+        }, 700);
+
+        setTimeout(() => {
           if (postSharedMessage) {
             postSharedMessage(
               response.data.createdPost.authorUserName,
@@ -5264,8 +5275,6 @@ function CommentModal({
           if (refreshPosts) {
             refreshPosts();
           }
-          setModalImage("");
-          setContent("");
           handleClose();
         }, 500);
       })
@@ -5482,21 +5491,23 @@ function CommentModal({
         <div
           className={
             postSharingStartedActivateAnimate && !postSharingPausedAnimate
-              ? "post_sharing_line_animation"
-              : postSharingPausedAnimate
-              ? "paused"
+              ? `post_sharing_line_animation ${pulse ? "pulsing" : ""}`
+              : postSharingPausedAnimate && !image
+              ? "paused "
               : null
           }
           style={{
-            visibility:
+            display:
               postSharingStartedActivateAnimate || postSharingPausedAnimate
                 ? ""
-                : "hidden",
+                : "none",
             border: "2px solid #1C9BEF",
             height: "0.2rem",
-            top: "0px",
+            position: "relative",
             borderTopLeftRadius: "4px",
             marginLeft: "6px",
+            maxWidth: "100%",
+            width: "100%",
           }}
         ></div>
         <div

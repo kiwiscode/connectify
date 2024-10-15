@@ -813,7 +813,7 @@ function LogoutModal({
     rightSideColumSubscriptionModalStatus,
     setRightSideColumSubscriptionModalStatus,
   ] = useState(null);
-  const grapRightSideColumnSubscriptionModalOpenedOrClosedStatus = (data) => {
+  const grabRightSideColumnSubscriptionModalOpenedOrClosedStatus = (data) => {
     console.log(
       "Data received from rightsidecolumn component for subscription modal status =>",
       data
@@ -1186,7 +1186,6 @@ function LogoutModal({
                         fontSize: font15.fontSize,
                         lineHeight: font15.lineHeight,
                         textAlign: "left",
-                        display: "flex",
                         alignItems: "center",
                         width: "120px",
                         overflow: "hidden",

@@ -226,8 +226,12 @@ function MainPage({ isNewPostShared }) {
     setError("");
   };
 
+  const [pulse, setPulse] = useState(false);
   const handlePost = () => {
     setPostSharingStartedActivateAnimate(true);
+    setTimeout(() => {
+      setPulse(true);
+    }, 700);
     if (content || chosenEmoji || image) {
       axios
         .post(
@@ -243,16 +247,25 @@ function MainPage({ isNewPostShared }) {
           }
         )
         .then((response) => {
-          setTimeout(() => {
-            if (!image) {
+          if (!image || image) {
+            setTimeout(() => {
+              setPulse(false);
+              setPostSharingStartedActivateAnimate(false);
               setPostSharingPausedAnimate(true);
-            }
-          }, 400);
+            }, 700);
+
+            setTimeout(() => {
+              setPostSharingStartedActivateAnimate(false);
+              setPostSharingPausedAnimate(false);
+            }, 700);
+          }
 
           setTimeout(() => {
-            setPostSharingPausedAnimate(false);
-            setPostSharingStartedActivateAnimate(false);
+            setImage("");
+            setContent("");
+          }, 700);
 
+          setTimeout(() => {
             axios
               .get(`${API_URL}/posts`, {
                 headers: {
@@ -270,9 +283,7 @@ function MainPage({ isNewPostShared }) {
               response.data.createdPost.authorUserName,
               response.data.createdPost._id
             );
-            setImage("");
-            setContent("");
-          }, 500);
+          }, 750);
         })
         .catch((err) => {
           return err;
@@ -641,6 +652,8 @@ function MainPage({ isNewPostShared }) {
     };
   }, [clickedPostBox]);
 
+  const [windowLoadingAfterGoogleAuth, setWindowLoadingAfterGoogleAuth] =
+    useState(false);
   useEffect(() => {
     console.log(userInfo?.signedUpWithVariantOne);
     console.log(userInfo?.signedUpWithGoogle);
@@ -660,7 +673,15 @@ function MainPage({ isNewPostShared }) {
       setshowModalForProfilePictureOrUsernameOrBoth(true);
     }
     // getUser();
-  }, []);
+  }, [
+    location.search,
+    navigate,
+    token,
+    location,
+    userInfo,
+    windowLoadingAfterGoogleAuth,
+    location.pathname,
+  ]);
 
   useEffect(() => {
     window.addEventListener("resize", handleResize);
@@ -778,17 +799,51 @@ function MainPage({ isNewPostShared }) {
     const user = JSON.parse(params.get("user"));
 
     if (token && user) {
+      setWindowLoadingAfterGoogleAuth(true);
       localStorage.setItem("token", token);
       localStorage.setItem("userInfo", JSON.stringify(user));
-      updateUser(user);
       setTimeout(() => {
+        updateUser(user);
         navigate("/home");
       }, 1000);
+      setTimeout(() => {
+        setWindowLoadingAfterGoogleAuth(false);
+      }, 1250);
     }
-  }, [location.search, navigate, token, location, userInfo, location.pathname]);
+  }, [
+    location.search,
+    navigate,
+    token,
+    location,
+    userInfo,
+    windowLoadingAfterGoogleAuth,
+    location.pathname,
+  ]);
 
   return (
     <>
+      {windowLoadingAfterGoogleAuth ? (
+        <div
+          style={{
+            position: "fixed",
+            width: "100%",
+            height: "100dvh",
+            backgroundColor: "#fff",
+            zIndex: 3,
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%,-50%)",
+            }}
+          >
+            <LoadingSpinner strokeColor={"rgb(29, 155, 240)"}></LoadingSpinner>
+          </div>
+        </div>
+      ) : null}
       {contextHolder}
       {/* start to check subscription completed modal  */}
       {showSubscriptionCompletedModal ? (
@@ -1967,9 +2022,9 @@ function MainPage({ isNewPostShared }) {
             <div
               className={
                 postSharingStartedActivateAnimate && !postSharingPausedAnimate
-                  ? "post_sharing_line_animation"
-                  : postSharingPausedAnimate
-                  ? "paused"
+                  ? `post_sharing_line_animation ${pulse ? "pulsing" : ""}`
+                  : postSharingPausedAnimate && !image
+                  ? "paused "
                   : null
               }
               style={{
@@ -1982,6 +2037,8 @@ function MainPage({ isNewPostShared }) {
                 height: "0.2rem",
                 top: "0px",
                 borderTopLeftRadius: "4px",
+                maxWidth: "100%",
+                width: "100%",
               }}
             ></div>
             <div
@@ -2390,7 +2447,8 @@ function MainPage({ isNewPostShared }) {
         </span>
         <div
           style={{
-            height: width <= 700 ? "100dvh" : "",
+            // height: width <= 700 ? "100dvh" : "",
+            height: width > 700 && "",
           }}
           className="all-posts"
         >
@@ -2402,7 +2460,7 @@ function MainPage({ isNewPostShared }) {
                     <>
                       <div key={post._id}>
                         {post.deactivatedOwner ||
-                        (post.userId.isPrivate &&
+                        (post.userId?.isPrivate &&
                           !checkIfFollowing(post.userId._id) &&
                           post.userId._id !== userInfo._id) ? null : (
                           <div
@@ -2644,7 +2702,7 @@ function MainPage({ isNewPostShared }) {
                                           {post.authorFullName}
                                         </span>
                                       </Link>{" "}
-                                      {post?.userId.isPrivate && (
+                                      {post?.userId?.isPrivate && (
                                         <span
                                           style={{
                                             marginRight: "5px",
@@ -3347,7 +3405,7 @@ function MainPage({ isNewPostShared }) {
                                         {post.authorFullName}
                                       </span>
                                     </Link>{" "}
-                                    {post?.userId.isPrivate && (
+                                    {post?.userId?.isPrivate && (
                                       <span>
                                         <svg
                                           fill={

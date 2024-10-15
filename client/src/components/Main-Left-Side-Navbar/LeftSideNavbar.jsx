@@ -21,7 +21,7 @@ import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
-const FRONTEND_URL = import.meta.env.VITE_APP_API_URL;
+const FRONTEND_URL = import.meta.env.VITE_APP_FRONTEND_URL;
 
 function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
   const [{ theme, themeName }] = useContext(ThemeContext);
@@ -78,11 +78,15 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
     postSharingStartedActivateAnimate,
     setPostSharingStartedActivateAnimate,
   ] = useState(null);
+
   const [postSharingPausedAnimate, setPostSharingPausedAnimate] =
     useState(null);
+  const [pulse, setPulse] = useState(false);
   const handlePost = () => {
     setPostSharingStartedActivateAnimate(true);
-
+    setTimeout(() => {
+      setPulse(true);
+    }, 700);
     if (content || chosenEmoji || modalImage) {
       axios
         .post(
@@ -99,14 +103,23 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
         )
 
         .then((response) => {
-          setTimeout(() => {
-            if (!modalImage) {
+          if (!modalImage || modalImage) {
+            setTimeout(() => {
+              setPulse(false);
+              setPostSharingStartedActivateAnimate(false);
               setPostSharingPausedAnimate(true);
-            }
-          }, 400);
+            }, 700);
+
+            setTimeout(() => {
+              setPostSharingStartedActivateAnimate(false);
+              setPostSharingPausedAnimate(false);
+            }, 700);
+          }
           setTimeout(() => {
-            setPostSharingPausedAnimate(false);
-            setPostSharingStartedActivateAnimate(false);
+            setModalImage("");
+            setContent("");
+          }, 700);
+          setTimeout(() => {
             postSharedMessage(
               response.data.createdPost.authorUserName,
               response.data.createdPost._id
@@ -118,7 +131,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
             setModalImage("");
             setContent("");
             handleClose();
-          }, 500);
+          }, 750);
         })
         .catch((err) => {
           return err;
@@ -271,9 +284,9 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
         <div
           className={
             postSharingStartedActivateAnimate && !postSharingPausedAnimate
-              ? "post_sharing_line_animation"
-              : postSharingPausedAnimate
-              ? "paused"
+              ? `post_sharing_line_animation ${pulse ? "pulsing" : ""}`
+              : postSharingPausedAnimate && !modalImage
+              ? "paused "
               : null
           }
           style={{
@@ -286,6 +299,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
             height: "0.2rem",
             top: "0px",
             borderTopLeftRadius: "4px",
+            maxWidth: "100%",
+            width: "100%",
           }}
         ></div>
         <>

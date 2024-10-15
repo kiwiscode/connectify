@@ -6,7 +6,7 @@ const MONGO_URI = process.env.MONGO_URI;
 console.log("mongo db uri:", MONGO_URI);
 
 mongoose
-  .connect(MONGO_URI, { bufferCommands: false })
+  .connect(MONGO_URI)
   .then((x) => {
     const databaseName = x.connections[0].name;
     console.log(
