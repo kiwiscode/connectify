@@ -440,13 +440,14 @@ function App() {
     "/messages",
     "/i/bookmarks",
     "/profile",
-    "/profile/:id",
-    "/:postOwner/status/:postId",
-    "/:postOwner/status/:postId/photo/1",
-    "/messages/:chatRoomId",
-    "/profile/:userId/requests",
-    "/profile/:userId/following",
-    "/profile/:userId/followers",
+    // dynamic routeları include etme
+    // `/profile/${userInfo._id}`,
+    // "/:postOwner/status/:postId",
+    // "/:postOwner/status/:postId/photo/1",
+    // "/messages/:chatRoomId",
+    // "/profile/:userId/requests",
+    // "/profile/:userId/following",
+    // "/profile/:userId/followers",
     "/settings/deactivated",
     "/i/premium_sign_up",
     "/i/verified-orgs-signup",
@@ -568,8 +569,7 @@ function App() {
                 // path !== `/${userInfo?.username}/lists` &&
                 // path !== "/i/spaces/start" &&
                 // path !== "/i/flow/password_reset" &&
-                routesArray.includes(path) &&
-                  showLeftSideNavbar === true &&
+                showLeftSideNavbar === true &&
                   !path.startsWith("/account") &&
                   !path.endsWith("/communities/explore") &&
                   !path.endsWith("/photo/1") && (
@@ -864,8 +864,8 @@ function App() {
                 //   path !== "/i/flow/language_selector" &&
                 //   path !== "/i/flow/add_email" &&
                 //   path !== "/i/flow/enable_automated_account" &&
-                routesArray.includes(path) &&
-                  showRightSideBarColumn === true &&
+
+                showRightSideBarColumn === true &&
                   !path.startsWith("/settings") &&
                   !path.startsWith("/account") &&
                   !path.endsWith("/communities/explore") &&
