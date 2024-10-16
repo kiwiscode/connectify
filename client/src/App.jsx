@@ -28,8 +28,12 @@ const FollowerDetailPage = lazy(() => import("./pages/FollowersDetailPage"));
 const DeactivatedPage = lazy(() => import("./pages/DeactivatedPage"));
 const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
-
 const BookmarksPage = lazy(() => import("./pages/BookmarksPage"));
+const CommunitiesPage = lazy(() => import("./pages/CommunitiesPage"));
+const UserListsPage = lazy(() => import("./pages/UserListsPage"));
+const HelpPage = lazy(() => import("./pages/HelpPage"));
+const JobsPage = lazy(() => import("./pages/JobsPage"));
+const SpacesPage = lazy(() => import("./pages/SpacesPage"));
 const PremiumSignupPage = lazy(() => import("./pages/PremiumSignupPage"));
 const Settings = lazy(() => import("./pages/Settings"));
 const AccountInformationMain = lazy(() =>
@@ -241,7 +245,6 @@ const RightSideColumn = lazy(() =>
 const socket = io(import.meta.env.VITE_APP_API_URL);
 
 import "bootstrap/dist/css/bootstrap.min.css";
-import CommunitiesPage from "./pages/CommunitiesPage";
 
 function App() {
   const { userInfo } = useContext(UserContext);
@@ -605,6 +608,19 @@ function App() {
                   <Route
                     path={`/${userInfo?.username}/communities/explore`}
                     element={<CommunitiesPage />}
+                  ></Route>
+                  <Route
+                    path={`/${userInfo?.username}/lists`}
+                    element={<UserListsPage />}
+                  ></Route>
+                  <Route
+                    path={`/help/connectify`}
+                    element={<HelpPage />}
+                  ></Route>
+                  <Route path={`/jobs`} element={<JobsPage />}></Route>
+                  <Route
+                    path={`/i/spaces/start`}
+                    element={<JobsPage />}
                   ></Route>
                   <Route
                     path="/profile"

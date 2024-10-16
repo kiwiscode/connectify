@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { startTransition, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../../context/ThemeContext";
 import "./UnderConstructionPage.css";
@@ -12,7 +12,11 @@ function UnderConstructionPage() {
       <div className={`wrapper-parent--parent-- ${themeName}`}></div>
       <div className="wrapper-parent--">
         <div
-          onClick={() => navigate(-1)}
+          onClick={() => {
+            startTransition(() => {
+              navigate(-1);
+            });
+          }}
           className={themeName === "dark-theme" ? "arrow-dark-theme" : "arrow"}
           style={{
             width: "50px",
