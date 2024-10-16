@@ -124,7 +124,7 @@ const handleCreateChatRoom = async (req, res) => {
     user1.messages.push({
       room: roomId,
       members: [user1._id, user2._id],
-      readed: false,
+      readed: true,
       deactivatedMember: false,
     });
 

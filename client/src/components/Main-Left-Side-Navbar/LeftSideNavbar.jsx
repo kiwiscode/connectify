@@ -216,6 +216,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
         }
       );
 
+      console.log("result.data:", result);
+
       setNumberOfUnreadMessages(result.data.length);
       console.log("result for unread messages:", result);
     } catch (error) {
