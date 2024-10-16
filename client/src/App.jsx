@@ -10,6 +10,7 @@ import { UserContext } from "./context/UserContext";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const MainPage = lazy(() => import("./pages/MainPage"));
+const ExplorePage = lazy(() => import("./pages/ExplorePage"));
 const UserProfile = lazy(() => import("./pages/UserProfilePage"));
 const SpesificUserProfile = lazy(() => import("./pages/SpesificUserProfile"));
 
@@ -240,6 +241,7 @@ const RightSideColumn = lazy(() =>
 const socket = io(import.meta.env.VITE_APP_API_URL);
 
 import "bootstrap/dist/css/bootstrap.min.css";
+import CommunitiesPage from "./pages/CommunitiesPage";
 
 function App() {
   const { userInfo } = useContext(UserContext);
@@ -342,6 +344,163 @@ function App() {
   };
   console.log("Active theme =>", themeName);
 
+  // left side bar gösterim ayarları
+  const [showLeftSideNavbar, setShowLeftSideNavbar] = useState(null);
+  const handleHideLeftSideNavBar = () => {
+    setShowLeftSideNavbar(false);
+  };
+  const handleShowLeftSideNavBar = () => {
+    setShowLeftSideNavbar(true);
+  };
+  const doNotShowLeftSideBarInTheseRoutes = [
+    "/",
+    "/settings/deactivated",
+    "/i/premium_sign_up",
+    "/help_connectify",
+    "/billing/stripe/subscription",
+    "/explore",
+    "/settings/apps_and_sessions",
+    "/settings/connected_accounts",
+    "/settings/delegate",
+    "/jobs",
+    "/help/connectify",
+    `/${userInfo?.username}/lists`,
+    "/i/spaces/start",
+    "/i/flow/password_reset",
+  ];
+
+  useEffect(() => {
+    if (doNotShowLeftSideBarInTheseRoutes.some((route) => route === path)) {
+      handleHideLeftSideNavBar();
+    } else {
+      handleShowLeftSideNavBar();
+    }
+  }, [path, doNotShowLeftSideBarInTheseRoutes]);
+
+  // right side bar gösterim ayarları
+  const [showRightSideBarColumn, setShowRightSideBarColumn] = useState(null);
+  const handleHideRightSideBarColumn = () => {
+    setShowRightSideBarColumn(false);
+  };
+  const handleShowRightSideBarColumn = () => {
+    setShowRightSideBarColumn(true);
+  };
+
+  const doNotShowRightSideBarColumnInTheseRoutes = [
+    "/",
+    "/settings/deactivated",
+    "/i/premium_sign_up",
+    "/help_connectify",
+    "/billing/stripe/subscription",
+    "/explore",
+    "/jobs",
+    "/help/connectify",
+    `/${userInfo?.username}/lists`,
+    "/i/spaces/start",
+    "/i/flow/password_reset",
+    "/i/flow/verify_account_ownership",
+    "/i/flow",
+    "/i/flow/subscription_eligibility_check",
+    "/i/verified-choose",
+    "/i/flow/add_phone",
+    "/i/flow/language_selector",
+    "/i/flow/add_email",
+    "/i/flow/enable_automated_account",
+  ];
+
+  useEffect(() => {
+    if (
+      doNotShowRightSideBarColumnInTheseRoutes.some((route) => route === path)
+    ) {
+      handleHideRightSideBarColumn();
+    } else {
+      handleShowRightSideBarColumn();
+    }
+  }, [path, doNotShowRightSideBarColumnInTheseRoutes]);
+
+  // tüm routeları check et
+  const [showPageNotFoundAnimation, setShowPageNotFoundAnimation] =
+    useState(null);
+
+  const handleHidePageNotFoundAnimation = () => {
+    setShowPageNotFoundAnimation(false);
+  };
+
+  const handleShowPageNotFoundAnimation = () => {
+    setShowPageNotFoundAnimation(true);
+  };
+
+  const routesArray = [
+    "/",
+    "/home",
+    "/notifications",
+    "/messages",
+    "/i/bookmarks",
+    "/profile",
+    "/profile/:id",
+    "/:postOwner/status/:postId",
+    "/:postOwner/status/:postId/photo/1",
+    "/messages/:chatRoomId",
+    "/profile/:userId/requests",
+    "/profile/:userId/following",
+    "/profile/:userId/followers",
+    "/settings/deactivated",
+    "/i/premium_sign_up",
+    "/i/verified-orgs-signup",
+    "/i/flow/subscription_eligibility_check",
+    "/settings",
+    "/settings/account",
+    "/settings/your_twitter_data/account",
+    "/settings/password",
+    "/account/send_password_reset",
+    "/account/confirm_pin_reset",
+    "/account/reset_password",
+    "/account/password_reset_survey",
+    "/account/password_reset_complete",
+    "/settings/deactivate",
+    "/i/flow/verify_account_ownership",
+    "/settings/download-your-data",
+    "/settings/screen_name",
+    "/settings/phone",
+    "/i/flow/add_phone",
+    "/settings/email",
+    "/i/flow/password_reset",
+    "/settings/languages",
+    "/settings/your_twitter_data/language",
+    "/i/flow/language_selector",
+    "/settings/language",
+    "/i/flow/add_email",
+    "/settings/your_twitter_data/age",
+    "/settings/account/automation",
+    "/i/flow/enable_automated_account",
+    "/settings/your_twitter_data/gender",
+    "/settings/country",
+    "/settings/audience_and_tagging",
+    "/settings/tagging",
+    "/settings/monetization",
+    "/settings/superfollows/application/eligibility",
+    "/settings/ad_rev_share_eligibility",
+    "/i/verified-choose",
+    "/settings/manage_subscriptions",
+    "/billing/stripe/subscription",
+    "/settings/security_and_account_access",
+    "/settings/security",
+    "/settings/privacy_and_safety",
+    "/settings/notifications",
+    "/settings/accessibility_display_and_languages",
+    "/settings/display",
+    "/settings/about",
+    "/help_connectify",
+  ];
+
+  useEffect(() => {
+    if (routesArray.some((route) => route === path)) {
+      handleHidePageNotFoundAnimation();
+    } else {
+      handleShowPageNotFoundAnimation();
+    }
+  }, [path, doNotShowRightSideBarColumnInTheseRoutes]);
+
   return (
     <>
       <div
@@ -391,28 +550,32 @@ function App() {
                 minHeight: "100vh",
               }}
             >
-              {path !== "/" &&
-                path !== "/settings/deactivated" &&
-                path !== "/i/premium_sign_up" &&
-                path !== "/help_connectify" &&
-                !path.startsWith("/account") &&
-                path !== "/billing/stripe/subscription" &&
-                path !== "/explore" &&
-                !path.endsWith("/communities/explore") &&
-                path !== "/settings/apps_and_sessions" &&
-                path !== "/settings/connected_accounts" &&
-                path !== "/settings/delegate" &&
-                path !== "/jobs" &&
-                path !== "/help/connectify" &&
-                path !== `/${userInfo?.username}/lists` &&
-                path !== "/i/spaces/start" &&
-                path !== "/i/flow/password_reset" &&
-                !path.endsWith("/photo/1") && (
-                  <LeftSideNavBar
-                    refreshPosts={handleShareNewPost}
-                    setIsPostShared={handlePostSharingIsDone}
-                  />
-                )}{" "}
+              {
+                // path !== "/" &&
+                // path !== "/settings/deactivated" &&
+                // path !== "/i/premium_sign_up" &&
+                // path !== "/help_connectify" &&
+                // path !== "/billing/stripe/subscription" &&
+                // path !== "/explore" &&
+                // path !== "/settings/apps_and_sessions" &&
+                // path !== "/settings/connected_accounts" &&
+                // path !== "/settings/delegate" &&
+                // path !== "/jobs" &&
+                // path !== "/help/connectify" &&
+                // path !== `/${userInfo?.username}/lists` &&
+                // path !== "/i/spaces/start" &&
+                // path !== "/i/flow/password_reset" &&
+                routesArray.includes(path) &&
+                  showLeftSideNavbar === true &&
+                  !path.startsWith("/account") &&
+                  !path.endsWith("/communities/explore") &&
+                  !path.endsWith("/photo/1") && (
+                    <LeftSideNavBar
+                      refreshPosts={handleShareNewPost}
+                      setIsPostShared={handlePostSharingIsDone}
+                    />
+                  )
+              }{" "}
               <Suspense
                 fallback={
                   <LoadingSpinner
@@ -428,6 +591,7 @@ function App() {
                     path="/home"
                     element={<MainPage isNewPostShared={isPostShared} />}
                   ></Route>
+                  <Route path="/explore" element={<ExplorePage />}></Route>
 
                   <Route
                     path="/notifications"
@@ -437,6 +601,10 @@ function App() {
                   <Route
                     path="/i/bookmarks"
                     element={<BookmarksPage />}
+                  ></Route>
+                  <Route
+                    path={`/${userInfo?.username}/communities/explore`}
+                    element={<CommunitiesPage />}
                   ></Route>
                   <Route
                     path="/profile"
@@ -655,42 +823,48 @@ function App() {
                     element={<HelpConnectifyMain />}
                   ></Route>
 
+                  {/* under constructor pages */}
+
                   <Route path="/*" element={<NotFoundPage />}></Route>
                 </Routes>
               </Suspense>
-              {path !== "/" &&
-                path !== "/settings/deactivated" &&
-                path !== "/i/premium_sign_up" &&
-                !path.startsWith("/settings") &&
-                path !== "/help_connectify" &&
-                path !== "/i/flow/verify_account_ownership" &&
-                !path.startsWith("/account") &&
-                (path !== "/i/flow" ||
-                  path === "/i/flow/subscription_eligibility_check") &&
-                path !== "/i/verified-choose" &&
-                path !== "/i/flow/add_phone" &&
-                path !== "/i/flow/language_selector" &&
-                path !== "/i/flow/add_email" &&
-                path !== "/i/flow/enable_automated_account" &&
-                path !== "/billing/stripe/subscription" &&
-                path !== "/explore" &&
-                !path.endsWith("/communities/explore") &&
-                path !== "/jobs" &&
-                path !== "/help/connectify" &&
-                path !== `/${userInfo?.username}/lists` &&
-                path !== "/i/spaces/start" &&
-                path !== "/i/flow/password_reset" &&
-                !path.endsWith("/photo/1") && (
-                  <RightSideColumn
-                    isVerifiedOrgsSignUpRoute={
-                      openVerifiedOrganizationSubscriptionTypedModal
-                    }
-                    isSubscriptionEligibilityCheckRouteForIndividualSubscription={
-                      openIndividualEligibilityVerifyNumberScreen
-                    }
-                    premiumInfoFromParentAppJsx={premiumInfo}
-                  />
-                )}
+              {
+                //   path !== "/" &&
+                //   path !== "/settings/deactivated" &&
+                //   path !== "/i/premium_sign_up" &&
+                //   path !== "/help_connectify" &&
+                //   path !== "/billing/stripe/subscription" &&
+                //   path !== "/explore" &&
+                //   path !== "/jobs" &&
+                //   path !== "/help/connectify" &&
+                //   path !== `/${userInfo?.username}/lists` &&
+                //   path !== "/i/spaces/start" &&
+                //   path !== "/i/flow/password_reset" &&
+                //   path !== "/i/flow/verify_account_ownership" &&
+                //   (path !== "/i/flow" ||
+                //   path === "/i/flow/subscription_eligibility_check") &&
+                //   path !== "/i/verified-choose" &&
+                //   path !== "/i/flow/add_phone" &&
+                //   path !== "/i/flow/language_selector" &&
+                //   path !== "/i/flow/add_email" &&
+                //   path !== "/i/flow/enable_automated_account" &&
+                routesArray.includes(path) &&
+                  showRightSideBarColumn === true &&
+                  !path.startsWith("/settings") &&
+                  !path.startsWith("/account") &&
+                  !path.endsWith("/communities/explore") &&
+                  !path.endsWith("/photo/1") && (
+                    <RightSideColumn
+                      isVerifiedOrgsSignUpRoute={
+                        openVerifiedOrganizationSubscriptionTypedModal
+                      }
+                      isSubscriptionEligibilityCheckRouteForIndividualSubscription={
+                        openIndividualEligibilityVerifyNumberScreen
+                      }
+                      premiumInfoFromParentAppJsx={premiumInfo}
+                    />
+                  )
+              }
             </Row>
           </Container>
         </div>

@@ -730,9 +730,9 @@ function MessagesPage() {
                                             maxWidth:
                                               eachMessageRoom.chat[
                                                 eachMessageRoom.chat.length - 1
-                                              ].text.length > 50
+                                              ].text.length > 50 && width > 768
                                                 ? "450px"
-                                                : null,
+                                                : "200px",
                                           }}
                                           className="p-0"
                                         >

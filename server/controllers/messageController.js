@@ -149,7 +149,7 @@ const handleCreateChatRoom = async (req, res) => {
 
 const handleAddMessageToRoom = async (req, res) => {
   try {
-    const { messageData, currentUserId } = req.body;
+    const { messageData } = req.body;
     const { chatRoomId } = req.params;
     const [userId1, userId2] = chatRoomId.split("-");
     const roomIdArray = [userId1, userId2];
