@@ -441,7 +441,8 @@ function App() {
     "/i/bookmarks",
     "/profile",
     // dynamic routeları include etme
-    // `/profile/${userInfo._id}`,
+    // all user ids
+    // `/profile/:id`,
     // "/:postOwner/status/:postId",
     // "/:postOwner/status/:postId/photo/1",
     // "/messages/:chatRoomId",
@@ -554,31 +555,22 @@ function App() {
                 minHeight: "100vh",
               }}
             >
-              {
-                // path !== "/" &&
-                // path !== "/settings/deactivated" &&
-                // path !== "/i/premium_sign_up" &&
-                // path !== "/help_connectify" &&
-                // path !== "/billing/stripe/subscription" &&
-                // path !== "/explore" &&
-                // path !== "/settings/apps_and_sessions" &&
-                // path !== "/settings/connected_accounts" &&
-                // path !== "/settings/delegate" &&
-                // path !== "/jobs" &&
-                // path !== "/help/connectify" &&
-                // path !== `/${userInfo?.username}/lists` &&
-                // path !== "/i/spaces/start" &&
-                // path !== "/i/flow/password_reset" &&
+              {(routesArray.includes(path) ||
+                path.startsWith("/messages") ||
+                path.startsWith("/profile") ||
+                path.endsWith("/requests") ||
+                path.endsWith("/following") ||
+                path.endsWith("/followers") ||
+                path.includes("/status")) &&
                 showLeftSideNavbar === true &&
-                  !path.startsWith("/account") &&
-                  !path.endsWith("/communities/explore") &&
-                  !path.endsWith("/photo/1") && (
-                    <LeftSideNavBar
-                      refreshPosts={handleShareNewPost}
-                      setIsPostShared={handlePostSharingIsDone}
-                    />
-                  )
-              }{" "}
+                !path.startsWith("/account") &&
+                !path.endsWith("/communities/explore") &&
+                !path.endsWith("/photo/1") && (
+                  <LeftSideNavBar
+                    refreshPosts={handleShareNewPost}
+                    setIsPostShared={handlePostSharingIsDone}
+                  />
+                )}{" "}
               <Suspense
                 fallback={
                   <LoadingSpinner
@@ -844,43 +836,28 @@ function App() {
                   <Route path="/*" element={<NotFoundPage />}></Route>
                 </Routes>
               </Suspense>
-              {
-                //   path !== "/" &&
-                //   path !== "/settings/deactivated" &&
-                //   path !== "/i/premium_sign_up" &&
-                //   path !== "/help_connectify" &&
-                //   path !== "/billing/stripe/subscription" &&
-                //   path !== "/explore" &&
-                //   path !== "/jobs" &&
-                //   path !== "/help/connectify" &&
-                //   path !== `/${userInfo?.username}/lists` &&
-                //   path !== "/i/spaces/start" &&
-                //   path !== "/i/flow/password_reset" &&
-                //   path !== "/i/flow/verify_account_ownership" &&
-                //   (path !== "/i/flow" ||
-                //   path === "/i/flow/subscription_eligibility_check") &&
-                //   path !== "/i/verified-choose" &&
-                //   path !== "/i/flow/add_phone" &&
-                //   path !== "/i/flow/language_selector" &&
-                //   path !== "/i/flow/add_email" &&
-                //   path !== "/i/flow/enable_automated_account" &&
-
+              {(routesArray.includes(path) ||
+                path.startsWith("/messages") ||
+                path.startsWith("/profile") ||
+                path.endsWith("/requests") ||
+                path.endsWith("/following") ||
+                path.endsWith("/followers") ||
+                path.includes("/status")) &&
                 showRightSideBarColumn === true &&
-                  !path.startsWith("/settings") &&
-                  !path.startsWith("/account") &&
-                  !path.endsWith("/communities/explore") &&
-                  !path.endsWith("/photo/1") && (
-                    <RightSideColumn
-                      isVerifiedOrgsSignUpRoute={
-                        openVerifiedOrganizationSubscriptionTypedModal
-                      }
-                      isSubscriptionEligibilityCheckRouteForIndividualSubscription={
-                        openIndividualEligibilityVerifyNumberScreen
-                      }
-                      premiumInfoFromParentAppJsx={premiumInfo}
-                    />
-                  )
-              }
+                !path.startsWith("/settings") &&
+                !path.startsWith("/account") &&
+                !path.endsWith("/communities/explore") &&
+                !path.endsWith("/photo/1") && (
+                  <RightSideColumn
+                    isVerifiedOrgsSignUpRoute={
+                      openVerifiedOrganizationSubscriptionTypedModal
+                    }
+                    isSubscriptionEligibilityCheckRouteForIndividualSubscription={
+                      openIndividualEligibilityVerifyNumberScreen
+                    }
+                    premiumInfoFromParentAppJsx={premiumInfo}
+                  />
+                )}
             </Row>
           </Container>
         </div>

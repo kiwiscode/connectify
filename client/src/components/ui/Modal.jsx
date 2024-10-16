@@ -226,17 +226,21 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
     });
   };
 
+  const { getToken, userInfo } = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
   const handleShowLoginModal = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setTabIndex(0);
-      setIsLoading(false);
-      setShowLoginModal(true);
-    }, 500);
+    if (userInfo && userInfo._id && getToken()) {
+      navigate("/home");
+    } else {
+      setIsLoading(true);
+      setTimeout(() => {
+        setTabIndex(0);
+        setIsLoading(false);
+        setShowLoginModal(true);
+      }, 500);
+    }
   };
 
-  const { getToken } = useContext(UserContext);
   const [findConnectifyAccount, setFindConnectifyAccount] = useState("");
 
   const [forgotPasswordInProcessUser, setForgotPasswordInProcessUser] =
