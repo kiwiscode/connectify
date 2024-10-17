@@ -463,6 +463,9 @@ function PostPopover({
                             themeName !== "dark-theme"
                           ? "#f7f7f7"
                           : "",
+                      opacity: "0.5",
+                      cursor: "default",
+                      pointerEvents: "none",
                     }}
                   >
                     <span>
@@ -505,6 +508,9 @@ function PostPopover({
                             themeName !== "dark-theme"
                           ? "#f7f7f7"
                           : "",
+                      opacity: "0.5",
+                      cursor: "default",
+                      pointerEvents: "none",
                     }}
                   >
                     <span>
@@ -546,6 +552,9 @@ function PostPopover({
                             themeName !== "dark-theme"
                           ? "#f7f7f7"
                           : "",
+                      opacity: "0.5",
+                      cursor: "default",
+                      pointerEvents: "none",
                     }}
                   >
                     <span>
@@ -587,6 +596,9 @@ function PostPopover({
                             themeName !== "dark-theme"
                           ? "#f7f7f7"
                           : "",
+                      opacity: "0.5",
+                      cursor: "default",
+                      pointerEvents: "none",
                     }}
                   >
                     <span>
@@ -629,6 +641,9 @@ function PostPopover({
                             themeName !== "dark-theme"
                           ? "#f7f7f7"
                           : "",
+                      opacity: "0.5",
+                      cursor: "default",
+                      pointerEvents: "none",
                     }}
                   >
                     <span>
@@ -671,6 +686,9 @@ function PostPopover({
                             themeName !== "dark-theme"
                           ? "#f7f7f7"
                           : "",
+                      opacity: "0.5",
+                      cursor: "default",
+                      pointerEvents: "none",
                     }}
                   >
                     <span>
@@ -731,6 +749,9 @@ function PostPopover({
                             themeName !== "dark-theme"
                           ? "#f7f7f7"
                           : "",
+                      opacity: "0.5",
+                      cursor: "default",
+                      pointerEvents: "none",
                     }}
                   >
                     <span>
@@ -793,6 +814,9 @@ function PostPopover({
                             themeName !== "dark-theme"
                           ? "#f7f7f7"
                           : "",
+                      opacity: "0.5",
+                      cursor: "default",
+                      pointerEvents: "none",
                     }}
                   >
                     <span>
@@ -855,6 +879,9 @@ function PostPopover({
                             themeName !== "dark-theme"
                           ? "#f7f7f7"
                           : "",
+                      opacity: "0.5",
+                      cursor: "default",
+                      pointerEvents: "none",
                     }}
                   >
                     <span>
@@ -905,6 +932,9 @@ function PostPopover({
                             themeName !== "dark-theme"
                           ? "#f7f7f7"
                           : "",
+                      opacity: "0.5",
+                      cursor: "default",
+                      pointerEvents: "none",
                     }}
                   >
                     <span>
@@ -969,6 +999,9 @@ function PostPopover({
                             themeName !== "dark-theme"
                           ? "#f7f7f7"
                           : "",
+                      opacity: "0.5",
+                      cursor: "default",
+                      pointerEvents: "none",
                     }}
                   >
                     <span>
@@ -1018,7 +1051,6 @@ function PostPopover({
                       </span>
                     </span>
                   </div>
-
                   <div
                     onMouseEnter={() => {
                       setHoveredOption("View post engagements");
@@ -1035,6 +1067,9 @@ function PostPopover({
                             themeName !== "dark-theme"
                           ? "#f7f7f7"
                           : "",
+                      opacity: "0.5",
+                      cursor: "default",
+                      pointerEvents: "none",
                     }}
                   >
                     <span>
@@ -1082,6 +1117,9 @@ function PostPopover({
                             themeName !== "dark-theme"
                           ? "#f7f7f7"
                           : "",
+                      opacity: "0.5",
+                      cursor: "default",
+                      pointerEvents: "none",
                     }}
                   >
                     <span>
@@ -1129,6 +1167,9 @@ function PostPopover({
                             themeName !== "dark-theme"
                           ? "#f7f7f7"
                           : "",
+                      opacity: "0.5",
+                      cursor: "default",
+                      pointerEvents: "none",
                     }}
                   >
                     <span>
@@ -1176,6 +1217,9 @@ function PostPopover({
                             themeName !== "dark-theme"
                           ? "#f7f7f7"
                           : "",
+                      opacity: "0.5",
+                      cursor: "default",
+                      pointerEvents: "none",
                     }}
                   >
                     {" "}

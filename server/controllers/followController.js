@@ -2,7 +2,6 @@ const User = require("../models/User.model");
 
 const handleFollow = (req, res) => {
   const { activeUserId, theFollowedUserID } = req.body;
-  console.log("Follow Route is working !", activeUserId, theFollowedUserID);
   if (activeUserId !== theFollowedUserID) {
     User.findById(activeUserId)
       .then((activeUser) => {
@@ -15,9 +14,6 @@ const handleFollow = (req, res) => {
             const followerIds = followedUser.followers.map((eachFollower) => {
               return eachFollower._id.toString();
             });
-
-            console.log("Following ids from active user =>", followingIds);
-            console.log("Follower ids from active user =>", followerIds);
 
             if (
               !followingIds.includes(theFollowedUserID) &&
@@ -45,7 +41,7 @@ const handleFollow = (req, res) => {
                     })
                 )
                 .catch((error) => {
-                  console.log(error);
+                  console.error(error);
                   res.status(500).json({
                     errorMessage: "Error occured while saving active user !",
                   });
@@ -58,11 +54,11 @@ const handleFollow = (req, res) => {
             }
           })
           .catch((error) => {
-            console.log(error);
+            console.error("Error =>", error);
           });
       })
       .catch((error) => {
-        console.error(error);
+        console.error("Error =>", error);
       });
   } else {
     res.status(500).json({ errorMessage: "A user cannot follow themselves." });

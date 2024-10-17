@@ -47,7 +47,6 @@ export const useAntdMessageHandler = () => {
   };
 
   const pinnedMessage = () => {
-    console.log("here is working rn pinned +");
     messageApi.success({
       type: "success",
       content: <div>Your post was pinned to your profile.</div>,
@@ -57,7 +56,6 @@ export const useAntdMessageHandler = () => {
   };
 
   const unpinnedMessage = () => {
-    console.log("here is working rn unpinned -");
     messageApi.success({
       type: "success",
       content: <div>Your post was unpinned from your profile</div>,
@@ -71,7 +69,6 @@ export const useAntdMessageHandler = () => {
     duration,
     isBookmarkAddedMessage
   ) => {
-    console.log("Şu an burası çalışıyor custom message için !!!");
     messageApi.success({
       type: "success",
       content: (

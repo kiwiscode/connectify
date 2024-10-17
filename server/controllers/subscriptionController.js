@@ -33,7 +33,8 @@ const handleThisUserPhoneVerified = async (req, res) => {
       "Phone number (current) =>",
       isPhoneNumberExist
     );
-  } catch {
+  } catch (error) {
+    console.error("Error =>", error);
     res.status(500).json({ error: "User not found !" });
   }
 };

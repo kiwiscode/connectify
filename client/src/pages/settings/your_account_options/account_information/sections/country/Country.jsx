@@ -52,7 +52,7 @@ function Country() {
         setUser(response.data.user);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 

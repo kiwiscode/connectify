@@ -89,7 +89,6 @@ function DownloadAnArchiveOfYourDataMain() {
         }
       )
       .then((response) => {
-        console.log("Response =>", response);
         if (response.status === 201) {
           setemailVerificationCodeStatus(201);
           setemailVerificationCode(response.data.code);
@@ -102,7 +101,7 @@ function DownloadAnArchiveOfYourDataMain() {
         }, 300);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
   const [confirmEmailVerificationCode, setconfirmEmailVerificationCode] =
@@ -155,7 +154,7 @@ function DownloadAnArchiveOfYourDataMain() {
         setUser(response.data.user);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 

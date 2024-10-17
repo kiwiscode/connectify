@@ -47,7 +47,7 @@ function RepostAction({
         refreshPosts();
       })
       .catch((error) => {
-        console.log(error);
+        console.error("Error =>", error);
       });
   };
 
@@ -66,7 +66,7 @@ function RepostAction({
         refreshPosts();
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 

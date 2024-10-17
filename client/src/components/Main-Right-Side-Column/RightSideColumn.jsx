@@ -163,7 +163,7 @@ function RightSideColumn({
         setFilteredSearchResult(filteredUsers);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   }, [searchTerm]);
 
@@ -187,35 +187,6 @@ function RightSideColumn({
   };
   // sticky position implementation finish to check
 
-  // const getUser = async () => {
-  //   try {
-  //     const url = `${API_URL}/auth/login-success`;
-  //     const { data } = await axios.get(url, { withCredentials: true });
-  //     updateUser(data.user);
-
-  //     localStorage.setItem("userInfo", JSON.stringify(data.user));
-  //     localStorage.setItem("token", data.token);
-  //     axios
-  //       .get(`${API_URL}/get-most-followed-3-user`, {
-  //         headers: {
-  //           Authorization: `Bearer ${getToken()}`,
-  //         },
-  //       })
-  //       .then((response) => {
-  //         setFirst3User(response.data.first3User);
-  //       })
-  //       .catch((error) => {
-  //         console.log("Error =>", error);
-  //       });
-  //   } catch (err) {
-  //     console.error("Error =>", err);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getUser();
-  // }, []);
-
   useEffect(() => {
     axios
       .get(`${API_URL}/get-most-followed-3-user`, {
@@ -227,7 +198,7 @@ function RightSideColumn({
         setFirst3User(response.data.first3User);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   }, []);
 
@@ -242,7 +213,7 @@ function RightSideColumn({
         setUser(response.data.user);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -285,7 +256,7 @@ function RightSideColumn({
         refreshActiveUser();
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   };
 
@@ -308,7 +279,7 @@ function RightSideColumn({
         refreshActiveUser();
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -335,9 +306,6 @@ function RightSideColumn({
       setTabIndex(1);
       setindividualSubOptionTab(2);
       setorganizationSubPremiumRole("Organization");
-      console.log("Selected option =>", selectedOption);
-      console.log("Selected helper option =>", helperStateSelectedOption);
-      console.log("Tab index =>", tabIndex);
       setisIndividualSubscriptionClicked(false);
       setshowSubscriptionModal(true);
       setisOrganizationSubscriptionClicked(true);
@@ -599,7 +567,6 @@ function RightSideColumn({
     setpremiumType("Premium+");
     setplanType("Annual Plan");
     setplanPrice("€199.92");
-    console.log("Aktif burası !");
     if (!premium_sign_up_page_active) {
       if (
         tabIndex === 2 &&
@@ -803,10 +770,6 @@ function RightSideColumn({
         );
       }
     } else {
-      console.log("Pr. price =>", premium_sign_up_plan_page_plan_price);
-      console.log("Pl. type =>", premium_sign_up_plan_page_plan_type);
-      console.log("P. type =>", premium_sign_up_page_premium_type);
-      console.log("P. role =>", premium_sign_up_page_premium_role);
       setplanPrice(premium_sign_up_plan_page_plan_price);
       setplanType(premium_sign_up_plan_page_plan_type);
       setpremiumType(premium_sign_up_page_premium_type);
@@ -859,7 +822,6 @@ function RightSideColumn({
       })
       .catch((error) => {
         const { status } = error.response;
-        console.log("Status =>", status);
         sethelperStateSelectedOption(selectedOption);
         setselectedOption(helperStateSelectedOption);
         setphoneVerified(status);
@@ -941,12 +903,6 @@ function RightSideColumn({
   const handleCheckoutStripeApiOrganizationBasic = () => {
     setCheckoutProcessLoadingBar(true);
 
-    console.log(
-      organizationSubPremiumRole,
-      organizationSubPremiumType,
-      organizationSubPlanTypeBasic,
-      organizationSubPlanPriceBasic
-    );
     axios
       .post(
         `${API_URL}/organization-basic-subscribe-create-checkout-session`,
@@ -964,7 +920,6 @@ function RightSideColumn({
         }
       )
       .then((response) => {
-        console.log("Res =>", response);
         setTimeout(() => {
           if (response.data.url) {
             window.location.href = response.data.url;
@@ -972,28 +927,12 @@ function RightSideColumn({
         }, 1000);
       })
       .catch((err) => {
-        console.log("Error =>", err);
+        console.error("Error =>", err);
         setCheckoutProcessLoadingBar(false);
       });
   };
 
   const handleFullAccessOrganizationPlanModal = () => {
-    console.log(
-      "Apply for Full Access premium role =>",
-      organizationSubPremiumRole
-    );
-    console.log(
-      "Apply for Full Access premium type =>",
-      organizationSubPremiumType
-    );
-    console.log(
-      "Apply for Full Access plan type =>",
-      organizationSubPlanTypeFullAccess
-    );
-    console.log(
-      "Apply for Full Access plan price =>",
-      organizationSubPlanPriceFullAccess
-    );
     setSubTabIndexFromOrganizationSelect(subTabIndexFromOrganizationSelect + 1);
   };
 
@@ -1043,7 +982,6 @@ function RightSideColumn({
         }
       )
       .then((response) => {
-        console.log("Response =>", response);
         setTimeout(() => {
           if (response.data.url) {
             window.location.href = response.data.url;
@@ -1060,15 +998,6 @@ function RightSideColumn({
     organizationWebSite,
     organizationType
   ) => {
-    console.log(
-      organizationName,
-      yourFullName,
-      organizationEmailAdress,
-      organizationWebSite,
-      organizationType,
-      emailRegex.test(organizationEmailAdress)
-    );
-
     if (!organizationName) {
       setOrganizationNameFilled(true);
     }
@@ -1153,13 +1082,6 @@ function RightSideColumn({
   const [verifyPhoneCode, setrandomCode] = useState(null);
 
   const handleCheckIsPasswordInputCorrect = () => {
-    console.log(
-      "After check is password input correct function handleCheckIsPasswordInputCorrect =>",
-      premium_sign_up_plan_page_plan_price,
-      premium_sign_up_plan_page_plan_type,
-      premium_sign_up_page_premium_type,
-      premium_sign_up_page_premium_role
-    );
     if (premium_sign_up_page_active) {
       setpremiumInfo((prevPremiumInfo) => {
         return {
@@ -1262,8 +1184,6 @@ function RightSideColumn({
     setshowgeneratedQrCodeModal(true);
     setshowVerifyingCodeModal(false);
 
-    console.log("inside function verify phone code !", verifyPhoneCode);
-
     axios
       .post(
         `${API_URL}/premium-info-verify-phone-number-individual-subscription`,
@@ -1337,26 +1257,16 @@ function RightSideColumn({
         setTimeout(() => {
           handleIndividualSubscriptionCheckoutStripeApi();
         }, 3000);
-        console.log("Response =>", response);
-        console.log("Response =>", showSubscriptionProcessNotCompletedModal);
       })
       .catch((error) => {
-        console.error(error);
+        console.error("error:", error);
         const { status } = error.response;
 
         if (status === 400 || status === 500) {
-          console.log("Show error screen !");
-
           setTimeout(() => {
             setShowSubscriptionProcessNotCompletedModal(true);
-            console.log(
-              "Response =>",
-              showSubscriptionProcessNotCompletedModal
-            );
           }, 3000);
         }
-        console.error("Error =>", error);
-        console.error("Error status =>", status);
       });
   };
 
@@ -1417,7 +1327,6 @@ function RightSideColumn({
   const path = location.pathname;
 
   function sendDataToParentPremiumSignUpPage() {
-    console.log("Hello world hehe");
     sendModalStatuForPremiumSignUpPage(true);
   }
 
@@ -1446,7 +1355,6 @@ function RightSideColumn({
       {premium_sign_up_page_active && !organizationSubscribeOptionClicked && (
         <Button
           onClick={() => {
-            console.log("Hello world");
             setTabIndex(2);
             setSubLoading(true);
             setTimeout(() => {
@@ -2754,7 +2662,7 @@ function RightSideColumn({
                                           : "rgb(83, 100, 113)",
                                     }}
                                   >
-                                    X Pro
+                                    C Pro
                                   </span>
                                   <svg
                                     width={20}
@@ -4093,7 +4001,7 @@ function RightSideColumn({
                                       lineHeight: font15.lineHeight,
                                     }}
                                   >
-                                    X Pro
+                                    C Pro
                                   </span>
                                   <svg
                                     width={20}
@@ -5355,7 +5263,7 @@ function RightSideColumn({
                                       lineHeight: font15.lineHeight,
                                     }}
                                   >
-                                    X Pro
+                                    C Pro
                                   </span>
                                   <svg
                                     width={20}
@@ -11095,7 +11003,7 @@ function RightSideColumn({
                                             : "rgb(83, 100, 113)",
                                       }}
                                     >
-                                      X Pro
+                                      C Pro
                                     </span>
                                     <svg
                                       width={20}
@@ -12434,7 +12342,7 @@ function RightSideColumn({
                                         lineHeight: font15.lineHeight,
                                       }}
                                     >
-                                      X Pro
+                                      C Pro
                                     </span>
                                     <svg
                                       width={20}
@@ -13697,7 +13605,7 @@ function RightSideColumn({
                                         lineHeight: font15.lineHeight,
                                       }}
                                     >
-                                      X Pro
+                                      C Pro
                                     </span>
                                     <svg
                                       width={20}

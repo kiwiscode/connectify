@@ -44,7 +44,6 @@ const LikeAction = ({
   }, []);
 
   const handlePostLike = (postId) => {
-    console.log("Post id =>", postId);
     setShouldAnimate(!shouldAnimate);
     axios
       .post(
@@ -66,7 +65,7 @@ const LikeAction = ({
         refreshPosts();
       })
       .catch((error) => {
-        console.log("Error message =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -90,7 +89,7 @@ const LikeAction = ({
         refreshPosts();
       })
       .catch((err) => {
-        console.log("Error =>", err);
+        console.error("Error =>", err);
       });
   };
 

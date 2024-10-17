@@ -34,7 +34,6 @@ function AudienceAndTagging() {
         }
       );
       if (response) {
-        console.log("Response =>", response);
         setShow(false);
         updateUser({ isPrivate: response.data.user.isPrivate });
       }
@@ -54,8 +53,6 @@ function AudienceAndTagging() {
         }
       );
       if (response) {
-        console.log("Response =>", response);
-
         updateUser({ isVideosProtected: response.data.user.isVideosProtected });
       }
     } catch (error) {
@@ -268,7 +265,7 @@ function AudienceAndTagging() {
               lineHeight: font13.lineHeight,
             }}
           >
-            Manage what information you allow other people on X to see.
+            Manage what information you allow other people on C to see.
           </div>
           <div
             className="mt-3"

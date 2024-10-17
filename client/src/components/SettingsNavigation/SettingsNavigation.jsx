@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { startTransition, useContext, useState } from "react";
 import useWindowDimensions from "../../hooks/getWindowDimensions";
 import { ThemeContext } from "../../context/ThemeContext";
 import { NavigationHistoryContext } from "../../context/NavigationHistoryContext";
@@ -599,7 +599,9 @@ function SettingsNavigation() {
             </div>
             <div
               onClick={() => {
-                navigate("/help_connectify");
+                startTransition(() => {
+                  navigate("/help_connectify");
+                });
               }}
               className="has-children chirp-regular-font"
               style={{

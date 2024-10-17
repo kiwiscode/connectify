@@ -31,7 +31,6 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
   const font15 = getFontSizeAndLineHeight15();
   const font13 = getFontSizeAndLineHeight13();
   const font11 = getFontSizeAndLineHeight11();
-  console.log("Width =>", width);
 
   const [selectedPremiumOption, setSelectedPremiumOption] = useState(
     "Annual plan basic-option"
@@ -1748,7 +1747,7 @@ function PremiumSignupPage({ sendToAppPlanPrice }) {
                             marginLeft: "5px",
                           }}
                         >
-                          X Pro, Analytics, Media Studio
+                          C Pro, Analytics, Media Studio
                         </div>
                       </div>
                       <div

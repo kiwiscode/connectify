@@ -46,7 +46,7 @@ const handleProfile = (req, res) => {
       res.status(200).json({ posts: user.posts, user, message: "success" });
     })
     .catch((err) => {
-      console.log("Error =>", err);
+      console.error("Error =>", err);
       res.status(500).json({
         errorMessage: "An error occured while fetching the data",
       });
@@ -55,8 +55,6 @@ const handleProfile = (req, res) => {
 
 const handleShowSpesificProfile = (req, res) => {
   const profileId = req.params.id;
-
-  console.log("profile id:", profileId);
 
   User.findById(profileId)
     // start to check
@@ -196,7 +194,6 @@ const handleProfilePicture = (req, res) => {
             format: "jpg",
           })
           .then((imageInfo) => {
-            console.log("AFTER UPLOADING THE IMAGE =>", imageInfo);
             user.imageUrl = imageInfo.url;
             user.save();
 
@@ -217,7 +214,6 @@ const handleProfileCoverImage = (req, res) => {
   const { userId } = req.user;
   const { profileCoverImage } = req.body;
 
-  console.log("profile cover img:", profileCoverImage.slice(0, 25));
   User.findById(userId)
     .populate()
     .then((user) => {
@@ -236,14 +232,13 @@ const handleProfileCoverImage = (req, res) => {
             format: "jpg",
           })
           .then((imageInfo) => {
-            console.log("AFTER UPLOADING THE IMAGE =>", imageInfo);
             user.profileCoverImage = imageInfo.url;
             user.save();
 
             res.status(200).json({ imageInfo: imageInfo });
           })
           .catch((error) => {
-            console.error("error:", error);
+            console.error("Error =>", error);
             res.status(501).json({ errorMessage: "Error occured!" });
           });
       } else {
@@ -278,7 +273,6 @@ const getFollowing = (req, res) => {
     .populate("following")
     .populate("followers")
     .then((user) => {
-      console.log("User following =>", user.following.length);
       res.status(200).json({ following: user.following, user: user });
     })
     .catch(() => {
@@ -297,16 +291,10 @@ const handlecreateChatSpesificUserInformations = (req, res) => {
     .populate("messages")
 
     .then((user) => {
-      console.log(
-        "User ready to get current message room id =>",
-        user.username,
-        user.messages
-      );
-
       res.status(200).json({ messages: user.messages });
     })
     .catch((error) => {
-      console.log("Error =>", error);
+      console.error("Error =>", error);
     });
 };
 
@@ -317,7 +305,6 @@ async function handleChangePassword(req, res) {
     const user = await User.findById(userId);
 
     const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
-    console.log("is password match =>", isPasswordMatch);
     const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
     if (!regex.test(newPassword) || newPassword.length < 6) {
       res.status(402).json({
@@ -351,7 +338,6 @@ async function handleDeactivatePasswordConfirmation(req, res) {
       deactivatePassword,
       user.password
     );
-    console.log("is password match =>", isPasswordMatch);
     if (!isPasswordMatch) {
       return res.status(401).json({ message: "Incorrect password." });
     }
@@ -365,7 +351,6 @@ async function handleDeactivatePasswordConfirmation(req, res) {
 
 const handleDeactivateAccount = (req, res) => {
   const { userId } = req.user;
-  console.log("User id ready to deactivate his account =>", userId);
 
   User.findById(userId)
     .then((user) => {
@@ -389,8 +374,6 @@ const handleDeactivateAccount = (req, res) => {
             user.messages.forEach((message) => {
               message.members.forEach((eachMember) => {
                 if (eachMember._id.toString() === userId) {
-                  console.log("Room =>", message);
-
                   if (user._id.toString() !== userId) {
                     message.deactivatedMember = true;
                     user.save();
@@ -405,8 +388,8 @@ const handleDeactivateAccount = (req, res) => {
           console.error("Error:", error.message);
         });
     })
-    .catch(() => {
-      console.log("Error");
+    .catch((error) => {
+      console.error("Error =>", error);
     });
 };
 
@@ -423,8 +406,6 @@ const editProfile = async (req, res) => {
   const { userId } = req.params;
   try {
     const user = await User.findById(userId);
-
-    console.log("body:", req.body);
 
     if (!user) {
       return res.status(404).json({ message: "User not found." });

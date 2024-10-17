@@ -76,10 +76,10 @@ function FollowingDetailPage() {
             setactiveUserFollowers(response.data.user.followers);
           })
           .catch((error) => {
-            console.log("Error =>", error);
+            console.error("Error =>", error);
           });
       } catch (error) {
-        console.error("error:", error);
+        console.error("Error =>", error);
       }
     };
     getActiveUser();
@@ -117,7 +117,7 @@ function FollowingDetailPage() {
         setFollowing(response.data.following);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -184,10 +184,9 @@ function FollowingDetailPage() {
         }
       );
 
-      console.log("received follow requests:", result);
       setRequests(result.data.receivedFollowRequests);
     } catch (error) {
-      console.error("error:", error);
+      console.error("Error =>", error);
     }
   };
 
@@ -956,7 +955,7 @@ function FollowingDetailPage() {
                     getFollowing();
                   })
                   .catch((error) => {
-                    console.log(error);
+                    console.error("Error =>", error);
                   });
               };
 
@@ -980,7 +979,7 @@ function FollowingDetailPage() {
                     handleClose();
                   })
                   .catch((error) => {
-                    console.log("Error =>", error);
+                    console.error("Error =>", error);
                   });
               };
 

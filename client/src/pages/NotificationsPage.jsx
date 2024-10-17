@@ -55,8 +55,6 @@ function NotificationsPage() {
     getAllNotifications();
   }, []);
 
-  console.log("All notifications =>", allNotifications);
-
   const months = [
     "Jan",
     "Feb",
@@ -80,7 +78,6 @@ function NotificationsPage() {
 
   const [dataFromCommentModal, setDataFromCommentModal] = useState("");
   function handleDataFromCommentModal(data) {
-    console.log("Data =>", data);
     setDataFromCommentModal(data);
   }
   const { isPostModalVisible } = useContext(ModalVisibilityContext);
@@ -109,7 +106,6 @@ function NotificationsPage() {
     useState(null);
 
   function handleDataFromTopNavigationComponentOpenedStatus(data) {
-    console.log("Data =>", data);
     setDataFromTopNavigationComponent(data);
   }
 

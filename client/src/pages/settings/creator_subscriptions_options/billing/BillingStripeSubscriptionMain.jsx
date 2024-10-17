@@ -50,9 +50,8 @@ function BillingStripeSubscriptionMain() {
       setTimeout(() => {
         navigate("/home");
       }, 350);
-      console.log("Response =>", response);
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error =>", error);
     }
   };
 
@@ -514,7 +513,7 @@ function BillingStripeSubscriptionMain() {
                   <span>Paid</span>
                 </span>
                 <span className="very-dark-gray-light-theme-text-variant-1 chirp-regular-font">
-                  Twitter Blue
+                  Connectify Blue
                 </span>
               </div>
             </div>

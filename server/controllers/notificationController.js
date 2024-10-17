@@ -95,7 +95,7 @@ const getAllNotifications = async (req, res) => {
     );
     res.json({ allNotifications: sortedNotifications });
   } catch (error) {
-    console.log("Error =>", error);
+    console.error("Error =>", error);
     res.status(500).json({
       success: false,
       message: "Error occured while fetching all notifications!",

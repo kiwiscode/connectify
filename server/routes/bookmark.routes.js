@@ -41,10 +41,6 @@ router.post("/bookmarks/add", authenticateToken, async (req, res) => {
               : postId,
           })
             .then((commentToAddBookmark) => {
-              console.log(
-                "Response found for this comment =>",
-                commentToAddBookmark
-              );
               commentToAddBookmark[0].bookmarks.unshift(
                 bookmark._id.toString()
               );
@@ -56,38 +52,30 @@ router.post("/bookmarks/add", authenticateToken, async (req, res) => {
         }
         // eğer bookmark eklenen post comment ise comment collectionundaki referencinada bookmarksı ekle
 
-        console.log("Bookmark created:", bookmark);
         if (!post.isReposted && !post.reposted.length) {
-          console.log("Burası çalışıyor 0!");
           post.bookmarks.unshift(bookmark._id.toString());
         } else if (post.isReposted) {
-          console.log("Burası çalışıyor 1!");
           post.bookmarks.unshift(bookmark._id.toString());
           // original post => find
           const originalPostId = post.repostedFromThisOriginalPost[0]._id;
           Post.findOne({ _id: originalPostId })
             .then((originalPost) => {
               if (originalPost) {
-                console.log("Original post before update:", originalPost);
                 originalPost.bookmarks.unshift(bookmark._id.toString());
                 originalPost.save();
-                console.log("Original post after update:", originalPost);
               }
             })
             .catch(() => {
               res.status(404).json("Original post not found!");
             });
         } else if (!post.isReposted && post.reposted.length) {
-          console.log("Burası çalışıyor 2!");
           post.bookmarks.unshift(bookmark._id.toString());
           // reference post => find
           Post.findOne({ repostedFromThisOriginalPost: postId })
             .then((referencePost) => {
               if (referencePost) {
-                console.log("referencePost post before update:", referencePost);
                 referencePost.bookmarks.unshift(bookmark._id.toString());
                 referencePost.save();
-                console.log("referencePost post after update:", referencePost);
               }
             })
             .catch(() => {
@@ -117,9 +105,6 @@ router.delete("/bookmarks/:bookmarkId", authenticateToken, async (req, res) => {
 
     const post = await Post.findById(bookmarkId);
 
-    console.log("Post =>", post);
-    console.log("Bookmark id =>", bookmarkId);
-
     const bookmark = await Bookmark.findOneAndDelete({
       bookmarkedPost: post.isReposted
         ? post.repostedFromThisOriginalPost[0]._id
@@ -127,16 +112,11 @@ router.delete("/bookmarks/:bookmarkId", authenticateToken, async (req, res) => {
       bookmarker: userId,
     });
 
-    console.log("Bookmark found !!", bookmark);
-
     if (!bookmark) {
       return res.status(404).json({ error: "Bookmark not found" });
     }
 
     if (post.isComment) {
-      console.log(
-        "Post is comment ! delete this bookmark also from the comment inside comment collection"
-      );
       Comment.find({
         postId: post.isReposted
           ? post.repostedFromThisOriginalPost[0]._id.toString()
@@ -162,13 +142,11 @@ router.delete("/bookmarks/:bookmarkId", authenticateToken, async (req, res) => {
 
     if (post) {
       if (!post.isReposted && !post.reposted.length) {
-        console.log("Burası çalışıyor 0");
         post.bookmarks = post.bookmarks.filter((eachBookmark) => {
           return eachBookmark.toString() !== bookmark._id.toString();
         });
         post.save();
       } else if (post.isReposted) {
-        console.log("Burası çalışıyor 1");
         post.bookmarks = post.bookmarks.filter((eachBookmark) => {
           return eachBookmark.toString() !== bookmark._id.toString();
         });
@@ -189,7 +167,6 @@ router.delete("/bookmarks/:bookmarkId", authenticateToken, async (req, res) => {
           });
         post.save();
       } else if (!post.isReposted && post.reposted.length) {
-        console.log("Burası çalışıyor 2");
         post.bookmarks = post.bookmarks.filter((eachBookmark) => {
           return eachBookmark.toString() !== bookmark._id.toString();
         });
@@ -213,7 +190,6 @@ router.delete("/bookmarks/:bookmarkId", authenticateToken, async (req, res) => {
     }
 
     if (user) {
-      console.log("User exists with bookmarks!", user.bookmarks);
       user.bookmarks = user.bookmarks.filter((eachBookmark) => {
         return eachBookmark.toString() !== bookmark._id.toString();
       });
@@ -272,9 +248,6 @@ router.delete("/delete-all-bookmarks", authenticateToken, async (req, res) => {
     const deletedBookmarkIds = bookmarksToDelete.map((eachBookmarkId) => {
       return eachBookmarkId._id.toString();
     });
-
-    console.log("Bookmarks to delete =>", bookmarksToDelete);
-    console.log("Each bookmark id =>", deletedBookmarkIds);
 
     const deletedBookmarks = await Bookmark.deleteMany({ bookmarker: userId });
 

@@ -144,7 +144,7 @@ function About() {
             paddingRight: width <= 500 ? "32px" : "12px",
           }}
         >
-          Check out other places for helpful information to learn more about X
+          Check out other places for helpful information to learn more about C
           products and services.
         </div>
         <div
@@ -186,6 +186,9 @@ function About() {
               paddingRight: width <= 500 ? "21px" : "0px",
               padding: "12px 0px",
               margin: "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Privacy center</div>
@@ -247,6 +250,9 @@ function About() {
               paddingRight: width <= 500 ? "21px" : "0px",
               padding: "12px 0px",
               margin: "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Ads info</div>
@@ -272,6 +278,9 @@ function About() {
               paddingRight: width <= 500 ? "21px" : "0px",
               padding: "12px 0px",
               margin: "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Cookie Policy</div>
@@ -297,6 +306,9 @@ function About() {
               paddingLeft: width <= 500 ? "21px" : "0px",
               paddingRight: width <= 500 ? "21px" : "0px",
               margin: "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Imprint</div>
@@ -322,6 +334,9 @@ function About() {
               paddingLeft: width <= 500 ? "21px" : "0px",
               paddingRight: width <= 500 ? "21px" : "0px",
               margin: "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>MStV Transparenzangaben</div>
@@ -347,6 +362,9 @@ function About() {
               paddingLeft: width <= 500 ? "21px" : "0px",
               paddingRight: width <= 500 ? "21px" : "0px",
               margin: "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Privacy Policy</div>
@@ -372,6 +390,9 @@ function About() {
               paddingLeft: width <= 500 ? "21px" : "0px",
               paddingRight: width <= 500 ? "21px" : "0px",
               margin: "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Terms of Service</div>
@@ -433,6 +454,9 @@ function About() {
               paddingLeft: width <= 500 ? "21px" : "0px",
               paddingRight: width <= 500 ? "21px" : "0px",
               margin: "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>About</div>
@@ -458,6 +482,9 @@ function About() {
               paddingLeft: width <= 500 ? "21px" : "0px",
               paddingRight: width <= 500 ? "21px" : "0px",
               margin: "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Accessibility</div>
@@ -483,6 +510,9 @@ function About() {
               margin: "0px",
               paddingLeft: width <= 500 ? "21px" : "0px",
               paddingRight: width <= 500 ? "21px" : "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Imprint</div>
@@ -508,6 +538,9 @@ function About() {
               margin: "0px",
               paddingLeft: width <= 500 ? "21px" : "0px",
               paddingRight: width <= 500 ? "21px" : "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Advertising</div>
@@ -533,6 +566,9 @@ function About() {
               margin: "0px",
               paddingLeft: width <= 500 ? "21px" : "0px",
               paddingRight: width <= 500 ? "21px" : "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Privacy Policy</div>
@@ -558,6 +594,9 @@ function About() {
               margin: "0px",
               paddingLeft: width <= 500 ? "21px" : "0px",
               paddingRight: width <= 500 ? "21px" : "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Blog</div>
@@ -583,6 +622,9 @@ function About() {
               margin: "0px",
               paddingLeft: width <= 500 ? "21px" : "0px",
               paddingRight: width <= 500 ? "21px" : "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Brand Resources</div>
@@ -608,6 +650,9 @@ function About() {
               margin: "0px",
               paddingLeft: width <= 500 ? "21px" : "0px",
               paddingRight: width <= 500 ? "21px" : "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Careers</div>
@@ -633,6 +678,9 @@ function About() {
               margin: "0px",
               paddingLeft: width <= 500 ? "21px" : "0px",
               paddingRight: width <= 500 ? "21px" : "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Developers</div>
@@ -658,6 +706,9 @@ function About() {
               margin: "0px",
               paddingLeft: width <= 500 ? "21px" : "0px",
               paddingRight: width <= 500 ? "21px" : "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Directory</div>
@@ -683,6 +734,9 @@ function About() {
               margin: "0px",
               paddingLeft: width <= 500 ? "21px" : "0px",
               paddingRight: width <= 500 ? "21px" : "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Download the C app</div>
@@ -708,6 +762,9 @@ function About() {
               margin: "0px",
               paddingLeft: width <= 500 ? "21px" : "0px",
               paddingRight: width <= 500 ? "21px" : "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Help Center</div>
@@ -733,6 +790,9 @@ function About() {
               margin: "0px",
               paddingLeft: width <= 500 ? "21px" : "0px",
               paddingRight: width <= 500 ? "21px" : "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Marketing</div>
@@ -758,6 +818,9 @@ function About() {
               margin: "0px",
               paddingLeft: width <= 500 ? "21px" : "0px",
               paddingRight: width <= 500 ? "21px" : "0px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>C for Business</div>

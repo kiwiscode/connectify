@@ -38,7 +38,7 @@ function CreatorSubscriptionMain() {
         setUser(response.data.user);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -483,7 +483,6 @@ function CreatorSubscriptionMain() {
                       setShowSubscriptions(true);
                     }, 300);
                   } else {
-                    console.log("User =>", user);
                     showCustomMessage(
                       "You don’t have any Subscriptions yet",
                       6

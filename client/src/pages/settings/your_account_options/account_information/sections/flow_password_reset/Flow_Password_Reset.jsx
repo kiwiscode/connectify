@@ -82,12 +82,10 @@ function Flow_Password_Reset() {
     axios
       .post(`${API_URL}/check-find-account`, { findConnectifyAccount })
       .then((response) => {
-        console.log("Response from server =>", response);
         if (
           response.status === 201 &&
           response.data.message === "The user entered an email address."
         ) {
-          console.log("User entered an email, show confirm username tab.");
           setTabLoading(true);
           setForgotPasswordInProcessUser(response.data.user);
           setTimeout(() => {
@@ -98,9 +96,6 @@ function Flow_Password_Reset() {
           response.status === 201 &&
           response.data.message === "The user entered an username."
         ) {
-          console.log(
-            "User entered an username, show send email verification code direct."
-          );
           setTabLoading(true);
           setForgotPasswordInProcessUser(response.data.user);
           setTimeout(() => {
@@ -110,7 +105,7 @@ function Flow_Password_Reset() {
         }
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
         showCustomMessage("Sorry, we could not find your account.", 4);
       });
   };
@@ -156,7 +151,7 @@ function Flow_Password_Reset() {
         }, 500);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -221,8 +216,6 @@ function Flow_Password_Reset() {
   const [differentReason, setDifferentReason] = useState(false);
 
   const handleChangePassword = () => {
-    console.log("Tab loading after change password click =>", tabLoading);
-    console.log("Tab index after click =>", tabIndex);
     if (validPassword) {
       axios
         .post(
@@ -247,7 +240,7 @@ function Flow_Password_Reset() {
           }
         })
         .catch((error) => {
-          console.log("Error =>", error);
+          console.error("Error =>", error);
         });
     }
   };
@@ -264,7 +257,6 @@ function Flow_Password_Reset() {
     /^(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})$/;
 
   const handleLoginAfterForgotPasswordProcess = () => {
-    console.log("Trying to log in !");
     setTabLoading(true);
     axios
       .post(`${API_URL}/login-after-forgot-password-process`, {
@@ -279,22 +271,18 @@ function Flow_Password_Reset() {
 
         updateUser(user);
 
-        console.log("Response =>", response);
-
         setTimeout(() => {
           navigate("/home");
         }, 500);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
   const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
 
   useEffect(() => {
-    console.log("First input active mode =>", firstInputActive);
-    console.log("Second input active mode =>", secondInputActive);
     if (!regex.test(newPassword) && newPassword.length) {
       seterrorMessageForFirstInput(
         "Password needs to have at least 8 chars and must contain at least one number, one lowercase and one uppercase letter."

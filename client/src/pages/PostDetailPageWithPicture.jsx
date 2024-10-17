@@ -80,8 +80,6 @@ function PostDetailPageWithPicture() {
     []
   );
 
-  console.log("Commented for this post check =>", commentedForThisPost);
-
   const navigate = useNavigate();
 
   const [deactivatedUser, setdeactivatedUser] = useState(false);
@@ -102,7 +100,7 @@ function PostDetailPageWithPicture() {
         setdetailedPost(detailedPost);
       })
       .catch((error) => {
-        console.log(error);
+        console.error("Error =>", error);
       });
   };
 
@@ -142,10 +140,9 @@ function PostDetailPageWithPicture() {
           setdetailedPost(commentedForThisPost);
         }
         setdetailedPost(detailedPost);
-        console.log(response);
       })
       .catch((error) => {
-        console.log(error);
+        console.error("Error =>", error);
       });
   }, [postId]);
 
@@ -226,8 +223,6 @@ function PostDetailPageWithPicture() {
   const font17 = getFontSizeAndLineHeight17();
   const font15 = getFontSizeAndLineHeight15();
   const font13 = getFontSizeAndLineHeight13();
-
-  console.log("hello world from post detail with image picture !");
 
   const [hideDetails, setHideDetails] = useState(false);
 

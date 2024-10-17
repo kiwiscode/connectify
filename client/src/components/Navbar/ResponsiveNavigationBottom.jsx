@@ -76,7 +76,6 @@ function ResponsiveNavigationBarBottom({
       const unreadNotifications = await response.data.unReadNotifications;
 
       setUnReadNotifications(unreadNotifications);
-      console.log("Response =>", response);
     } catch (error) {
       console.error(
         "An error occurred while fetching active user info:",
@@ -108,7 +107,6 @@ function ResponsiveNavigationBarBottom({
       if (response) {
         getActiveUserInfo();
       }
-      console.log("Response from db =>", response);
     } catch (error) {
       console.error(
         "An error occurred while changing active user notification readed status:",
@@ -134,7 +132,6 @@ function ResponsiveNavigationBarBottom({
       );
 
       setNumberOfUnreadMessages(result.data.length);
-      console.log("result for unread messages:", result);
     } catch (error) {
       console.error("error:", error);
     }

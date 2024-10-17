@@ -71,6 +71,21 @@ const SecurityMain = lazy(() =>
     "./pages/settings/security_and_account_access/sections/security/main/SecurityMain"
   )
 );
+const AppsAndSessionsMain = lazy(() =>
+  import(
+    "./pages/settings/security_and_account_access/sections/apps_and_sessions/main/AppsAndSessionsMain"
+  )
+);
+const ConnectedAccountsMain = lazy(() =>
+  import(
+    "./pages/settings/security_and_account_access/sections/connected_accounts/main/ConnectedAccountsMain"
+  )
+);
+const DelegateMain = lazy(() =>
+  import(
+    "./pages/settings/security_and_account_access/sections/delegate/main/DelegateMain"
+  )
+);
 const PrivacyAndSafetyMain = lazy(() =>
   import("./pages/settings/privacy_and_safety/main/PrivacyAndSafetyMain")
 );
@@ -290,14 +305,12 @@ function App() {
 
   const [isPostShared, setIsPostShared] = useState(false);
   const handleShareNewPost = () => {
-    console.log("Post shared =>", isPostShared);
     setTimeout(() => {
       setIsPostShared(true);
     }, 200);
   };
 
   const handlePostSharingIsDone = () => {
-    console.log("Post shared =>", isPostShared);
     setIsPostShared(false);
   };
 
@@ -316,7 +329,6 @@ function App() {
     if (path == "/i/verified-orgs-signup") {
       setOpenVerifiedOrganizationSubscriptionTypedModal(true);
     } else if (path == "/i/flow/subscription_eligibility_check") {
-      console.log("Open individual subscription modal ...!");
       setopenIndividualEligibilityVerifyNumberScreen(true);
     } else {
       setOpenVerifiedOrganizationSubscriptionTypedModal(false);
@@ -333,8 +345,6 @@ function App() {
   const handleReceiveBasicIndividualPremiumDetailFromChildPremiumSignUpPage = (
     data
   ) => {
-    console.log("Data received about individual subscription detail:", data);
-
     setPremiumInfo((prevPremiumInfo) => {
       return {
         ...prevPremiumInfo,
@@ -345,7 +355,6 @@ function App() {
       };
     });
   };
-  console.log("Active theme =>", themeName);
 
   // left side bar gösterim ayarları
   const [showLeftSideNavbar, setShowLeftSideNavbar] = useState(null);
@@ -490,6 +499,9 @@ function App() {
     "/billing/stripe/subscription",
     "/settings/security_and_account_access",
     "/settings/security",
+    "/settings/apps_and_sessions",
+    "/settings/connected_accounts",
+    "/settings/delegate",
     "/settings/privacy_and_safety",
     "/settings/notifications",
     "/settings/accessibility_display_and_languages",
@@ -612,7 +624,7 @@ function App() {
                   <Route path={`/jobs`} element={<JobsPage />}></Route>
                   <Route
                     path={`/i/spaces/start`}
-                    element={<JobsPage />}
+                    element={<SpacesPage />}
                   ></Route>
                   <Route
                     path="/profile"
@@ -800,6 +812,7 @@ function App() {
                     path="/settings/manage_subscriptions"
                     element={<CreatorSubscriptionMain />}
                   ></Route>
+
                   <Route
                     path="/billing/stripe/subscription"
                     element={<BillingStripeSubscriptionMain />}
@@ -811,6 +824,18 @@ function App() {
                   <Route
                     path="/settings/security"
                     element={<SecurityMain />}
+                  ></Route>
+                  <Route
+                    path="/settings/apps_and_sessions"
+                    element={<AppsAndSessionsMain />}
+                  ></Route>
+                  <Route
+                    path="/settings/connected_accounts"
+                    element={<ConnectedAccountsMain />}
+                  ></Route>
+                  <Route
+                    path="/settings/delegate"
+                    element={<DelegateMain />}
                   ></Route>
                   <Route
                     path="/settings/privacy_and_safety"

@@ -99,12 +99,6 @@ module.exports = (io) => {
           );
 
           console.log("burası çalıştı ve bitti.");
-          // user1.messages = user1.messages.map((msg) =>
-          //   msg.room === roomName ? { ...msg, readed: true } : msg
-          // );
-          // user2.messages = user2.messages.map((msg) =>
-          //   msg.room === roomName ? { ...msg, readed: true } : msg
-          // );
         } else if (activeUser1) {
           // Sadece activeUser1 aktifse onun mesajlarını okundu olarak işaretle, activeUser2'nin mesajlarını okundu değil olarak tut
 
@@ -135,56 +129,7 @@ module.exports = (io) => {
           );
 
           console.log("burası çalıştı ve bitti 2. condition");
-
-          // user1.messages = user1.messages.map((msg) =>
-          //   msg.room === roomName ? { ...msg, readed: true } : msg
-          // );
-          // user2.messages = user2.messages.map((msg) =>
-          //   msg.room === roomName ? { ...msg, readed: false } : msg
-          // );
         }
-        // else if (activeUser2) {
-        //   // Sadece activeUser2 aktifse onun mesajlarını okundu olarak işaretle, activeUser1'in mesajlarını okundu değil olarak tut
-
-        //   await User.findByIdAndUpdate(
-        //     receiverId,
-        //     {
-        //       $set: {
-        //         "messages.$[msg].readed": false,
-        //       },
-        //     },
-        //     {
-        //       arrayFilters: [{ "msg.room": roomName }],
-        //       new: true,
-        //     }
-        //   );
-
-        //   await User.findByIdAndUpdate(
-        //     activeUserId,
-        //     {
-        //       $set: {
-        //         "messages.$[msg].readed": true,
-        //       },
-        //     },
-        //     {
-        //       arrayFilters: [{ "msg.room": roomName }],
-        //       new: true,
-        //     }
-        //   );
-
-        //   console.log("burası çalıştı ve bitti 3. condition");
-
-        //   // user1.messages = user1.messages.map((msg) =>
-        //   //   msg.room === roomName ? { ...msg, readed: false } : msg
-        //   // );
-        //   // user2.messages = user2.messages.map((msg) =>
-        //   //   msg.room === roomName ? { ...msg, readed: true } : msg
-        //   // );
-        // }
-
-        // Veritabanında güncelle
-        // await user1.save();
-        // await user2.save();
       }
     } catch (err) {
       console.error("Error updating message status:", err);

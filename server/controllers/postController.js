@@ -60,7 +60,7 @@ const handlePost = (req, res) => {
             });
           })
           .catch((error) => {
-            console.log(error);
+            console.error("Error =>", error);
           });
 
         // finish to check
@@ -78,7 +78,7 @@ const handlePost = (req, res) => {
             });
           })
           .catch((error) => {
-            console.log(error);
+            console.error("Error =>", error);
           });
       }
     })
@@ -127,13 +127,11 @@ const handleDeletePost = (req, res) => {
           const bookmarkIds = [];
 
           if (post.isReposted) {
-            console.log("if block is working 1");
             deleteConditions.push(
               post._id.toString(),
               post.repostedFromThisOriginalPost[0]?._id.toString()
             );
           } else if (post.reposted.length) {
-            console.log("else if block is working 2");
             Post.find({ repostedFromThisOriginalPost: post._id })
               .then((referencePost) => {
                 Post.deleteMany({
@@ -145,31 +143,21 @@ const handleDeletePost = (req, res) => {
                   },
                 })
                   .then((result) => {
-                    console.log("Delete conditions here =>", [
-                      post._id.toString(),
-                      referencePost[0]?._id.toString(),
-                    ]);
-
                     deleteConditions.push(
                       post._id.toString(),
                       referencePost[0]?._id.toString()
                     );
-
-                    console.log("Posts deleted successfully result =>", result);
                   })
                   .catch((error) => {
                     console.error("Error deleting posts:", error);
                   });
               })
               .catch((error) => {
-                console.log("error:", error);
+                console.error("Error =>", error);
               });
           } else {
-            console.log("else block is working 3");
             deleteConditions.push(post._id.toString());
           }
-
-          console.log("Delete Conditions ids:", bookmarkIds);
 
           // If the post is a comment
           if (post.isComment) {
@@ -246,14 +234,12 @@ const handleDeletePost = (req, res) => {
                   return eachBookmark._id.toString();
                 })
               );
-              console.log("Bookmark ids:", bookmarkIds);
             })
             .catch((error) => {
               console.error("Error finding users with bookmarks:", error);
             });
 
           setTimeout(() => {
-            console.log("now here is working update all the users");
             User.updateMany(
               {
                 $or: [
@@ -356,7 +342,7 @@ const handleDeletePost = (req, res) => {
             });
         })
         .catch((error) => {
-          console.log("Erro:", error);
+          console.error("Error =>", error);
         });
       return user.save().then(() => {
         res.status(200).json({
@@ -396,7 +382,6 @@ const handlePinPost = async (req, res) => {
     const referencePost = await Post.findOne({
       _id: post?.repostedFromThisOriginalPost[0]?._id,
     });
-    console.log("reference post:", referencePost);
 
     // Eğer reposted ise orijinal post id'sini kullan
     if (
@@ -417,8 +402,6 @@ const handlePinPost = async (req, res) => {
       pinnedPostId === originalPostId &&
       !post.reposted.length
     ) {
-      console.log("buradayız 1!!!");
-
       // Pinned postu kaldır
       user.pinnedPosts.splice(0, 1);
 
@@ -436,8 +419,6 @@ const handlePinPost = async (req, res) => {
       post.reposted.length &&
       referencePost?._id.toString() !== pinnedPostId
     ) {
-      console.log("buradayız 2 !!!");
-
       // Pinned postu kaldır
       user.pinnedPosts.splice(0, 1);
 
@@ -455,7 +436,6 @@ const handlePinPost = async (req, res) => {
       post.reposted.length &&
       referencePost._id.toString() === pinnedPostId
     ) {
-      console.log("buradayız 3 !!!");
       return res.status(200).json({
         message: "Post pinned successfully",
         pinnedPosts: user.pinnedPosts,

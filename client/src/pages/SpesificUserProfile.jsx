@@ -59,13 +59,10 @@ function SpesificUserProfile({ isNewPostShared }) {
   // use effect to grab current mouse click location start to check
 
   const [clickedPostBox, setclickedPostBox] = useState(null);
-  console.log("Clicked post outside of use effect =>", clickedPostBox);
   useEffect(() => {
     const getClickLocation = (e) => {
       const clickedElementParentClass = e.target.parentNode.className;
       const clickedElementClass = e.target.classList;
-      console.log("target details =>", clickedElementParentClass);
-      console.log("Target class list =>", e.target.classList);
       if (
         (clickedElementClass.contains("hover-reposted-text") &&
           clickedElementParentClass !== "post-circle-profile-svg-on-point" &&
@@ -92,10 +89,6 @@ function SpesificUserProfile({ isNewPostShared }) {
         clickedElementClass.contains("border-extra") ||
         clickedElementParentClass === "each-post"
       ) {
-        console.log("Clicked post box inside of use effect =>", clickedPostBox);
-        console.log(
-          "You clicked outside of any actions inside clicked post box"
-        );
         if (clickedPostBox) {
           navigate(
             `/½${clickedPostBox.userId.username}/status/${
@@ -189,7 +182,7 @@ function SpesificUserProfile({ isNewPostShared }) {
           handleClose();
         })
         .catch((error) => {
-          console.log(error);
+          console.error("Error =>", error);
         });
     }
   };
@@ -203,7 +196,6 @@ function SpesificUserProfile({ isNewPostShared }) {
   };
 
   const handleFollow = () => {
-    console.log("Button clicked !");
     if (getFollowerIds(profileInfo.followers).includes(userInfo._id)) {
       handleShow();
     } else {
@@ -246,7 +238,7 @@ function SpesificUserProfile({ isNewPostShared }) {
           });
         })
         .catch((error) => {
-          console.log(error);
+          console.error("Error =>", error);
         });
     }
   };
@@ -269,11 +261,7 @@ function SpesificUserProfile({ isNewPostShared }) {
         (request) => request.recipient === id
       );
 
-      console.log("founded request:", foundedRequestIndex);
-
       setRecipient(result.data[foundedRequestIndex]);
-
-      console.log("get sent follow requests:", result);
     } catch (error) {
       console.error("error:", error);
     }
@@ -283,8 +271,6 @@ function SpesificUserProfile({ isNewPostShared }) {
     if (userInfo._id) {
       getSentFollowRequests();
     }
-
-    console.log("recipient:", recipient);
   }, []);
 
   const sendFollowRequest = async (selectedUser) => {
@@ -306,8 +292,6 @@ function SpesificUserProfile({ isNewPostShared }) {
         }
       );
 
-      console.log("follow request sent:", result);
-
       getSentFollowRequests();
     } catch (error) {
       console.error("error:", error);
@@ -317,23 +301,15 @@ function SpesificUserProfile({ isNewPostShared }) {
   // start to check
   // NOTE must sorted
 
-  console.log("Show profile info posts =>", profileInfoPosts);
-
-  console.log("User rendered favorites =>", favorites);
-
   const checkIfAllFavoritesFromDeactivatedUser = () => {
     return favorites.map((eachFavorite) => {
       return eachFavorite.deactivatedOwner;
     });
   };
 
-  console.log("Favorites inside spesific user profile favorites =>", favorites);
-
   const hasFalse = checkIfAllFavoritesFromDeactivatedUser().some(
     (item) => item === false
   );
-
-  console.log(hasFalse);
 
   useEffect(() => {
     if (postsWindow === "hide") {
@@ -447,13 +423,10 @@ function SpesificUserProfile({ isNewPostShared }) {
 
   const isFollowing = checkSpesificUserFollowers()?.includes(userInfo._id);
 
-  console.log("profile info =>", checkSpesificUserFollowers());
-
   const { width } = useWindowDimensions();
 
   const [dataFromCommentModal, setDataFromCommentModal] = useState("");
   function handleDataFromCommentModal(data) {
-    console.log("Data =>", data);
     setDataFromCommentModal(data);
   }
 
@@ -498,7 +471,6 @@ function SpesificUserProfile({ isNewPostShared }) {
         },
       })
       .then((response) => {
-        console.log("Spesific user profile page response likes =>", response);
         setFavoriteWindow("");
         setPostWindow("hide");
         setFavorites(response.data.favorites);
@@ -518,11 +490,6 @@ function SpesificUserProfile({ isNewPostShared }) {
         },
       })
       .then((response) => {
-        console.log(
-          "After opening spesific user profile page response =>",
-          response
-        );
-
         setprofileInfoPosts(response.data.posts);
         setPostWindow("");
         setFavoriteWindow("hide");
@@ -585,7 +552,6 @@ function SpesificUserProfile({ isNewPostShared }) {
     }
   }, []);
 
-  console.log("recipient request id :", recipient);
   // discard follow request
   const discardFollowRequest = async () => {
     try {
@@ -604,8 +570,6 @@ function SpesificUserProfile({ isNewPostShared }) {
       console.error("error:", error);
     }
   };
-
-  console.log("profile info:", profileInfo);
 
   const [showBigPP, setshowBigPP] = useState(false);
   const [showBigProfileCoverImage, setShowBigProfileCoverImage] =
@@ -2633,7 +2597,6 @@ function SpesificUserProfile({ isNewPostShared }) {
                   {profileInfoPosts.slice(0, visibleTweets).map((post) => (
                     <div
                       onClick={() => {
-                        console.log("Post box parent class =>", post);
                         setclickedPostBox(post);
                       }}
                       className={
@@ -3198,7 +3161,6 @@ function SpesificUserProfile({ isNewPostShared }) {
                           </div>
                           <div
                             onClick={() => {
-                              console.log("Post box child class =>", post);
                               setclickedPostBox(post);
                             }}
                             className="border-extra"
@@ -3303,7 +3265,6 @@ function SpesificUserProfile({ isNewPostShared }) {
                     <>
                       <div
                         onClick={() => {
-                          console.log("Post box parent class =>", favorite);
                           setclickedPostBox(favorite);
                         }}
                         className={
@@ -3735,10 +3696,6 @@ function SpesificUserProfile({ isNewPostShared }) {
                             </div>
                             <div
                               onClick={() => {
-                                console.log(
-                                  "Post box child class =>",
-                                  favorite
-                                );
                                 setclickedPostBox(favorite);
                               }}
                               className="border-extra"

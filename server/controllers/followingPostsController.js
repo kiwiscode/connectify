@@ -35,13 +35,13 @@ const handleShowFollowingPosts = (req, res) => {
               res.status(202).json({ followingPosts: posts });
             })
             .catch((error) => {
-              console.log("Error =>", error);
+              console.error("Error =>", error);
             });
 
           // we need to get all the posts from post collection with the id of response id , response it self is an array in this case and it can have more than 1 length , because user can follow more than 1 person... finish to check
         })
         .catch((error) => {
-          console.log("Error =>", error);
+          console.error("Error =>", error);
         });
     })
     .catch(() => {

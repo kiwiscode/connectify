@@ -42,11 +42,6 @@ const handleGetFavorites = (req, res) => {
       },
     })
     .then((userFromDataBase) => {
-      console.log(
-        "All the favorites from data base for spesific user =>",
-        userFromDataBase.favorites[0]
-      );
-
       res.json({ favorites: userFromDataBase.favorites });
     })
     .catch(() => {
@@ -60,8 +55,6 @@ const handleAddFavorite = (req, res) => {
   const { postId } = req.body;
   const { userId } = req.user;
 
-  console.log("Post id =>", postId);
-  console.log("User id =>", userId);
   User.findById(userId)
     .populate("favorites")
     .then((user) => {
@@ -115,7 +108,7 @@ const handleAddFavorite = (req, res) => {
               commentFromDataBase[0]?.save();
             })
             .catch((error) => {
-              console.log("Error =>", error);
+              console.error("Error =>", error);
             });
         }
         // eğer favorilere eklenen post comment ise onu comment collectionunda bul ve ayrıca likeslarına userı ekle finish to check
@@ -159,9 +152,6 @@ const handleAddFavorite = (req, res) => {
             },
           })
             .then((repostedPost) => {
-              console.log("This then block is working!");
-              console.log("Reposted post =>", repostedPost[0].content);
-              console.log("Original post =>", post.content);
               repostedPost[0].likes.unshift(user);
               repostedPost[0].save();
               post.likes.unshift(user);
@@ -180,7 +170,7 @@ const handleAddFavorite = (req, res) => {
               });
             })
             .catch((error) => {
-              console.log("error => Second post not found !", error);
+              console.error("error => Second post not found !", error);
             });
         } else if (
           post.reposted.length &&
@@ -191,9 +181,6 @@ const handleAddFavorite = (req, res) => {
             _id: post.repostedFromThisOriginalPost[0],
           })
             .then((originalPost) => {
-              console.log("Reposted post =>", post);
-              console.log("Original post =>", originalPost);
-
               originalPost[0].likes.unshift(user);
               originalPost[0].save();
               post.likes.unshift(user);
@@ -211,7 +198,7 @@ const handleAddFavorite = (req, res) => {
               });
             })
             .catch((error) => {
-              console.log("error => Original post not found !", error);
+              console.error("error => Original post not found !", error);
             });
         }
       });
@@ -234,15 +221,7 @@ const handleDeleteFavorite = (req, res) => {
 
       Post.findById(postId).then((post) => {
         // activityi sil ! start to check
-        if (post.isComment && post.isReposted) {
-          console.log("Hangi condition çalıştırıcaksın ??");
-        } else if (post.isComment) {
-          console.log("First or second condition works");
-        } else if (post.isReposted) {
-          console.log("Third or fourth condition works");
-        } else {
-          console.log("Fifth or sixth condition works");
-        }
+
         Activity.findOneAndDelete({
           $and: [
             { activityType: "favorite" },
@@ -394,14 +373,12 @@ const handleDeleteFavorite = (req, res) => {
               // splice the user id from comment finish to check
             })
             .catch((error) => {
-              console.log("Error =>", error);
+              console.error("Error =>", error);
             });
         }
 
         // REVIEWED start to check
         if (!post.isReposted && post.reposted.length) {
-          console.log("This line is working 1st conditional block");
-
           Post.find({
             repostedFromThisOriginalPost: {
               $elemMatch: {
@@ -409,13 +386,9 @@ const handleDeleteFavorite = (req, res) => {
               },
             },
           }).then((repostedPost) => {
-            console.log("Original post =>", post);
-            console.log("Reposted post =>", repostedPost);
-            console.log(post.likes);
             const filterPostLikes = post.likes.filter((eachLike) => {
               return eachLike._id.toString() !== userId;
             });
-            console.log(filterPostLikes);
 
             post.likes = filterPostLikes;
             post.save();
@@ -431,10 +404,6 @@ const handleDeleteFavorite = (req, res) => {
                     return eachNotification.post.toString();
                   });
 
-                console.log(
-                  "Notificationların içerisindeki tüm mevcut post idleri => ",
-                  notifiedUserNotificationIds
-                );
                 // bildirimi alan kişi = notifiedUser !!!
                 // let's find the index of this post and delete the notification
                 const findedPost = notifiedUser.notifications.find(
@@ -457,18 +426,9 @@ const handleDeleteFavorite = (req, res) => {
                       );
                     }
                   );
-                  console.log(
-                    "Bu kisim calisiyor !",
-                    user.favorites,
-                    filteredFavoritesUserArray
-                  );
+
                   user.favorites = filteredFavoritesUserArray;
                   user.save();
-
-                  console.log(
-                    "User favorites filtreledikten sonra kisim calisiyor !",
-                    user.favorites
-                  );
                 } else if (
                   (findIndex === 0 &&
                     notifiedUser.notifications[findIndex].isFavorite.value) ||
@@ -488,34 +448,18 @@ const handleDeleteFavorite = (req, res) => {
                   } else if (
                     notifiedUser._id.toString() !== user._id.toString()
                   ) {
-                    console.log("Line 338 working");
-
                     // notifiedUser.notifications.splice(findIndex, 1);
                     notifiedUser.save();
-                    console.log("POST ID =>", postId);
-                    console.log(
-                      "REPOSTED POST ID =>",
-                      repostedPost[0]._id.toString()
-                    );
 
-                    console.log("User favorites =>", user.favorites);
                     const filteredFavoritesUserArray = user.favorites.filter(
                       (post) =>
                         post._id.toString() !==
                           repostedPost[0]._id.toString() &&
                         post._id.toString() !== postId
                     );
-                    console.log(
-                      "User favorites after filtering=>",
-                      filteredFavoritesUserArray
-                    );
 
                     user.favorites = filteredFavoritesUserArray;
                     user.save();
-                    console.log(
-                      "User favorites after filtering=>",
-                      user.favorites
-                    );
                   } else {
                     return;
                   }
@@ -524,16 +468,12 @@ const handleDeleteFavorite = (req, res) => {
                 ) {
                   Post.findOne({ repostedFromThisOriginalPost: post._id })
                     .then((originalPost) => {
-                      console.log("User favorites =>", user.favorites);
-                      console.log("ID 1 =>", post._id.toString());
-                      console.log("ID 2 =>", originalPost._id.toString());
                       const userFavoriteIds = user.favorites.map(
                         (eachFavorite) => {
                           return eachFavorite._id.toString();
                         }
                       );
 
-                      console.log(userFavoriteIds);
                       if (
                         userFavoriteIds.includes(originalPost._id.toString())
                       ) {
@@ -546,8 +486,6 @@ const handleDeleteFavorite = (req, res) => {
                           });
                         user.favorites = filteredFavoritesUserArray;
                         user.save();
-                        console.log("Check favorites array !");
-                        console.log("Original post =>", originalPost);
                       } else if (
                         userFavoriteIds.includes(post._id.toString())
                       ) {
@@ -560,19 +498,17 @@ const handleDeleteFavorite = (req, res) => {
                           });
                         user.favorites = filteredFavoritesUserArray;
                         user.save();
-                        console.log("Check favorites array 2!");
-                        console.log("Original post =>", originalPost);
                       } else {
                         return;
                       }
                     })
                     .catch((error) => {
-                      console.log(error);
+                      console.error("Error =>", error);
                     });
                 }
               })
               .catch((error) => {
-                console.log(error);
+                console.error("Error =>", error);
                 res.status(404).json({
                   erroMessage: "Notification receiver user not found!",
                 });
@@ -613,7 +549,6 @@ const handleDeleteFavorite = (req, res) => {
             _id: post.repostedFromThisOriginalPost[0],
           })
             .then((originalPost) => {
-              console.log(post.likes);
               const filterPostLikes = post.likes.filter((eachLike) => {
                 return eachLike._id.toString() !== userId;
               });
@@ -641,10 +576,6 @@ const handleDeleteFavorite = (req, res) => {
                 })
                 .then((secondUpdatedPost) => {
                   if (secondUpdatedPost) {
-                    console.log(
-                      "İkinci post güncelleme işlemi başarılı:",
-                      secondUpdatedPost
-                    );
                     res.status(200).json({ message: "Post güncellendi!" });
                   } else {
                     throw new Error("İkinci post güncelleme işlemi başarısız!");
@@ -666,11 +597,6 @@ const handleDeleteFavorite = (req, res) => {
                       return eachNotification.post.toString();
                     });
 
-                  console.log(
-                    "Notificationların içerisindeki tüm mevcut post idleri => ",
-                    notifiedUserNotificationIds
-                  );
-
                   const findedPost = notifiedUser.notifications.find(
                     (eachNotification) => {
                       return (
@@ -683,22 +609,13 @@ const handleDeleteFavorite = (req, res) => {
                   const findIndex =
                     notifiedUser.notifications.indexOf(findedPost);
 
-                  console.log("We are here =>");
-
-                  console.log("First condition =>", findedPost);
-                  console.log("Second condition =>", findIndex);
-
                   if (
                     (findIndex === 0 &&
                       notifiedUser.notifications[findIndex].isFavorite.value) ||
                     (findIndex > 0 &&
                       notifiedUser.notifications[findIndex].isFavorite.value)
                   ) {
-                    console.log("We are here => 2");
-
                     if (notifiedUser._id.toString() === user._id.toString()) {
-                      console.log("We are here => 3");
-
                       const filteredFavoritesUserArray = user.favorites.filter(
                         (post) =>
                           post._id.toString() !==
@@ -711,14 +628,9 @@ const handleDeleteFavorite = (req, res) => {
                     } else if (
                       notifiedUser._id.toString() !== user._id.toString()
                     ) {
-                      console.log("User favorites sss=>", user.favorites);
-
                       Post.find({
                         _id: post.repostedFromThisOriginalPost[0],
                       }).then((originalPost) => {
-                        console.log("Original post =>", originalPost);
-
-                        console.log("User favorites =>", user.favorites);
                         const filteredFavoritesUserArray =
                           user.favorites.filter(
                             (post) =>
@@ -732,15 +644,6 @@ const handleDeleteFavorite = (req, res) => {
 
                         // notifiedUser.notifications.splice(findIndex, 1);
                         notifiedUser.save();
-
-                        console.log(
-                          "User id for favorite collection delete =>",
-                          userId,
-                          "Post id for favorite collection delete =>",
-                          originalPost[0]._id,
-                          "||",
-                          new ObjectId(postId)
-                        );
                       });
                     }
                   } else if (
@@ -755,8 +658,6 @@ const handleDeleteFavorite = (req, res) => {
 
                     user.favorites = filteredFavoritesUserArray;
                     user.save();
-
-                    console.log("Check user favorites array !2");
                   } else {
                     console.log(
                       "Error occured while deleting the notification !"
@@ -807,7 +708,6 @@ const handleDeleteFavorite = (req, res) => {
         // REVIEWED 2 finish to check ...
         // REVIEWED 3 start to check
         else if (!post.isReposted && !post.reposted.length) {
-          console.log(post.likes);
           const filterPost = post.likes.filter((eachLike) => {
             return eachLike._id.toString() !== userId;
           });
@@ -831,9 +731,6 @@ const handleDeleteFavorite = (req, res) => {
                   notifiedUser.notifications[findIndex].isFavorite.value)
               ) {
                 if (notifiedUser._id.toString() === user._id.toString()) {
-                  console.log(
-                    "This line is working because the user who added their post to favorites."
-                  );
                   const filteredFavoritesUserArray =
                     notifiedUser.favorites.filter(
                       (postId) => postId._id.toString() !== post._id.toString()

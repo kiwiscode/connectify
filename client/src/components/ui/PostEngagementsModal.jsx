@@ -29,9 +29,6 @@ function PostEngagements({
   const [activeTab, setActiveTab] = useState("forYou");
 
   const handleShowReposts = () => {
-    console.log(
-      detailedPost.reposted ? detailedPost.reposted : "No reposts yet"
-    );
     // handleShowDetailedPostReposts();
     setActiveTab("reposts");
     setshowReposts(true);
@@ -53,7 +50,6 @@ function PostEngagements({
   };
 
   const handleShowLikes = () => {
-    console.log(detailedPost.likes ? detailedPost.likes : "No likes yet");
     // handleShowDetailedPostLikes();
     setActiveTab("likes");
     setshowReposts(false);
@@ -89,8 +85,6 @@ function PostEngagements({
       })
     : null;
 
-  console.log(checkMap);
-
   const [activeUser, setactiveUser] = useState([]);
   const [clicked, setClicked] = useState(false);
   const [followers, setFollowers] = useState([]);
@@ -104,14 +98,11 @@ function PostEngagements({
         },
       })
       .then((response) => {
-        console.log("Response for active user =>", response);
-
         setFollowers(response.data.user.followers);
         setFollowings(response.data.user.following);
-        console.log("Current followers array state =>", followers);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -137,14 +128,11 @@ function PostEngagements({
     setSelectedUser(selectedUser);
     setIsHovered(false);
     setshowUnfollowModal(true);
-
-    console.log("Current hovered value =>", isHovered);
   };
 
   const handleCloseUnfollowModal = () => setshowUnfollowModal(false);
 
   const handleUnfollow = (unfollowedUser) => {
-    console.log("Clicked user =>", unfollowedUser);
     axios
       .post(
         `${API_URL}/unfollow
@@ -160,14 +148,13 @@ function PostEngagements({
         }
       )
       .then((res) => {
-        console.log("Res =>", res);
         getActiveUser();
         setClicked(!clicked);
         setIsHovered(false);
         handleCloseUnfollowModal();
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -378,18 +365,10 @@ function PostEngagements({
                           // getActiveUser();
                           setClicked(!clicked);
 
-                          console.log("sELECTED uSer =>", selectedUser);
-
                           setIsHovered(false);
-                          console.log("Is still following 3 =>", isFollowing);
-
-                          console.log(
-                            "Is following current after handle follow =>",
-                            isFollowing
-                          );
                         })
                         .catch((error) => {
-                          console.log(error);
+                          console.error(error);
                         });
                     };
 
@@ -726,18 +705,10 @@ function PostEngagements({
                           // getActiveUser();
                           setClicked(!clicked);
 
-                          console.log("sELECTED uSer =>", selectedUser);
-
                           setIsHovered(false);
-                          console.log("Is still following 3 =>", isFollowing);
-
-                          console.log(
-                            "Is following current after handle follow =>",
-                            isFollowing
-                          );
                         })
                         .catch((error) => {
-                          console.log(error);
+                          console.error("error =>", error);
                         });
                     };
 

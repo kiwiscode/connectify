@@ -29,14 +29,13 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
         },
       })
       .then((response) => {
-        console.log("Response =>", response);
         const spliceActiveUser = response.data.filter((eachUser) => {
           return eachUser.username !== userInfo.username;
         });
         setActiveUsers(spliceActiveUser);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   }, []);
 
@@ -57,8 +56,6 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
     setSearchString2("");
     setShow2(false);
   };
-  console.log("Search string =>", searchString);
-  console.log("Search string 2 =>", searchString2);
 
   const [{ themeName }] = useContext(ThemeContext);
 
@@ -67,13 +64,9 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
       user.username.toLowerCase().startsWith(term.toLowerCase())
     );
 
-    console.log("Filtered users =>", filteredUsers);
-
     if (searchString !== "" || searchString2 !== "") {
-      console.log("Filtered users condition first =>", filteredUsers);
       setFilteredUsers(filtered);
     } else {
-      console.log("Filtered users condition second =>", filteredUsers);
       setFilteredUsers([]);
     }
   };
@@ -81,8 +74,6 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
     const term = e.target.value;
     setSearchString(term);
     if (searchString !== "" && term !== "") {
-      console.log("Active users =>", activeUsers);
-      console.log("Burası çalışıyor !");
       filterUsers(activeUsers, term);
     } else {
       setFilteredUsers([]);
@@ -94,14 +85,9 @@ function CreateChat({ messagesPageWriteAmESSAGEoPTION }) {
     if (searchString2 !== "" && term !== "") {
       filterUsers(activeUsers, term);
     } else {
-      console.log("Burası çalışıyor 2 !");
-
       setFilteredUsers([]);
     }
   };
-
-  console.log("Active users =>", activeUsers);
-  console.log("Filtered users =>", filteredUsers);
 
   const { width } = useWindowDimensions();
   const navigate = useNavigate();

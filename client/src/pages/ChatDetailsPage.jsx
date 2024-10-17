@@ -212,7 +212,6 @@ function ChatDetailsPage() {
       joinRoom(chatRoomId, userInfo.username);
 
       const userJoinedListener = (announcement) => {
-        console.log(announcement);
         // Kullanıcı katılma bildirimini görsel olarak gösterebilirsiniz
       };
 
@@ -226,7 +225,6 @@ function ChatDetailsPage() {
 
   useEffect(() => {
     socket.on("message", (data) => {
-      console.log("you received one message:", data);
       setArrivalMessage({
         // room: data.room,
         sender: data.sender,
@@ -237,7 +235,6 @@ function ChatDetailsPage() {
   }, []);
 
   useEffect(() => {
-    console.log("arrival message comes 2 times");
     arrivalMessage &&
       // currentChat?.members.includes(arrivalMessage.sender) &&
       setspesificRoomChat((prev) => [...prev, arrivalMessage]);
@@ -269,15 +266,8 @@ function ChatDetailsPage() {
   });
 
   const lastSendIndexMe = senderIds.lastIndexOf(userInfo._id);
-  console.log(senderIds.lastIndexOf(userInfo._id));
 
   const lastSendIndexOtherUser = senderIds.lastIndexOf(otherUserId);
-  console.log(senderIds.lastIndexOf(otherUserId));
-
-  console.log(
-    "spesific room chat my last message:",
-    spesificRoomChat[lastSendIndexMe]
-  );
 
   return (
     <>

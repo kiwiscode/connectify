@@ -80,7 +80,7 @@ function AccountInformationMain() {
           }
         })
         .catch((error) => {
-          console.log("Error =>", error);
+          console.error("Error =>", error);
         });
     }, 300);
   }, []);

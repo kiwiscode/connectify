@@ -154,7 +154,7 @@ function PrivacyAndSafetyMain() {
             paddingRight: width <= 500 ? "32px" : "12px",
           }}
         >
-          Your X activity
+          Your C activity
         </div>
         <div
           className="mt-4"
@@ -169,6 +169,9 @@ function PrivacyAndSafetyMain() {
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            onClick={() => {
+              navigate("/settings/audience_and_tagging");
+            }}
           >
             <div
               style={{
@@ -245,6 +248,11 @@ function PrivacyAndSafetyMain() {
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            style={{
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
+            }}
           >
             <div
               style={{
@@ -321,6 +329,11 @@ function PrivacyAndSafetyMain() {
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            style={{
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
+            }}
           >
             <div
               style={{
@@ -398,6 +411,11 @@ function PrivacyAndSafetyMain() {
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            style={{
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
+            }}
           >
             <div
               style={{
@@ -476,6 +494,11 @@ function PrivacyAndSafetyMain() {
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            style={{
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
+            }}
           >
             <div
               style={{
@@ -552,6 +575,11 @@ function PrivacyAndSafetyMain() {
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            style={{
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
+            }}
           >
             <div
               style={{
@@ -628,6 +656,11 @@ function PrivacyAndSafetyMain() {
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            style={{
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
+            }}
           >
             <div
               style={{
@@ -735,6 +768,11 @@ function PrivacyAndSafetyMain() {
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            style={{
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
+            }}
           >
             <div
               style={{
@@ -811,6 +849,11 @@ function PrivacyAndSafetyMain() {
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            style={{
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
+            }}
           >
             <div
               style={{
@@ -887,6 +930,11 @@ function PrivacyAndSafetyMain() {
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            style={{
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
+            }}
           >
             <div
               style={{
@@ -965,6 +1013,11 @@ function PrivacyAndSafetyMain() {
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            style={{
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
+            }}
           >
             <div
               style={{
@@ -1044,6 +1097,11 @@ function PrivacyAndSafetyMain() {
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            style={{
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
+            }}
           >
             <div
               style={{
@@ -1158,6 +1216,9 @@ function PrivacyAndSafetyMain() {
               display: "flex",
               justifyContent: "space-between",
               padding: "12px 16px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Privacy center</div>
@@ -1180,6 +1241,9 @@ function PrivacyAndSafetyMain() {
               display: "flex",
               justifyContent: "space-between",
               padding: "12px 16px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Privacy policy</div>
@@ -1202,6 +1266,9 @@ function PrivacyAndSafetyMain() {
               display: "flex",
               justifyContent: "space-between",
               padding: "12px 16px",
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
             }}
           >
             <div>Contact us</div>

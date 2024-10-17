@@ -113,14 +113,13 @@ function ChangeYourEmail() {
         }
       )
       .then((response) => {
-        console.log("Response =>", response);
         if (response.status === 201) {
           setemailVerificationCodeStatus(201);
           setemailVerificationCode(response.data.code);
         }
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
   const [confirmEmailVerificationCode, setconfirmEmailVerificationCode] =
@@ -170,9 +169,7 @@ function ChangeYourEmail() {
         }
       );
 
-      if (response.status === 200) {
-        console.log("Email updated successfully:", response.data);
-      } else {
+      if (response.status !== 200) {
         console.error("Unexpected response:", response);
       }
     } catch (error) {

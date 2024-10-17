@@ -52,18 +52,14 @@ function ScreenName() {
         }
       )
       .then((response) => {
-        console.log("Response =>", response);
         if (response.status === 200) {
           setusernameValidated(true);
           setusernameDuplicateError("");
-          console.log("Hello world !");
-        } else {
-          console.log("Hello world hahahahaha ! ");
         }
       })
       .catch((error) => {
         if (error.response.data.errorMessage && username.length) {
-          console.log("Something went wrong during the process !");
+          console.error("Something went wrong during the process !");
           setusernameValidated(false);
           setusernameDuplicateError(error.response.data.errorMessage);
           if (
@@ -108,7 +104,6 @@ function ScreenName() {
         }
       )
       .then((response) => {
-        console.log("Response from server =>", response);
         updateUser({ username: username });
         setLoading(true);
         setTimeout(() => {
@@ -117,7 +112,7 @@ function ScreenName() {
         }, 500);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -133,13 +128,11 @@ function ScreenName() {
         },
       })
       .then((response) => {
-        console.log("Response data =>", response.data.user);
-
         const userInfoRefreshed = response.data.user;
         localStorage.setItem("userInfo", JSON.stringify(userInfoRefreshed));
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 

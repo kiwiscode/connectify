@@ -143,7 +143,6 @@ function UserProfile({ isNewPostShared }) {
         },
       })
       .then((response) => {
-        console.log("Response from database for favorites !!!", response);
         setFavorites(response.data.favorites);
       })
       .catch((err) => {
@@ -162,7 +161,6 @@ function UserProfile({ isNewPostShared }) {
   );
 
   const handleGoBack = () => {
-    console.log("Go one page back !");
     navigate(-1);
   };
   const [pinnedPost, setPinnedPost] = useState(null);
@@ -183,7 +181,6 @@ function UserProfile({ isNewPostShared }) {
         updateUser(user);
         setPinnedPost(user.pinnedPosts[0]);
         setUserprofiledata(posts);
-        console.log("Response updated with populate for profile =>", response);
       })
       .catch((err) => {
         return err;
@@ -291,7 +288,7 @@ function UserProfile({ isNewPostShared }) {
         }
       })
       .catch((error) => {
-        console.log(error);
+        console.error("Error =>", error);
         setprofileImageChangingLoadingBar(false);
       });
   };
@@ -325,24 +322,6 @@ function UserProfile({ isNewPostShared }) {
     }
   }, []);
 
-  // const [activeUserFollowing, setactiveUserFollowing] = useState([]);
-  // const [activeUserFollowers, setactiveUserFollowers] = useState([]);
-  // useEffect(() => {
-  //   axios
-  //     .get(`${API_URL}/profile`, {
-  //       headers: {
-  //         Authorization: `Bearer ${getToken()}`,
-  //       },
-  //     })
-  //     .then((response) => {
-  //       setactiveUserFollowers(response.data.user.followers);
-  //       setactiveUserFollowing(response.data.user.following);
-  //     })
-  //     .catch((error) => {
-  //       console.log("Error =>", error);
-  //     });
-  // }, []);
-
   const [visibleTweets, setVisibleTweets] = useState(25);
   const [visibleLikedTweets, setvisibleLikedTweets] = useState(25);
   const handleShowMorePosts = () => {
@@ -371,7 +350,6 @@ function UserProfile({ isNewPostShared }) {
 
   const [dataFromCommentModal, setDataFromCommentModal] = useState("");
   function handleDataFromCommentModal(data) {
-    console.log("Data =>", data);
     setDataFromCommentModal(data);
   }
 
@@ -496,12 +474,6 @@ function UserProfile({ isNewPostShared }) {
     }
   }, [userInfo]);
 
-  useEffect(() => {
-    console.log("birthdate, month:", birthDateOnEdit.month);
-    console.log("birthdate, year:", birthDateOnEdit.year);
-    console.log("birthdate, day:", birthDateOnEdit.day);
-  }, [birthDateOnEdit.month, birthDateOnEdit.year, birthDateOnEdit.day]);
-
   const handleChangeFullName = (e) => {
     if (e.target.value.length <= 50) {
       setFullName(e.target.value);
@@ -609,20 +581,13 @@ function UserProfile({ isNewPostShared }) {
 
   const currentMonth = monthsBirthDate[new Date().getMonth()];
 
-  console.log("Selected month =>", selectedMonth);
-  console.log("Current month =>", currentMonth);
-
   useEffect(() => {
     const newDays = [];
     if (selectedMonth) {
-      console.log("ay seçildi!", selectedMonth);
-      console.log("get days in month:", getDaysInMonth(selectedMonth));
       for (let i = 1; i <= getDaysInMonth(selectedMonth); i++) {
-        console.log("i: ", i);
         newDays.push(i);
       }
     } else {
-      console.log("ay seçimi yapılmadı!");
       for (let i = 1; i <= getDaysInMonth(currentMonth); i++) {
         newDays.push(i);
       }
@@ -806,7 +771,6 @@ function UserProfile({ isNewPostShared }) {
           }}
           key={index}
           onClick={() => {
-            console.log("picked year:", year);
             if (year) {
               handleYearSelect(year);
             }
@@ -1088,32 +1052,6 @@ function UserProfile({ isNewPostShared }) {
     year: "",
   });
 
-  useEffect(() => {
-    console.log(
-      "data",
-      "fullname:",
-      fullName,
-      "bio:",
-      bioOnEdit,
-      "location:",
-      locationOnEdit,
-      "website:",
-      websiteOnEdit,
-      "birthdate:",
-      birthDateOnEdit,
-      "restrictions for birthdate:",
-      restrictions
-    );
-  }, [
-    fullName,
-    bioOnEdit,
-    locationOnEdit,
-    websiteOnEdit,
-    birthDateOnEdit,
-    restrictions,
-    userInfo,
-  ]);
-
   const closeEditModal = () => {
     setonFocusedToWebsiteField(false);
     setonFocusedToLocationField(false);
@@ -1207,10 +1145,6 @@ function UserProfile({ isNewPostShared }) {
     useState(false);
   const outsideBigProfileCoverImage = useRef(null);
 
-  console.log("user info:", userInfo);
-
-  console.log("user profile data:", userprofiledata);
-
   // cover bg profile img scenario
   const [coverImage, setCoverImage] = useState(null);
   const [
@@ -1259,7 +1193,7 @@ function UserProfile({ isNewPostShared }) {
         }
       })
       .catch((error) => {
-        console.log(error);
+        console.error("Error =>", error);
         setCoverImage(null);
         setprofileCoverImageChangingLoadingBar(false);
       });
@@ -4428,7 +4362,6 @@ function UserProfile({ isNewPostShared }) {
 
               <div
                 onClick={() => {
-                  console.log("Post box child class =>", pinnedPost);
                   setclickedPostBox(pinnedPost);
                 }}
                 className="border-extra"
@@ -4447,7 +4380,6 @@ function UserProfile({ isNewPostShared }) {
               {userprofiledata.slice(0, visibleTweets).map((post) => (
                 <div
                   onClick={() => {
-                    console.log("Post box parent class =>", post);
                     setclickedPostBox(post);
                   }}
                   className={
@@ -4940,7 +4872,6 @@ function UserProfile({ isNewPostShared }) {
                       </div>
                       <div
                         onClick={() => {
-                          console.log("Post box child class =>", post);
                           setclickedPostBox(post);
                         }}
                         className="border-extra"
@@ -5035,7 +4966,6 @@ function UserProfile({ isNewPostShared }) {
               {favorites.slice(0, visibleLikedTweets).map((favorite) => (
                 <div
                   onClick={() => {
-                    console.log("Post box parent class =>", favorite);
                     setclickedPostBox(favorite);
                   }}
                   className={
@@ -5449,7 +5379,6 @@ function UserProfile({ isNewPostShared }) {
                       </div>
                       <div
                         onClick={() => {
-                          console.log("Post box child class =>", favorite);
                           setclickedPostBox(favorite);
                         }}
                         className="border-extra"

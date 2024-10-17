@@ -159,6 +159,11 @@ function AccessibilityDisplayAndLanguagesMain() {
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            style={{
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
+            }}
           >
             <div
               style={{
@@ -392,6 +397,11 @@ function AccessibilityDisplayAndLanguagesMain() {
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            style={{
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
+            }}
           >
             <div
               style={{
@@ -469,6 +479,11 @@ function AccessibilityDisplayAndLanguagesMain() {
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            style={{
+              cursor: "default",
+              pointerEvents: "none",
+              opacity: "0.5",
+            }}
           >
             <div
               style={{

@@ -2,9 +2,6 @@ const User = require("../models/User.model");
 
 const handleUnfollow = (req, res) => {
   const { activeUserId, theUnfollowedUserID } = req.body;
-  console.log("Unfollow Route is working !");
-  console.log("User in action =>", activeUserId);
-  console.log("Unfollowed user =>", theUnfollowedUserID);
   User.findById(activeUserId)
     .then((activeUser) => {
       User.findById(theUnfollowedUserID)
@@ -16,9 +13,6 @@ const handleUnfollow = (req, res) => {
           const followerIds = followedUser.followers.map((eachFollower) => {
             return eachFollower._id.toString();
           });
-
-          console.log("Following ids from active user =>", followingIds);
-          console.log("Follower ids from active user =>", followerIds);
 
           const filterFollowing = activeUser.following.filter(
             (eachFollowing) => {
@@ -58,7 +52,7 @@ const handleUnfollow = (req, res) => {
                   })
               )
               .catch((error) => {
-                console.log(error);
+                console.error("Error =>", error);
                 res.status(500).json({
                   errorMessage: "Error occured while saving active user !",
                 });
@@ -71,7 +65,7 @@ const handleUnfollow = (req, res) => {
           }
         })
         .catch((error) => {
-          console.log(error);
+          console.error("Error =>", error);
         });
     })
     .catch((error) => {

@@ -15,7 +15,6 @@ const addComment = (req, res) => {
     .then((user) => {
       Post.findById(postId)
         .then((post) => {
-          console.log("Post got comment =>", post);
           Activity.create({
             activityHasBeenInitiatedWith: post.userId.toString(),
             thePersonWhoCarriedOutTheActivity: user._id.toString(),
@@ -30,8 +29,6 @@ const addComment = (req, res) => {
           // notification ekleme start to check
           // user kendisine notification gönderemez !
           setTimeout(() => {
-            console.log("Burayı çalıştırıyoruz şimdi !!!");
-            console.log("Created comment post id =>", createdCommentPostId);
             if (post?.userId?.toString() !== userId) {
               User.findById(post?.userId?.toString())
                 .then((notifiedUser) => {
@@ -66,10 +63,6 @@ const addComment = (req, res) => {
               !post.isReposted &&
               !post.reposted.length
             ) {
-              console.log(
-                "Bu post userın kendi postu ve isReposted değil ve post.reposted.length yok"
-              );
-
               if (modalImage !== "") {
                 cloudinary.uploader
                   .upload(modalImage, {
@@ -127,9 +120,6 @@ const addComment = (req, res) => {
                       post.comments.unshift(newCreatedComment._id.toString());
                       // peki ya commente comment yapıldığında ne olacak ????
                       if (post.isComment) {
-                        console.log(
-                          "You are adding a comment to another comment post inside your post 1"
-                        );
                         Comment.find({ postId: postId })
                           .then((findedComment) => {
                             findedComment[0].comments.unshift(
@@ -139,7 +129,7 @@ const addComment = (req, res) => {
                             findedComment[0].save();
                           })
                           .catch((error) => {
-                            console.log("ERROR =>", error);
+                            console.error("Error =>", error);
                           });
                       }
 
@@ -151,11 +141,9 @@ const addComment = (req, res) => {
                     });
                   })
                   .catch((error) => {
-                    console.log(error);
+                    console.error("Error =>", error);
                   });
               } else {
-                console.log("This line is working 1 !");
-
                 return Post.create({
                   userId: userId,
                   authorFullName: user.fullname,
@@ -190,13 +178,9 @@ const addComment = (req, res) => {
                             );
 
                             findedComment[0].save();
-
-                            console.log(
-                              "You are added a comment to another comment post inside your post 2"
-                            );
                           })
                           .catch((error) => {
-                            console.log("ERROR =>", error);
+                            console.error("Error =>", error);
                           });
                       }
 
@@ -208,17 +192,13 @@ const addComment = (req, res) => {
                     });
                   })
                   .catch((error) => {
-                    console.log(error);
+                    console.error("Error =>", error);
                   });
               }
             }
             // eğer kendi postuna comment yapıyorsan ve hiç repost yoksa finish to check
             // eğer kendi postuna comment yapıyorsan ve post reposted.length var ise start to check
             if (post.userId._id.toString() === userId && post.reposted.length) {
-              console.log(
-                "Bu post userın kendi postu ve isReposted değil veya isReposted ve post.reposted.length var"
-              );
-
               if (modalImage !== "") {
                 cloudinary.uploader
                   .upload(modalImage, {
@@ -277,9 +257,6 @@ const addComment = (req, res) => {
                       post.comments.unshift(newCreatedComment._id.toString());
                       // peki ya commente comment yapıldığında ne olacak ????
                       if (post.isComment && !post.isReposted) {
-                        console.log(
-                          "You are adding a comment to another comment post inside your post 1 second condition"
-                        );
                         Comment.find({ postId: postId })
                           .then((findedComment) => {
                             findedComment[0].comments.unshift(
@@ -289,7 +266,7 @@ const addComment = (req, res) => {
                             findedComment[0].save();
                           })
                           .catch((error) => {
-                            console.log("ERROR =>", error);
+                            console.error("Error =>", error);
                           });
                       }
 
@@ -318,12 +295,12 @@ const addComment = (req, res) => {
                                 findedComment[0].save();
                               })
                               .catch((error) => {
-                                console.log("ERROR =>", error);
+                                console.error("Error =>", error);
                               });
                             // new thingy finish to check
                           })
                           .catch((error) => {
-                            console.log("Error =>", error);
+                            console.error("Error =>", error);
                           });
                       } else {
                         Post.find({ repostedFromThisOriginalPost: postId })
@@ -334,7 +311,7 @@ const addComment = (req, res) => {
                             referencePost[0].save();
                           })
                           .catch((error) => {
-                            console.log(error);
+                            console.error("Error =>", error);
                           });
                       }
 
@@ -344,11 +321,9 @@ const addComment = (req, res) => {
                     });
                   })
                   .catch((error) => {
-                    console.log(error);
+                    console.error("Error =>", error);
                   });
               } else {
-                console.log("This line is working 1 !");
-
                 return Post.create({
                   userId: userId,
                   authorFullName: user.fullname,
@@ -376,9 +351,6 @@ const addComment = (req, res) => {
                       post.comments.unshift(newCreatedComment._id.toString());
                       // peki ya commente comment yapıldığında ne olacak ????
                       if (post.isComment && !post.isReposted) {
-                        console.log(
-                          "You are adding a comment to another comment post inside your post 2 second condition"
-                        );
                         Comment.find({ postId: postId })
                           .then((findedComment) => {
                             findedComment[0].comments.unshift(
@@ -388,7 +360,7 @@ const addComment = (req, res) => {
                             findedComment[0].save();
                           })
                           .catch((error) => {
-                            console.log("ERROR =>", error);
+                            console.error("Error =>", error);
                           });
                       }
 
@@ -404,7 +376,6 @@ const addComment = (req, res) => {
                               newCreatedComment._id.toString()
                             );
                             originalPost.save();
-                            console.log("-----this line is working !");
 
                             // new thingy start to check
                             Comment.find({
@@ -418,12 +389,12 @@ const addComment = (req, res) => {
                                 findedComment[0]?.save();
                               })
                               .catch((error) => {
-                                console.log("ERROR =>", error);
+                                console.error("Error =>", error);
                               });
                             // new thingy finish to check
                           })
                           .catch((error) => {
-                            console.log("Error =>", error);
+                            console.error("Error =>", error);
                           });
                       } else {
                         Post.find({ repostedFromThisOriginalPost: postId })
@@ -434,7 +405,7 @@ const addComment = (req, res) => {
                             referencePost[0].save();
                           })
                           .catch((error) => {
-                            console.log(error);
+                            console.error("Error =>", error);
                           });
                       }
 
@@ -444,7 +415,7 @@ const addComment = (req, res) => {
                     });
                   })
                   .catch((error) => {
-                    console.log(error);
+                    console.error("Error =>", error);
                   });
               }
             }
@@ -456,9 +427,6 @@ const addComment = (req, res) => {
               !post.isReposted &&
               !post.reposted.length
             ) {
-              console.log(
-                "Bu post başka bir usera ait isReposted değil ve post.reposted.length yok"
-              );
               if (modalImage !== "") {
                 cloudinary.uploader
                   .upload(modalImage, {
@@ -518,9 +486,6 @@ const addComment = (req, res) => {
 
                       // peki ya commente comment yapıldığında ne olacak ????
                       if (post.isComment && !post.isReposted) {
-                        console.log(
-                          "You are adding a comment to another comment post inside someones post 1 third condition"
-                        );
                         Comment.find({ postId: postId })
                           .then((findedComment) => {
                             findedComment[0].comments.unshift(
@@ -530,7 +495,7 @@ const addComment = (req, res) => {
                             findedComment[0].save();
                           })
                           .catch((error) => {
-                            console.log("ERROR =>", error);
+                            console.error("Error =>", error);
                           });
                       }
 
@@ -543,11 +508,9 @@ const addComment = (req, res) => {
                     });
                   })
                   .catch((error) => {
-                    console.log(error);
+                    console.error("Error =>", error);
                   });
               } else {
-                console.log("This line is working 1 !");
-
                 return Post.create({
                   userId: userId,
                   authorFullName: user.fullname,
@@ -576,9 +539,6 @@ const addComment = (req, res) => {
 
                       // peki ya commente comment yapıldığında ne olacak ????
                       if (post.isComment && !post.isReposted) {
-                        console.log(
-                          "You are adding a comment to another comment post inside someones post 2 third condition"
-                        );
                         Comment.find({ postId: postId })
                           .then((findedComment) => {
                             findedComment[0].comments.unshift(
@@ -588,7 +548,7 @@ const addComment = (req, res) => {
                             findedComment[0].save();
                           })
                           .catch((error) => {
-                            console.log("ERROR =>", error);
+                            console.error("Error =>", error);
                           });
                       }
                       post.save();
@@ -599,7 +559,7 @@ const addComment = (req, res) => {
                     });
                   })
                   .catch((error) => {
-                    console.log(error);
+                    console.error("Error =>", error);
                   });
               }
             }
@@ -609,9 +569,6 @@ const addComment = (req, res) => {
               post.userId._id.toString() !== userId &&
               post.reposted.length
             ) {
-              console.log(
-                "Bu post başka bir usera ait isReposted veya isReposted değil ve post.reposted.length var"
-              );
               if (modalImage !== "") {
                 cloudinary.uploader
                   .upload(modalImage, {
@@ -671,9 +628,6 @@ const addComment = (req, res) => {
 
                       // peki ya commente comment yapıldığında ne olacak ????
                       if (post.isComment && !post.isReposted) {
-                        console.log(
-                          "You are adding a comment to another comment post inside someones post 1 fourth condition"
-                        );
                         Comment.find({ postId: postId })
                           .then((findedComment) => {
                             findedComment[0].comments.unshift(
@@ -683,7 +637,7 @@ const addComment = (req, res) => {
                             findedComment[0].save();
                           })
                           .catch((error) => {
-                            console.log("ERROR =>", error);
+                            console.error("Error =>", error);
                           });
                       }
                       post.save();
@@ -711,12 +665,12 @@ const addComment = (req, res) => {
                                 findedComment[0].save();
                               })
                               .catch((error) => {
-                                console.log("ERROR =>", error);
+                                console.error("Error =>", error);
                               });
                             // new thingy finish to check
                           })
                           .catch((error) => {
-                            console.log("Error =>", error);
+                            console.error("Error =>", error);
                           });
                       } else {
                         Post.find({ repostedFromThisOriginalPost: postId })
@@ -727,7 +681,7 @@ const addComment = (req, res) => {
                             referencePost[0].save();
                           })
                           .catch((error) => {
-                            console.log(error);
+                            console.error("Error =>", error);
                           });
                       }
 
@@ -737,11 +691,9 @@ const addComment = (req, res) => {
                     });
                   })
                   .catch((error) => {
-                    console.log(error);
+                    console.error("Error =>", error);
                   });
               } else {
-                console.log("This line is working 1 !");
-
                 return Post.create({
                   userId: userId,
                   authorFullName: user.fullname,
@@ -769,9 +721,6 @@ const addComment = (req, res) => {
 
                       // peki ya commente comment yapıldığında ne olacak ????
                       if (post.isComment && !post.isReposted) {
-                        console.log(
-                          "You are adding a comment to another comment post inside someones post 2 fourth condition"
-                        );
                         Comment.find({ postId: postId })
                           .then((findedComment) => {
                             findedComment[0].comments.unshift(
@@ -781,7 +730,7 @@ const addComment = (req, res) => {
                             findedComment[0].save();
                           })
                           .catch((error) => {
-                            console.log("ERROR =>", error);
+                            console.error("Error =>", error);
                           });
                       }
 
@@ -814,7 +763,7 @@ const addComment = (req, res) => {
                               }
                             })
                             .catch((error) => {
-                              console.log("ERROR =>", error);
+                              console.error("Error =>", error);
                             });
                           // new thingy finish to check
                         });
@@ -847,7 +796,7 @@ const addComment = (req, res) => {
                     });
                   })
                   .catch((error) => {
-                    console.log(error);
+                    console.error("Error =>", error);
                   });
               }
             }
@@ -861,8 +810,6 @@ const addComment = (req, res) => {
                     if (post.reposted.length) {
                       // eğer comment içerisindeki commentlerden herhangi birine comment yapıyorsan ve bu commentin ayrıca reposted.lengthi varsa ve ayrıca image ekleyeceksen start to check
                       if (modalImage !== "") {
-                        console.log("Bu line çalışıyor !");
-
                         cloudinary.uploader
                           .upload(modalImage, {
                             folder: process.env.CLOUDINARY_FOLDER_NAME,
@@ -972,8 +919,6 @@ const addComment = (req, res) => {
                       }
                       // eğer comment içerisindeki commentlerden herhangi birine comment yapıyorsan ve bu commentin ayrıca reposted.lengthi varsa ve ayrıca image ekleyeceksen finish to check
                       else {
-                        console.log("Bu line çalışıyor 2 !");
-
                         Post.find({
                           repostedFromThisOriginalPost: post._id,
                         })
@@ -1050,7 +995,6 @@ const addComment = (req, res) => {
                       }
                     } else {
                       if (modalImage !== "") {
-                        console.log("Bu kısım çalışıyor !");
                         //  start to check
                         if (modalImage !== "") {
                           cloudinary.uploader

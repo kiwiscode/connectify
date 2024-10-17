@@ -99,7 +99,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
         password,
       })
       .then((response) => {
-        console.log("Response =>", response);
         if (response.status === 201) {
           setTabLoading(true);
           setTimeout(() => {
@@ -109,7 +108,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
         }
       })
       .catch((err) => {
-        console.log("Error is running right now !", err);
+        console.error("Error =>", err);
         if (err) {
           if (err.response.status === 400) {
             showCustomMessage("Sorry, we could not find your account.", 4);
@@ -124,14 +123,12 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
         authentication: loginInput,
       })
       .then((response) => {
-        console.log("Response user logged in =>", response);
         const { token, user } = response.data;
         if (response.status === 201) {
           setTabLoading(true);
           localStorage.setItem("userInfo", JSON.stringify(user));
           localStorage.setItem("token", token);
           updateUser(user);
-          console.log("Response after log in =>", response);
           setTimeout(() => {
             navigate("/home");
             setTabLoading(false);
@@ -139,7 +136,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
         }
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
         if (error.response.status === 501) {
           showCustomMessage("Wrong password!", 4);
         } else if (error.response.status === 400) {
@@ -149,8 +146,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
             setOpenDeactivateLoginModal(true);
           }, 300);
           handleShowReactivatedLoginScreen();
-
-          console.log("Open deactivated modal 2 =>", openDeactivateLoginModal);
 
           // 1 month later start to check
 
@@ -185,7 +180,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
   };
 
   const handleDeactivatedUserReturnLogin = () => {
-    console.log("Button clicked ");
     axios
       .post(`${API_URL}/auth/deactivate-user-back`, {
         authentication: loginInput,
@@ -204,7 +198,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
         }, 500);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -264,12 +258,10 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
     axios
       .post(`${API_URL}/check-find-account`, { findConnectifyAccount })
       .then((response) => {
-        console.log("Response from server =>", response);
         if (
           response.status === 201 &&
           response.data.message === "The user entered an email address."
         ) {
-          console.log("User entered an email, show confirm username tab.");
           setTabLoading(true);
           setForgotPasswordInProcessUser(response.data.user);
           setTimeout(() => {
@@ -280,9 +272,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
           response.status === 201 &&
           response.data.message === "The user entered an username."
         ) {
-          console.log(
-            "User entered an username, show send email verification code direct."
-          );
           setTabLoading(true);
           setForgotPasswordInProcessUser(response.data.user);
           setTimeout(() => {
@@ -292,7 +281,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
         }
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
         showCustomMessage("Sorry, we could not find your account.", 4);
       });
   };
@@ -323,7 +312,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
         }, 500);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -406,9 +395,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
       setValidPassword(true);
     }
   }, [newPassword, confirmPassword]);
-  console.log("New password outside of on change function =>", newPassword);
-
-  console.log("Confirm password outside of on change function =>", newPassword);
 
   const handleTabChange = () => {
     setTabLoading(true);
@@ -420,8 +406,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
   };
 
   const handleChangePassword = () => {
-    console.log("Tab loading after change password click =>", tabLoading);
-    console.log("Tab index after click =>", tabIndex);
     if (validPassword) {
       axios
         .post(
@@ -446,7 +430,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
           }
         })
         .catch((error) => {
-          console.log("Error =>", error);
+          console.error("Error =>", error);
         });
     }
   };
@@ -458,7 +442,6 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
   const [differentReason, setDifferentReason] = useState(false);
 
   const handleLoginAfterForgotPasswordProcess = () => {
-    console.log("Trying to log in !");
     setTabLoading(true);
     axios
       .post(`${API_URL}/login-after-forgot-password-process`, {
@@ -473,14 +456,12 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
 
         updateUser(user);
 
-        console.log("Response =>", response);
-
         setTimeout(() => {
           navigate("/home");
         }, 500);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -5112,15 +5093,12 @@ function CommentModal({
   //handle and convert it in base 64
   const handleImage = (e) => {
     const file = e.target.files[0];
-    console.log("FILE FROM MODAL.JSX =>", file);
     setFileToBase(file);
-    console.log(file);
   };
 
   const setFileToBase = (file) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    console.log("SET FILE TO BASE FILE FROM MODAL.JSX =>", file);
 
     reader.onloadend = () => {
       setModalImage(reader.result);
@@ -5222,7 +5200,7 @@ function CommentModal({
         }, 500);
       })
       .catch((error) => {
-        console.log("Error message =>", error);
+        console.error("Error =>", error);
       });
   };
 

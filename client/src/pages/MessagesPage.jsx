@@ -43,17 +43,15 @@ function MessagesPage() {
         },
       })
       .then((responseForMessages) => {
-        console.log("response for messages:", responseForMessages);
         setfilteredRooms(responseForMessages.data.messages);
         setmessageRooms(responseForMessages.data.messages);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   }, []);
 
   const handleShowDeleteConversationModal = () => {
-    console.log("Button clicked !");
     setshowMessageDeletePopover(false);
     setShowDeleteConversationModal(true);
   };
@@ -63,19 +61,12 @@ function MessagesPage() {
   };
 
   const grabTheMessageRoom = (messageRoom) => {
-    console.log("Message room clicked => ", messageRoom);
-
     if (messageRoom) {
       setReceivedMessageRoom(messageRoom);
     }
   };
 
   const deleteConversation = () => {
-    console.log(
-      "Ready to delete this message room from current user user.messages array =>",
-      receivedMessageRoom
-    );
-
     axios
       .post(
         `${API_URL}/delete-message`,
@@ -91,7 +82,7 @@ function MessagesPage() {
         setfilteredRooms(response.data.currentMessagesArray);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -216,8 +207,6 @@ function MessagesPage() {
     }
   };
 
-  console.log("filtered messages:", filteredRooms);
-
   const handleSearchTerm = (term) => {
     const searchTerm = term.target.value.toLowerCase();
     setSearchTerm(searchTerm);
@@ -286,7 +275,6 @@ function MessagesPage() {
   const { width } = useWindowDimensions();
 
   const handleReadMessage = async (roomId) => {
-    console.log("room =>", roomId);
     try {
       const url = await axios.post(
         `${API_URL}/mark-as-read-message`,
@@ -301,8 +289,6 @@ function MessagesPage() {
       );
 
       const response = url.data;
-
-      console.log("Response =>", response);
     } catch (error) {
       console.error("Error =>", error);
     }
@@ -313,7 +299,6 @@ function MessagesPage() {
     useState(null);
 
   function handleDataFromTopNavigationComponentOpenedStatus(data) {
-    console.log("Data =>", data);
     setDataFromTopNavigationComponent(data);
   }
 
@@ -584,7 +569,6 @@ function MessagesPage() {
                                 minHeight: "73px",
                                 paddingLeft: "12px",
                                 paddingRight: "12px",
-
                                 backgroundColor:
                                   eachMessageRoom.readed &&
                                   themeName !== "dark-theme"
@@ -599,143 +583,102 @@ function MessagesPage() {
                                       themeName === "dark-theme"
                                     ? "#181818"
                                     : "",
+                                maxWidth: "100%",
                               }}
                             >
                               {eachMessageRoom.chat &&
                                 eachMessageRoom.chat.length > 0 && (
                                   <>
-                                    <Stack
+                                    <div
                                       style={{
                                         margin: "0px 5px",
                                         padding: "5px",
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
                                       }}
-                                      direction="horizontal"
                                     >
-                                      <div className="p-0">
-                                        {" "}
-                                        {getMemberNotEqualActiveUser(
-                                          eachMessageRoom
-                                        ) ? (
-                                          <>
-                                            {getMemberNotEqualActiveUser(
-                                              eachMessageRoom
-                                            ).imageUrl.slice(0, 3) !== "../" ? (
-                                              <>
-                                                <img
-                                                  width={40}
-                                                  height={40}
-                                                  style={{
-                                                    borderRadius: "50%",
-                                                  }}
-                                                  src={
-                                                    getMemberNotEqualActiveUser(
-                                                      eachMessageRoom
-                                                    ).imageUrl
-                                                  }
-                                                  alt=""
-                                                />
-                                              </>
-                                            ) : (
-                                              <>
-                                                <img
-                                                  style={{
-                                                    borderRadius: "50%",
-                                                  }}
-                                                  width="40"
-                                                  height="40"
-                                                  src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
-                                                  alt=""
-                                                />
-                                              </>
-                                            )}
-                                          </>
-                                        ) : null}
-                                      </div>
                                       <div
                                         style={{
-                                          marginLeft: "10px",
+                                          display: "flex",
                                         }}
-                                        className="p-0"
                                       >
-                                        <span
-                                          className="chirp-bold-font"
-                                          style={{
-                                            color:
-                                              themeName === "dark-theme"
-                                                ? "white"
-                                                : "rgb(15, 20, 25)",
-
-                                            fontSize: font15.fontSize,
-                                            lineHeight: font15.lineHeight,
-                                          }}
-                                        >
-                                          {eachMessageRoom.members[1] &&
-                                          eachMessageRoom.members[0] ? (
-                                            <>
-                                              {eachMessageRoom.members[1]
-                                                .fullname !== userInfo.fullname
-                                                ? eachMessageRoom.members[1]
-                                                    .fullname
-                                                : eachMessageRoom.members[0]
-                                                    .fullname}{" "}
-                                            </>
-                                          ) : null}
-                                        </span>
-                                        <span
-                                          className="chirp-regular-font"
-                                          style={{
-                                            color:
-                                              themeName === "dark-theme"
-                                                ? "#71767A"
-                                                : "rgb(83, 100, 113)",
-                                            fontSize: font15.fontSize,
-                                            lineHeight: font15.lineHeight,
-                                          }}
-                                        >
-                                          @
-                                          {eachMessageRoom.members[1] &&
-                                          eachMessageRoom.members[0] ? (
-                                            <>
-                                              {eachMessageRoom.members[1]
-                                                .username !== userInfo.username
-                                                ? eachMessageRoom.members[1]
-                                                    .username
-                                                : eachMessageRoom.members[0]
-                                                    .username}{" "}
-                                            </>
-                                          ) : null}
-                                        </span>
-                                        <span
-                                          className="chirp-regular-font"
-                                          style={{
-                                            color:
-                                              themeName === "dark-theme"
-                                                ? "#71767A"
-                                                : "rgb(83, 100, 113)",
-                                            fontSize: font15.fontSize,
-                                            lineHeight: font15.lineHeight,
-                                          }}
-                                        >
+                                        <div className="p-0">
                                           {" "}
-                                          ·{" "}
-                                          {getCreatedRoomDate(
-                                            eachMessageRoom?.timestamp
-                                          )}
-                                        </span>
+                                          {getMemberNotEqualActiveUser(
+                                            eachMessageRoom
+                                          ) ? (
+                                            <>
+                                              {getMemberNotEqualActiveUser(
+                                                eachMessageRoom
+                                              ).imageUrl.slice(0, 3) !==
+                                              "../" ? (
+                                                <>
+                                                  <img
+                                                    width={40}
+                                                    height={40}
+                                                    style={{
+                                                      borderRadius: "50%",
+                                                    }}
+                                                    src={
+                                                      getMemberNotEqualActiveUser(
+                                                        eachMessageRoom
+                                                      ).imageUrl
+                                                    }
+                                                    alt=""
+                                                  />
+                                                </>
+                                              ) : (
+                                                <>
+                                                  <img
+                                                    style={{
+                                                      borderRadius: "50%",
+                                                    }}
+                                                    width="40"
+                                                    height="40"
+                                                    src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                                                    alt=""
+                                                  />
+                                                </>
+                                              )}
+                                            </>
+                                          ) : null}
+                                        </div>
                                         <div
                                           style={{
+                                            marginLeft: "10px",
+                                            wordWrap: "break-word",
                                             overflow: "hidden",
                                             textOverflow: "ellipsis",
-                                            whiteSpace: "nowrap",
-                                            maxWidth:
-                                              eachMessageRoom.chat[
-                                                eachMessageRoom.chat.length - 1
-                                              ].text.length > 50 && width > 768
-                                                ? "450px"
-                                                : "200px",
+                                            whiteSpace: "normal",
                                           }}
                                           className="p-0"
                                         >
+                                          <span
+                                            className="chirp-bold-font"
+                                            style={{
+                                              color:
+                                                themeName === "dark-theme"
+                                                  ? "white"
+                                                  : "rgb(15, 20, 25)",
+
+                                              fontSize: font15.fontSize,
+                                              lineHeight: font15.lineHeight,
+                                            }}
+                                          >
+                                            {eachMessageRoom.members[1] &&
+                                            eachMessageRoom.members[0] ? (
+                                              <>
+                                                {eachMessageRoom.members[1]
+                                                  .fullname !==
+                                                userInfo.fullname
+                                                  ? eachMessageRoom.members[1]
+                                                      .fullname
+                                                  : eachMessageRoom.members[0]
+                                                      .fullname}{" "}
+                                              </>
+                                            ) : null}
+                                          </span>
                                           <span
                                             className="chirp-regular-font"
                                             style={{
@@ -743,14 +686,57 @@ function MessagesPage() {
                                                 themeName === "dark-theme"
                                                   ? "#71767A"
                                                   : "rgb(83, 100, 113)",
+                                              fontSize: font15.fontSize,
+                                              lineHeight: font15.lineHeight,
                                             }}
+                                          >
+                                            @
+                                            {eachMessageRoom.members[1] &&
+                                            eachMessageRoom.members[0] ? (
+                                              <>
+                                                {eachMessageRoom.members[1]
+                                                  .username !==
+                                                userInfo.username
+                                                  ? eachMessageRoom.members[1]
+                                                      .username
+                                                  : eachMessageRoom.members[0]
+                                                      .username}{" "}
+                                              </>
+                                            ) : null}
+                                          </span>
+                                          <span
+                                            className="chirp-regular-font"
+                                            style={{
+                                              color:
+                                                themeName === "dark-theme"
+                                                  ? "#71767A"
+                                                  : "rgb(83, 100, 113)",
+                                              fontSize: font15.fontSize,
+                                              lineHeight: font15.lineHeight,
+                                            }}
+                                          >
+                                            {" "}
+                                            ·{" "}
+                                            {getCreatedRoomDate(
+                                              eachMessageRoom?.timestamp
+                                            )}
+                                          </span>
+                                          <div
+                                            style={{
+                                              color:
+                                                themeName === "dark-theme"
+                                                  ? "#71767A"
+                                                  : "rgb(83, 100, 113)",
+                                              maxWidth: "300px",
+                                            }}
+                                            className="p-0 chirp-regular-font"
                                           >
                                             {
                                               eachMessageRoom.chat[
                                                 eachMessageRoom.chat.length - 1
                                               ].text
                                             }
-                                          </span>
+                                          </div>
                                         </div>
                                       </div>
                                       {/* modern popover test start to check  */}
@@ -758,7 +744,7 @@ function MessagesPage() {
                                         style={{
                                           marginTop: "5px",
                                         }}
-                                        className={`p-2 ms-auto message-icon`}
+                                        className={`p-2 message-icon`}
                                       >
                                         <PopupState
                                           variant="popover"
@@ -884,8 +870,9 @@ function MessagesPage() {
                                                     <List.Item
                                                       style={{
                                                         padding: "12px 16px",
-
                                                         opacity: "0.5",
+                                                        cursor: "default",
+                                                        pointerEvents: "none",
                                                         borderBottom:
                                                           themeName !==
                                                           "dark-theme"
@@ -937,6 +924,8 @@ function MessagesPage() {
                                                       style={{
                                                         padding: "12px 16px",
                                                         opacity: "0.5",
+                                                        cursor: "default",
+                                                        pointerEvents: "none",
                                                         borderBottom:
                                                           themeName !==
                                                           "dark-theme"
@@ -989,6 +978,8 @@ function MessagesPage() {
                                                       style={{
                                                         padding: "12px 16px",
                                                         opacity: "0.5",
+                                                        cursor: "default",
+                                                        pointerEvents: "none",
                                                         borderBottom:
                                                           themeName !==
                                                           "dark-theme"
@@ -1093,7 +1084,7 @@ function MessagesPage() {
                                         </PopupState>
                                       </div>
                                       {/* modern popover test finish to check  */}
-                                    </Stack>
+                                    </div>
 
                                     {/* message text is here ? start to check  */}
 

@@ -72,7 +72,8 @@ router.get("/all-messages", authenticateToken, (req, res) => {
       res.status(200).json({ messages: user.messages });
     })
     .catch((error) => {
-      console.log("Error =>", error);
+      console.error("Error =>", error);
+      return res.status(500).json({ error: "Internal Server Error" });
     });
 });
 

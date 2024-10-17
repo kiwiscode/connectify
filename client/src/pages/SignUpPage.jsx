@@ -171,9 +171,6 @@ function SignUpPage() {
 
   const currentMonth = months[new Date().getMonth()];
 
-  console.log("Selected month =>", selectedMonth);
-  console.log("Current month =>", currentMonth);
-
   if (selectedMonth) {
     for (let i = 1; i <= getDaysInMonth(selectedMonth); i++) {
       dayNum.push(i);
@@ -475,24 +472,15 @@ function SignUpPage() {
         }
       )
       .then((response) => {
-        console.log("Response =>", response);
         if (response.status === 201) {
           setemailVerificationCodeStatus(201);
           setemailVerificationCode(response.data.code);
         }
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
-
-  console.log("Email verification code =>", emailVerificationCode);
-  console.log(
-    "Email verification api call status =>",
-    emailVerificationCodeStatus
-  );
-
-  console.log("Confirming email code =>", confirmEmailVerificationCode);
 
   const [showOptionsReceivedEmail, setShowOptionsReceivedEmail] =
     useState(false);
@@ -612,9 +600,6 @@ function SignUpPage() {
     }
   }, [password]);
 
-  console.log("Password.length =>", password.length);
-  console.log("Password is valid ? =>", passwordIsValid);
-
   const signedUserInfo = {
     fullname,
     email,
@@ -624,7 +609,6 @@ function SignUpPage() {
     selectedYear,
   };
 
-  console.log("Signed user info so far =>", signedUserInfo);
   const handleLogin = () => {
     axios
       .post(`${API_URL}/auth/login`, {
@@ -634,16 +618,13 @@ function SignUpPage() {
       .then((response) => {
         const { token, user } = response.data;
 
-        console.log("Response data =>", response.data);
-
         localStorage.setItem("userInfo", JSON.stringify(user));
         localStorage.setItem("token", token);
         updateUser(user);
-        console.log("Response after log in =>", response);
         navigate("/home");
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
   const handleSignUp = () => {
@@ -652,15 +633,13 @@ function SignUpPage() {
         signedUserInfo,
       })
       .then((response) => {
-        console.log("Response =>", response);
-
         setTabLoading(true);
         setTimeout(() => {
           handleLogin();
         }, 500);
       })
       .catch((err) => {
-        console.log("Error =>", err);
+        console.error("Error =>", err);
         const { status } = err.response;
 
         if (status === 402) {
@@ -671,9 +650,6 @@ function SignUpPage() {
   };
 
   const { height, width } = useWindowDimensions();
-
-  console.log("Height =>", height);
-  console.log("Width =>", width);
 
   return (
     <>

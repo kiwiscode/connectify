@@ -32,11 +32,10 @@ function Automation() {
         },
       })
       .then((response) => {
-        console.log("User =>", response.data.user);
         setUser(response.data.user);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 

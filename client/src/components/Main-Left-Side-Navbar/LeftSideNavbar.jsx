@@ -190,7 +190,6 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
       if (response) {
         getActiveUserInfo();
       }
-      console.log("Response from db =>", response);
     } catch (error) {
       console.error(
         "An error occurred while changing active user notification readed status:",
@@ -216,10 +215,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
         }
       );
 
-      console.log("result.data:", result);
-
       setNumberOfUnreadMessages(result.data.length);
-      console.log("result for unread messages:", result);
     } catch (error) {
       console.error("error:", error);
     }

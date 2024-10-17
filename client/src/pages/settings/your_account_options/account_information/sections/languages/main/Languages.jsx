@@ -28,7 +28,7 @@ function Languages() {
         setUser(response.data.user);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -138,7 +138,7 @@ function Languages() {
             lineHeight: font13.lineHeight,
           }}
         >
-          Manage which languages are used to personalize your X experience.
+          Manage which languages are used to personalize your C experience.
         </div>
         <div
           className={

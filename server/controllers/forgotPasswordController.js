@@ -12,10 +12,6 @@ emailProcessAfterChanginPassword();
 const handleGetForgotPasswordProcessUser = (req, res) => {
   const { findConnectifyAccount } = req.body;
 
-  console.log(
-    "This user trying to find his/her password =>",
-    findConnectifyAccount
-  );
   const emailRegex =
     /^[a-zA-Z0-9._%+-]+@(gmail|outlook|hotmail|yahoo|proton|zoho|mail|aol|yandex)\.(com|org|net|gov|edu|mil|co|info|de|co.uk|ca|me|tr|com.tr)$/;
   User.find({
@@ -25,11 +21,6 @@ const handleGetForgotPasswordProcessUser = (req, res) => {
     ],
   })
     .then((userFromDB) => {
-      console.log(
-        "User from data base who is trying to find their password because they forgot password ! =>",
-        userFromDB
-      );
-
       if (userFromDB.length) {
         if (findConnectifyAccount.match(emailRegex)) {
           res.status(201).json({
@@ -123,42 +114,26 @@ const generateRandomCode = () => {
 const handleSendForgotPasswordProcessCodeToEmail = (req, res) => {
   const { forgotPasswordInProcessUser } = req.body;
 
-  console.log(
-    "Forgot password in process user =>",
-    forgotPasswordInProcessUser
-  );
-  console.log(
-    "Processed user username =>",
-    forgotPasswordInProcessUser.username
-  );
-  console.log("Processed user email =>", forgotPasswordInProcessUser.email);
-
   User.findById(forgotPasswordInProcessUser._id)
     .then((user) => {
-      console.log("User found =>", user.username);
       sendConfirmationCodeToEmail(user, generateRandomCode())
         .then((result) => {
-          console.log("Result after email send =>", result);
-
           res.status(201).json({ result: result });
         })
         .catch((error) => {
-          console.log(
+          console.error(
             "Error occured before sending verification code email =>",
             error
           );
         });
     })
     .catch((error) => {
-      console.log("Error occured User not found!  =>", error);
+      console.error("Error occured User not found!  =>", error);
     });
 };
 
 async function handleChangePasswordForgotPasswordTab(req, res) {
   const { forgotPasswordInProcessUser, newPassword } = req.body;
-
-  console.log(forgotPasswordInProcessUser);
-  console.log(newPassword);
 
   try {
     const user = await User.findById(forgotPasswordInProcessUser._id);
@@ -246,10 +221,6 @@ const saltRounds = 10;
 const changePasswordInForgotPasswordProcess = (req, res) => {
   const { user, newPassword } = req.body;
 
-  console.log("User after forgot password process tries to log in =>", user);
-
-  console.log("New password =>", newPassword);
-
   User.findOne({ email: user.email })
     .then((findedUser) => {
       bcrypt
@@ -258,8 +229,6 @@ const changePasswordInForgotPasswordProcess = (req, res) => {
           return bcrypt.hash(newPassword, salt);
         })
         .then((hash) => {
-          console.log("Hash =>", hash);
-
           findedUser.password = hash;
           findedUser
             .save()
@@ -284,12 +253,6 @@ const changePasswordInForgotPasswordProcess = (req, res) => {
 
 const handleLoginAfterForgotPasswordProcess = (req, res) => {
   const { user, newPassword } = req.body;
-  console.log(
-    "User after forgot password process tries to log in =>",
-    user.password
-  );
-
-  console.log("New password =>", newPassword);
 
   if (user.username === "" || user.password === "") {
     res.status(403).json({
@@ -311,10 +274,6 @@ const handleLoginAfterForgotPasswordProcess = (req, res) => {
       bcrypt
         .compare(newPassword, userFromDB.password)
         .then((isSamePassword) => {
-          console.log(
-            "Is same password forgot password section ?",
-            isSamePassword
-          );
           if (!isSamePassword) {
             res.status(401).json({ errorMessage: "Wrong password!" });
           } else if (userFromDB.isDeactivated) {
@@ -354,7 +313,6 @@ const handleLoginAfterForgotPasswordProcess = (req, res) => {
                 expiresIn: "7d",
               });
 
-              console.log("Logged in user username =>", username);
               res.json({
                 token,
                 user: {
@@ -395,21 +353,8 @@ const handleLoginAfterForgotPasswordProcess = (req, res) => {
 const handleiSEmailAndUsernameMatchForgotPasswordProcess = (req, res) => {
   const { findConnectifyAccount, confirmUsername } = req.body;
 
-  console.log(
-    "email one step before =>",
-    findConnectifyAccount,
-    "username current step =>",
-    confirmUsername
-  );
-
   User.find({ email: findConnectifyAccount })
     .then((user) => {
-      console.log(
-        "User finded according to the req.body email:findConnectifyAccount",
-        user[0].email,
-        user[0].username
-      );
-
       if (user[0].username === confirmUsername) {
         res.status(201).json({ error: false, message: "Success!" });
       } else {

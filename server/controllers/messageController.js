@@ -78,8 +78,6 @@ const handleMarkAsReadMessage = async (req, res) => {
 
     await user.save();
 
-    console.log("mark as read the message", messageRoomId);
-
     res.status(200).send("Message marked as read");
   } catch (error) {
     console.error("Error:", error);
@@ -97,8 +95,6 @@ const handleCreateChatRoom = async (req, res) => {
     const user1 = await User.findById(userId1);
     const user2 = await User.findById(userId2);
 
-    console.log("room id:", roomId);
-
     if (!user1 || !user2) {
       return res.status(404).send("One or both users not found");
     }
@@ -115,8 +111,6 @@ const handleCreateChatRoom = async (req, res) => {
     );
 
     if (user1RoomExists || user2RoomExists) {
-      console.log("user 1:", user1.username);
-      console.log("user 2:", user2.username);
       return res.status(400).send("Chat room already exists");
     }
 

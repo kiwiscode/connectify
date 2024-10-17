@@ -39,7 +39,6 @@ const BookmarkAction = ({
   const { contextHolder, showCustomMessage } = useAntdMessageHandler();
 
   const handleBookmarkAdd = (postId, findedPost) => {
-    console.log("Post id =>", postId);
     axios
       .post(
         `${API_URL}/bookmarks/add`,
@@ -62,7 +61,7 @@ const BookmarkAction = ({
         refreshPosts();
       })
       .catch((error) => {
-        console.log("Error message =>", error);
+        console.error("Error =>", error);
       });
   };
   const handleDeleteBookMark = (bookmarkId) => {
@@ -80,7 +79,7 @@ const BookmarkAction = ({
         refreshPosts();
       })
       .catch((err) => {
-        console.log("Error =>", err);
+        console.error("Error =>", err);
       });
   };
 

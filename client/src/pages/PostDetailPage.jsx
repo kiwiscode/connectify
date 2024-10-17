@@ -60,8 +60,6 @@ function PostDetailPage() {
     []
   );
 
-  console.log("Commented for this post check =>", commentedForThisPost);
-
   const navigate = useNavigate();
 
   const [deactivatedUser, setdeactivatedUser] = useState(false);
@@ -82,7 +80,7 @@ function PostDetailPage() {
         setdetailedPost(detailedPost);
       })
       .catch((error) => {
-        console.log(error);
+        console.error("Error =>", error);
       });
   };
 
@@ -122,10 +120,9 @@ function PostDetailPage() {
           setdetailedPost(commentedForThisPost);
         }
         setdetailedPost(detailedPost);
-        console.log(response);
       })
       .catch((error) => {
-        console.log(error);
+        console.error("Error =>", error);
       });
   }, [postId]);
 
@@ -195,7 +192,6 @@ function PostDetailPage() {
 
   const [dataFromCommentModal, setDataFromCommentModal] = useState("");
   function handleDataFromCommentModal(data) {
-    console.log("Data =>", data);
     setDataFromCommentModal(data);
   }
 

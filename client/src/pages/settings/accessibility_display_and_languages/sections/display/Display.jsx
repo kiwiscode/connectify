@@ -1557,7 +1557,9 @@ function Display() {
                 backgroundColor: "#15202B",
                 borderRadius: "4px",
                 border: themeName === "dark-theme" ? "1px solid #333639" : null,
-                cursor: "pointer",
+                cursor: "default",
+                pointerEvents: "none",
+                opacity: "0.5",
               }}
             >
               <div

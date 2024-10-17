@@ -101,8 +101,7 @@ function MainPage({ isNewPostShared }) {
       setPosts(response.data);
       setPostsLoadingSpinner(false);
     } catch (error) {
-      console.log("Catch error working!");
-      console.error("Error:", error);
+      console.error("Error =>", error);
     }
   };
 
@@ -146,7 +145,7 @@ function MainPage({ isNewPostShared }) {
         setFollowingPosts(response.data);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -264,10 +263,8 @@ function MainPage({ isNewPostShared }) {
           }, 750);
         })
         .catch((err) => {
-          return err;
+          console.error("Error =>", err);
         });
-    } else {
-      console.log("Nothing to share !");
     }
   };
 
@@ -368,7 +365,7 @@ function MainPage({ isNewPostShared }) {
         setprofileImageChangingLoadingBar(false);
       })
       .catch((error) => {
-        console.log(error);
+        console.error("Error =>", error);
       });
   };
 
@@ -415,19 +412,14 @@ function MainPage({ isNewPostShared }) {
         }
       )
       .then((response) => {
-        console.log("Response =>", response);
         if (response.status === 200) {
           setusernameValidated(true);
           setnextButtonActive(true);
           setusernameDuplicateError("");
-          console.log("Hello world !");
-        } else {
-          console.log("Hello world hahahahaha ! ");
         }
       })
       .catch((error) => {
         if (error.response.data.errorMessage && username.length) {
-          console.log("Something went wrong during the process !");
           setnextButtonDisabled(true);
           setnextButtonActive(false);
           setusernameValidated(false);
@@ -456,7 +448,6 @@ function MainPage({ isNewPostShared }) {
         }
       )
       .then((response) => {
-        console.log("Response from server =>", response);
         setTabLoading(true);
         setLoading(true);
         setTimeout(() => {
@@ -488,7 +479,7 @@ function MainPage({ isNewPostShared }) {
         }, 350);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -505,7 +496,7 @@ function MainPage({ isNewPostShared }) {
         }, 500);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -536,7 +527,7 @@ function MainPage({ isNewPostShared }) {
         }
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -553,15 +544,13 @@ function MainPage({ isNewPostShared }) {
           }
         )
         .then((response) => {
-          console.log("Response show modal =>", response);
           if (response.status === 200) {
             setshowSubscriptionCompletedModal(true);
           }
         })
         .catch((error) => {
           updateUser({ hasSubscription: true });
-          return error;
-          // console.log("Error do not show modal =>", error);
+          console.error("Error =>", error);
         });
     }
   }, [getToken()]);
@@ -618,8 +607,6 @@ function MainPage({ isNewPostShared }) {
   const [windowLoadingAfterGoogleAuth, setWindowLoadingAfterGoogleAuth] =
     useState(false);
   useEffect(() => {
-    console.log(userInfo?.signedUpWithVariantOne);
-    console.log(userInfo?.signedUpWithGoogle);
     if (
       (userInfo?.signedUpWithVariantOne?.isSignedUpWithVariantOne &&
         !userInfo?.signedUpWithVariantOne
@@ -627,11 +614,6 @@ function MainPage({ isNewPostShared }) {
       (userInfo?.signedUpWithGoogle?.isSignedUpWithGoogle &&
         !userInfo.signedUpWithGoogle?.isProfileImageCustomizationModalShown)
     ) {
-      console.log("We are here right now !");
-      console.log(
-        "User info signed up with variant one =>",
-        userInfo?.isSignedUpWithVariantOne?.isSignedUpWithVariantOne
-      );
       setTabIndex(0);
       setshowModalForProfilePictureOrUsernameOrBoth(true);
     }
@@ -676,7 +658,6 @@ function MainPage({ isNewPostShared }) {
 
   const [dataFromCommentModal, setDataFromCommentModal] = useState("");
   function handleDataFromCommentModal(data) {
-    console.log("Data =>", data);
     setDataFromCommentModal(data);
   }
 
@@ -708,7 +689,6 @@ function MainPage({ isNewPostShared }) {
     useState(null);
 
   function handleDataFromTopNavigationComponentOpenedStatus(data) {
-    console.log("Data =>", data);
     setDataFromTopNavigationComponent(data);
   }
 
@@ -2424,7 +2404,6 @@ function MainPage({ isNewPostShared }) {
                           post.userId._id !== userInfo._id) ? null : (
                           <div
                             onClick={() => {
-                              console.log("Post box parent class =>", post);
                               setclickedPostBox(post);
                             }}
                             className={
@@ -3026,7 +3005,6 @@ function MainPage({ isNewPostShared }) {
 
                             <div
                               onClick={() => {
-                                console.log("Post box child class =>", post);
                                 setclickedPostBox(post);
                               }}
                               className="border-extra"
@@ -3128,7 +3106,6 @@ function MainPage({ isNewPostShared }) {
                       <div key={post._id}>
                         <div
                           onClick={() => {
-                            console.log("Post box parent class =>", post);
                             setclickedPostBox(post);
                           }}
                           className={
@@ -3708,7 +3685,6 @@ function MainPage({ isNewPostShared }) {
                           </div>
                           <div
                             onClick={() => {
-                              console.log("Post box child class =>", post);
                               setclickedPostBox(post);
                             }}
                             className="border-extra"

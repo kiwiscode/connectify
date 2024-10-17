@@ -14,8 +14,6 @@ router.post("/add_gender_to_user", authenticateToken, async (req, res) => {
     const { genderOption } = req.body;
     const { userId } = req.user;
 
-    console.log("Gender option =>", genderOption);
-
     if (!genderOption) {
       return res.status(400).json({ message: "Gender option is required" });
     }
@@ -42,9 +40,6 @@ router.post("/add_country_to_user", authenticateToken, async (req, res) => {
   try {
     const { countryOption } = req.body;
     const { userId } = req.user;
-
-    console.log("Country option =>", countryOption);
-    console.log("User id =>", userId);
 
     if (!countryOption) {
       return res.status(400).json({ message: "Country option is required" });
@@ -76,9 +71,6 @@ router.post(
       const { phoneNumber } = req.body;
       const { userId } = req.user;
 
-      console.log("Phone number =>", phoneNumber);
-      console.log("User id =>", userId);
-
       if (!phoneNumber) {
         return res.status(400).json({ message: "Phone number is required" });
       }
@@ -107,9 +99,6 @@ router.post("/user_update_email", authenticateToken, async (req, res) => {
   try {
     const { newEmail } = req.body;
     const { userId } = req.user;
-
-    console.log("New email =>", newEmail);
-    console.log("User id =>", userId);
 
     if (!newEmail) {
       return res.status(400).json({ message: "New email option is required" });
@@ -154,26 +143,19 @@ router.post("/phone_verification_code", authenticateToken, async (req, res) => {
     const { toNumber, countryCode } = req.body;
     const { userId } = req.user;
     countryCodeFromUser = countryCode;
-    console.log("Country code =>", countryCode);
-    console.log("Number =>", toNumber);
-    console.log("User id =>", userId);
-    console.log("To number =>", toNumber + countryCode);
 
     randomCode = randomCode === undefined ? generateRandomCode() : randomCode;
 
-    console.log("Random code =>", randomCode);
     const message = await client.messages.create({
       body: `Your Connectify confirmation code is ${randomCode}`,
       from: process.env.TWILIO_ACCOUNT_NUMBER,
       to: `+${countryCode + toNumber}`,
     });
-    console.log(message.sid);
     res.status(201).json({
       code: randomCode,
       message: "Verification code to phone sent",
     });
   } catch (error) {
-    console.log("Error =>", error);
     res.status(500).json("Internal server error !");
   }
 });
@@ -192,13 +174,6 @@ router.post("/verify_code", authenticateToken, async (req, res) => {
 
     const cleanedPhoneNumber = removeLeadingZero(phoneNumberInput);
 
-    console.log("Verification code input =>", verificationCodeInput);
-    console.log("Country code =>", countryCodeFromUser);
-    console.log(
-      "Is correct verification code =>",
-      verificationCodeInput === randomCode ? "Correct code" : "Invalid code!"
-    );
-    console.log("Phone number input =>", phoneNumberInput);
     if (verificationCodeInput === randomCode) {
       resultPhoneNumberGlobal = {
         phone_number: cleanedPhoneNumber,
@@ -225,7 +200,6 @@ router.post("/verify_code", authenticateToken, async (req, res) => {
       });
     }
   } catch (error) {
-    console.log("Error =>", error);
     res.status(500).json("Internal server error !");
   }
 });
@@ -284,9 +258,6 @@ router.post(
       const { multi_factor_authentication_input } = req.body;
       const { userId } = req.user;
 
-      console.log("Input =>", multi_factor_authentication_input);
-      console.log("Active user =>", userId);
-
       const user = await User.findOne({
         $or: [
           { email: multi_factor_authentication_input },
@@ -323,8 +294,6 @@ router.post(
         return;
       }
 
-      console.log("Finded user for managing (AKA(Merging)) :", user);
-
       if (user) {
         res.status(200).json({
           message: "User found and authorized for managing account.",
@@ -343,9 +312,6 @@ router.post(
     try {
       const { automatedAccountAuthentication, password } = req.body;
       const { userId } = req.user;
-
-      console.log("Automated account =>", automatedAccountAuthentication);
-      console.log("User id =>", userId);
 
       if (!automatedAccountAuthentication) {
         return res
@@ -438,7 +404,6 @@ router.post(
         user: updatedUser,
       });
     } catch (error) {
-      console.log("Error =>", error);
       res.status(500).json("Server error!");
     }
   }
@@ -451,15 +416,11 @@ router.post(
     try {
       const { userId } = req.user;
 
-      console.log("User id =>", userId);
-
       const updatedUser = await User.findByIdAndUpdate(
         userId,
         { automated_account: null },
         { new: true, runValidators: true }
       );
-
-      console.log("Updated user =>", updatedUser);
 
       if (!updatedUser) {
         return res.status(404).json({ message: "User not found" });
@@ -470,7 +431,6 @@ router.post(
         user: updatedUser,
       });
     } catch (error) {
-      console.log("Error =>", error);
       res.status(500).json("Server error!");
     }
   }
@@ -483,8 +443,6 @@ router.post(
     try {
       const { languages } = req.body;
       const { userId } = req.user;
-
-      console.log("Languages option =>", languages);
 
       if (!languages) {
         return res
@@ -523,8 +481,6 @@ router.post("/toggle_profile_privacy", authenticateToken, async (req, res) => {
     }
     const userPrivate = user.isPrivate;
 
-    console.log("User private =>", userPrivate);
-
     if (userPrivate) {
       const updatedUser = await User.findByIdAndUpdate(
         userId,
@@ -547,7 +503,7 @@ router.post("/toggle_profile_privacy", authenticateToken, async (req, res) => {
         .json({ message: "Privacy updated successfully", user: updatedUser });
     }
   } catch (error) {
-    console.log("Error: ", error);
+    console.error("Error: ", error);
   }
 });
 
@@ -561,8 +517,6 @@ router.post("/toggle_protect_videos", authenticateToken, async (req, res) => {
       res.status(404).json("User not found!");
     }
     const userVidesProtected = user.isVideosProtected;
-
-    console.log("User videos protected =>", userVidesProtected);
 
     if (userVidesProtected) {
       const updatedUser = await User.findByIdAndUpdate(
@@ -588,7 +542,8 @@ router.post("/toggle_protect_videos", authenticateToken, async (req, res) => {
       });
     }
   } catch (error) {
-    console.log("Error: ", error);
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -617,7 +572,8 @@ router.post(
         user: updatedUser,
       });
     } catch (error) {
-      console.log("Error: ", error);
+      console.error(error);
+      return res.status(500).json({ error: "Internal Server Error" });
     }
   }
 );
@@ -642,7 +598,8 @@ router.get("/subscription", authenticateToken, async (req, res) => {
 
     res.status(200).json(responseData);
   } catch (error) {
-    console.log("Error =>", error);
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -662,7 +619,8 @@ router.get(
 
       res.status(200).json(responseData);
     } catch (error) {
-      console.log("Error =>", error);
+      console.error(error);
+      return res.status(500).json({ error: "Internal Server Error" });
     }
   }
 );
@@ -670,7 +628,6 @@ router.get(
 router.post("/cancel_subscription", authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
-    console.log("User id =>", userId);
 
     const activeSubscription = await Subscription.findOne({
       owner: userId,
@@ -726,7 +683,6 @@ router.post("/cancel_subscription", authenticateToken, async (req, res) => {
       }
     );
     if (subscription) {
-      console.log("Subscription =>", subscription);
       res.status(200).json({
         message: "Subscription cancelled successfully.",
         subscription: subscription,

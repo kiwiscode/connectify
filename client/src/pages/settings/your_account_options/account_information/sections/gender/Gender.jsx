@@ -59,15 +59,12 @@ function Gender() {
         }
         showCustomMessage("Gender updated", 6);
       }
-
-      console.log("Response =>", response);
     } catch (error) {
-      console.error("error:", error);
+      console.error("Error =>", error);
     }
   };
 
   useEffect(() => {
-    console.log("User info =>", userInfo);
     if (userInfo?.gender) {
       if (userInfo.gender !== "Male" && userInfo.gender !== "Female") {
         setAddYourGenderFieldValue(userInfo.gender);

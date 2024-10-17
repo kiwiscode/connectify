@@ -47,7 +47,6 @@ function FollowingRequests() {
           }
         );
 
-        console.log("received follow requests:", result);
         setRequestsOfthemonitoreduser(result.data);
         setActiveTab("requests");
         setRequests(result.data.receivedFollowRequests);
@@ -70,7 +69,6 @@ function FollowingRequests() {
         }
       );
 
-      console.log("received follow requests:", result);
       setRequestsOfthemonitoreduser(result.data);
       setActiveTab("requests");
       setRequests(result.data.receivedFollowRequests);

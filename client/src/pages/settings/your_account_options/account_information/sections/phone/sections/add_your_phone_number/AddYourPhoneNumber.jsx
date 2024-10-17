@@ -89,7 +89,6 @@ function AddYourPhoneNumber() {
         }
       );
       if (response) {
-        console.log("Response =>", response);
         if (response.status === 201) {
           setPhoneVerificationCodeStatus(201);
           setPhoneVerificationCode(response.data.code);
@@ -149,7 +148,6 @@ function AddYourPhoneNumber() {
         }
       );
       if (response) {
-        console.log("Response =>", response);
         navigate("/settings/phone");
       }
     } catch (error) {
@@ -207,7 +205,7 @@ function AddYourPhoneNumber() {
         setUser(response.data.user);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -249,7 +247,6 @@ function AddYourPhoneNumber() {
 
   const handlePhoneNumberCheck = async () => {
     try {
-      console.log("Here is working!");
       const response = await axios.post(
         `${API_URL}/auth/phone-number-check`,
         { phone_number_input: phoneNumber },
@@ -259,7 +256,6 @@ function AddYourPhoneNumber() {
           },
         }
       );
-      console.log("Response =>", response);
       if (response) {
         setErrorPhoneInValidMessage2("");
         setvalidPhoneNumber2(true);

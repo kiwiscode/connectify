@@ -44,18 +44,16 @@ function FollowerDetailPage() {
         },
       })
       .then((response) => {
-        console.log("Response of get followers() =>", response);
         setfollowersofthemonitoreduser(response.data.user);
         setActiveTab("followers");
         setFollowers(response.data.followers);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
   const handleGoBack = () => {
-    console.log("You clicked to go back !");
     navigate(-1);
   };
   const [activeUserFollowing, setactiveUserFollowing] = useState([]);
@@ -69,11 +67,10 @@ function FollowerDetailPage() {
         },
       })
       .then((response) => {
-        console.log("Get active user() response =>", response);
         setactiveUserFollowing(response.data.user.following);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -169,7 +166,6 @@ function FollowerDetailPage() {
         }
       );
 
-      console.log("received follow requests:", result);
       setRequests(result.data.receivedFollowRequests);
     } catch (error) {
       console.error("error:", error);
@@ -936,7 +932,7 @@ function FollowerDetailPage() {
                     getFollowers();
                   })
                   .catch((error) => {
-                    console.log(error);
+                    console.error("Error =>", error);
                   });
               };
 
@@ -960,7 +956,7 @@ function FollowerDetailPage() {
                     setshowUnfollowModal(false);
                   })
                   .catch((error) => {
-                    console.log("Error =>", error);
+                    console.error("Error =>", error);
                   });
               };
 

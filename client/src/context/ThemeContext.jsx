@@ -33,18 +33,12 @@ export const ThemeProvider = ({ children }) => {
 
   const toggleThemeBetweenLightDarkMode = () => {
     if (themeName === "dark-theme") {
-      console.log("Function is working first condition !");
-
       localStorage.setItem("themeName", "light-theme");
       setThemeName("light-theme");
     } else if (themeName === "light-theme") {
-      console.log("Function is working second condition !");
-
       localStorage.setItem("themeName", "dark-theme");
       setThemeName("dark-theme");
     } else {
-      console.log("Function is working third condition !");
-
       localStorage.setItem("themeName", "light-theme");
       setThemeName("light-theme");
     }

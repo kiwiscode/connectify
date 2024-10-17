@@ -23,10 +23,6 @@ function LanguageSelector() {
   const [which_languages_do_you_speak, setWhich_languages_do_you_speak] =
     useState([]);
 
-  console.log(
-    "Which languages do you speak ? =>",
-    which_languages_do_you_speak
-  );
   const refreshActiveUser = () => {
     axios
       .get(`${API_URL}/profile`, {
@@ -45,7 +41,7 @@ function LanguageSelector() {
         setUser(response.data.user);
       })
       .catch((error) => {
-        console.log("Error =>", error);
+        console.error("Error =>", error);
       });
   };
 
@@ -434,11 +430,6 @@ function LanguageSelector() {
 
                                         setWhich_languages_do_you_speak(
                                           filteredArray
-                                        );
-
-                                        console.log(
-                                          "Which languages do you speak =>",
-                                          which_languages_do_you_speak
                                         );
                                       } else {
                                         setAddedSpokenLanguages((prevState) => [
@@ -949,7 +940,7 @@ function LanguageSelector() {
             lineHeight: font13.lineHeight,
           }}
         >
-          Manage which languages are used to personalize your X experience.
+          Manage which languages are used to personalize your C experience.
         </div>
         <div
           className={

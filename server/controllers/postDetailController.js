@@ -5,8 +5,6 @@ const Bookmark = require("../models/Bookmark.model");
 const getPostDetail = (req, res) => {
   const { postId } = req.params;
 
-  console.log(postId);
-
   Post.findById(postId)
     .populate("likes")
     .populate("reposted")
@@ -93,7 +91,6 @@ const getPostDetail = (req, res) => {
       },
     })
     .then((post) => {
-      console.log("Detailed post comments =>", post.comments.length);
       res.status(200).json({ detailedPost: post });
     })
     .catch(() => {

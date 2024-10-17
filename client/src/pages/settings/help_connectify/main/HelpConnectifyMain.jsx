@@ -1,12 +1,6 @@
+import UnderConstructionPage from "../../../../components/UnderConstructionPage/UnderConstructionPage";
+
 function HelpConnectifyMain() {
-  return (
-    <div
-      style={{
-        textAlign: "center",
-      }}
-    >
-      Help connectify
-    </div>
-  );
+  return <UnderConstructionPage />;
 }
 export default HelpConnectifyMain;

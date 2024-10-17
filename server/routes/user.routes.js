@@ -152,8 +152,6 @@ router.post(
           followRequestIndex
         ].recipient._id.toString();
 
-      console.log("recipient id:", recipientId);
-
       // Follow isteğini sentFollowRequests arrayinden çıkar
       requester.sentFollowRequests.splice(followRequestIndex, 1);
 

@@ -41,7 +41,6 @@ function Tagging() {
           },
         }
       );
-      console.log("Response =>", response);
       if (response) {
         updateUser({
           photoTaggingPermission: response.data.user.photoTaggingPermission,

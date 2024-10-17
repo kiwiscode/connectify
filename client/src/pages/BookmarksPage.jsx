@@ -36,7 +36,6 @@ function Bookmarks() {
           Authorization: `Bearer ${getToken()}`,
         },
       });
-      console.log("Bookmarks =>", response.data.bookmarksForThisUserFromDB);
       setBookmarks(response.data.bookmarksForThisUserFromDB);
     } catch (error) {
       console.error("Error =>", error);
@@ -216,7 +215,6 @@ function Bookmarks() {
           Authorization: `Bearer ${getToken()}`,
         },
       });
-      console.log("Response =>", response);
       handleCloseClearAllBookmarksModal();
       fetchBookmarks();
     } catch (error) {
@@ -231,7 +229,6 @@ function Bookmarks() {
 
   const [dataFromCommentModal, setDataFromCommentModal] = useState("");
   function handleDataFromCommentModal(data) {
-    console.log("Data =>", data);
     setDataFromCommentModal(data);
   }
 
