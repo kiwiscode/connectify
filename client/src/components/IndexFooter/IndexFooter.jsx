@@ -1,12 +1,13 @@
 import { useContext } from "react";
 import { ThemeContext } from "../../context/ThemeContext";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
+import useWindowDimensions from "../../hooks/getWindowDimensions";
 
 function IndexFooter() {
   const [{ themeName }] = useContext(ThemeContext);
   const { getFontSizeAndLineHeight13 } = useFontSizeHandler();
   const font13 = getFontSizeAndLineHeight13();
-
+  const { width } = useWindowDimensions();
   return (
     <>
       <div
@@ -20,7 +21,9 @@ function IndexFooter() {
           justifyContent: "center",
           alignItems: "center",
         }}
-        className={`footer-container chirp-regular-font mt-3 footer-container-${themeName}`}
+        className={`footer-container chirp-regular-font ${
+          width <= 1440 ? "mt-3" : "mt-5"
+        }  footer-container-${themeName}`}
       >
         <a href="">
           <span>About</span>
