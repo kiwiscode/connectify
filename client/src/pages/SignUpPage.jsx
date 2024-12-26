@@ -71,10 +71,6 @@ function SignUpPage() {
   };
 
   const [showCreateAccountModal, setshowCreateAccountModal] = useState(false);
-  const handleCloseCreateAccountModal = () => {
-    setshowCreateAccountModal(false);
-    setTabIndex(0);
-  };
 
   const [tabLoading, setTabLoading] = useState(null);
 
@@ -85,6 +81,56 @@ function SignUpPage() {
     setTimeout(() => {
       setTabLoading(false);
     }, 500);
+  };
+
+  const resetSignUpModalStates = () => {
+    setFullname("");
+    setfullnameFilled(false);
+    setEmail("");
+    setPassword("");
+    setError("");
+    setSuccess("");
+    setShowPassword(false);
+    setshowCreateAccountModal(false);
+    setTabIndex(0);
+    setTabLoading(false);
+    setFirstAppearance(true);
+    setshowMonthPicker(false);
+    setSelectedMonth("");
+    setshowDayPicker(false);
+    setselectedDay("");
+    setshowYearPicker(false);
+    setselectedYear("");
+    setdisplayedYear("");
+    setStyleOfBoxMonth(false);
+    setStyleOfBoxDay(false);
+    setStyleOfBoxYear(false);
+    setCloseOptionsReceivedEmail(false);
+    setonFocusedToFullNameField(false);
+    setinformationsAreCorrect(false);
+    setcheckFields({
+      nameInput: false,
+      emailInput: false,
+      dateofbirthInput: false,
+    });
+    setIshoveredIndexMonth(null);
+    setIshoveredIndexDay(null);
+    setIshoveredIndexYear(null);
+    setemailTypeError("");
+    setfirstClicked(false);
+    setsecondClicked(false);
+    setthirdClicked(false);
+    setemailVerificationCode("");
+    setconfirmEmailVerificationCode("");
+    setemailVerificationCodeStatus("");
+    setShowOptionsReceivedEmail(false);
+    setpasswordIsValid(false);
+  };
+
+  const handleCloseCreateAccountModal = () => {
+    // setshowCreateAccountModal(false);
+    // setTabIndex(0);
+    resetSignUpModalStates();
   };
 
   const handleChangeFullName = (e) => {
@@ -183,6 +229,7 @@ function SignUpPage() {
 
   const handleMonthClick = () => {
     setshowMonthPicker(!showMonthPicker);
+    setStyleOfBoxMonth(true);
   };
 
   const handleMonthSelect = (month) => {
@@ -526,17 +573,19 @@ function SignUpPage() {
     ) {
       setStyleOfBoxMonth(false);
       setshowMonthPicker(false);
-    } else {
-      setStyleOfBoxMonth(true);
     }
+    // else {
+    //   setStyleOfBoxMonth(true);
+    // }
   };
   const handleClickOutsideDayPicker = (event) => {
     if (dayPickerRef.current && !dayPickerRef.current.contains(event.target)) {
       setStyleOfBoxDay(false);
       setshowDayPicker(false);
-    } else {
-      setStyleOfBoxDay(true);
     }
+    // else {
+    //   setStyleOfBoxDay(true);
+    // }
   };
   const handleClickOutsideYearPicker = (event) => {
     if (
@@ -545,9 +594,10 @@ function SignUpPage() {
     ) {
       setStyleOfBoxYear(false);
       setshowYearPicker(false);
-    } else {
-      setStyleOfBoxYear(true);
     }
+    // else {
+    //   setStyleOfBoxYear(true);
+    // }
   };
 
   useEffect(() => {
@@ -875,28 +925,29 @@ function SignUpPage() {
                       Create your account
                     </div>
 
-                    {onFocusedToFullNameField ? (
-                      <InputLabel
+                    <InputLabel
+                      className={` ${
+                        onFocusedToFullNameField ? "visible" : "invisible"
+                      }`}
+                      style={{
+                        width: "81.5%",
+                        textAlign: "right",
+                      }}
+                    >
+                      <div
+                        className="chirp-regular-font"
                         style={{
-                          width: "81.5%",
-                          textAlign: "right",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                         }}
                       >
-                        <div
-                          className="chirp-regular-font"
-                          style={{
-                            color:
-                              themeName === "dark-theme"
-                                ? "#71767A"
-                                : "rgb(83, 100, 113)",
-                            fontSize: font13.fontSize,
-                            lineHeight: font13.lineHeight,
-                          }}
-                        >
-                          {fullname.length} / {50}
-                        </div>
-                      </InputLabel>
-                    ) : null}
+                        {fullname.length} / {50}
+                      </div>
+                    </InputLabel>
 
                     <TextField
                       autoFocus={true}
@@ -2405,28 +2456,31 @@ function SignUpPage() {
                     >
                       Create your account
                     </div>
-                    {onFocusedToFullNameField ? (
-                      <InputLabel
+                    <InputLabel
+                      className={` ${
+                        onFocusedToFullNameField ? "visible" : "invisible"
+                      }`}
+                      style={{
+                        width: "81.5%",
+                        textAlign: "right",
+                      }}
+                    >
+                      <div
+                        className="chirp-regular-font"
                         style={{
-                          width: "81.5%",
-                          textAlign: "right",
+                          color:
+                            themeName === "dark-theme"
+                              ? "#71767A"
+                              : "rgb(83, 100, 113)",
+                          fontSize: font13.fontSize,
+                          lineHeight: font13.lineHeight,
                         }}
                       >
-                        <div
-                          className="chirp-regular-font"
-                          style={{
-                            color:
-                              themeName === "dark-theme"
-                                ? "#71767A"
-                                : "rgb(83, 100, 113)",
-                            fontSize: font13.fontSize,
-                            lineHeight: font13.lineHeight,
-                          }}
-                        >
+                        <div>
                           {fullname.length} / {50}
                         </div>
-                      </InputLabel>
-                    ) : null}
+                      </div>
+                    </InputLabel>
                     <TextField
                       autoFocus={true}
                       onFocus={() => setonFocusedToFullNameField(true)}

@@ -23,6 +23,7 @@ import {
 } from "react-phone-number-input/input";
 import en from "react-phone-number-input/locale/en.json";
 import { useFontSizeHandler } from "../../../../../../../../utils/useFontSizeHandler";
+import { v4 as uuidv4 } from "uuid";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
@@ -1028,7 +1029,7 @@ function AddYourPhoneNumber() {
                       >
                         <option value="">{en["ZZ"]}</option>
                         {sortedCountries.map((country) => (
-                          <option key={country._id} value={country}>
+                          <option key={uuidv4()} value={country}>
                             +{getCountryCallingCode(country)} {en[country]}
                           </option>
                         ))}

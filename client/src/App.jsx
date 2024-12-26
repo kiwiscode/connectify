@@ -1,5 +1,5 @@
 import { Suspense, lazy, useContext, useEffect, useState } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { ThemeContext } from "./context/ThemeContext";
 import LoadingSpinner from "./components/ui/LoadingSpinner";
 import { Container, Row } from "react-bootstrap";
@@ -267,7 +267,7 @@ function App() {
   const location = useLocation();
   const path = location.pathname;
   const { navigationHistoryArray } = useContext(NavigationHistoryContext);
-
+  const navigate = useNavigate();
   // bir rota öncesi işlemleri
   const oneRouteBefore =
     navigationHistoryArray?.length > 0 && navigationHistoryArray[1]
@@ -517,6 +517,12 @@ function App() {
       handleShowPageNotFoundAnimation();
     }
   }, [path, doNotShowRightSideBarColumnInTheseRoutes]);
+
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      navigate(`/`);
+    }
+  }, []);
 
   return (
     <>

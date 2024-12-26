@@ -798,7 +798,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       </div>
                     </span>
                   </NavLink>
-                  <NavLink
+                  {/* <NavLink
                     style={{
                       color: "black",
                       display: "flex",
@@ -862,7 +862,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                         </BootstrapTooltip>
                       </div>
                     </span>
-                  </NavLink>
+                  </NavLink> */}
                   <NavLink
                     onClick={changeNotificationReadedStatus}
                     style={{
@@ -1122,7 +1122,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       </div>
                     </span>
                   </NavLink>
-                  <NavLink
+                  {/* <NavLink
                     style={{
                       color: "black",
                       display: "flex",
@@ -1185,7 +1185,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                         </BootstrapTooltip>
                       </div>
                     </span>
-                  </NavLink>
+                  </NavLink> */}
                   <NavLink
                     style={{
                       color: "black",
@@ -1406,7 +1406,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                           }`}
                         >
                           {" "}
-                          <div
+                          {/* <div
                             onClick={() => {
                               popupState.close();
                               navigate(`/${userInfo.username}/lists`);
@@ -1528,7 +1528,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          </div> */}
                           <div
                             onClick={() => {
                               popupState.close();
@@ -1652,7 +1652,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                               </div>
                             </div>
                           </div>
-                          <div
+                          {/* <div
                             onClick={() => {
                               popupState.close();
                               navigate(`/help/connectify`);
@@ -1774,8 +1774,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                 </div>
                               </div>
                             </div>
-                          </div>
-                          <div
+                          </div> */}
+                          {/* <div
                             onClick={() => {
                               popupState.close();
                               navigate("/jobs");
@@ -1929,8 +1929,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                 </div>
                               </div>
                             </div>
-                          </div>
-                          <div
+                          </div> */}
+                          {/* <div
                             onClick={() => {
                               popupState.close();
                               navigate("/i/spaces/start");
@@ -2052,7 +2052,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                 </div>
                               </div>
                             </div>
-                          </div>{" "}
+                          </div>{" "} */}
                           <div
                             onClick={() => {
                               popupState.close();
@@ -2380,7 +2380,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                 </div>
               </div>
               {/* second */}
-              <div
+              {/* <div
                 className={`home-nav-link home-nav-link-${themeName}`}
                 style={{
                   cursor: "default",
@@ -2431,7 +2431,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                     Explore
                   </span>
                 </div>
-              </div>
+              </div> */}
               {/* third */}
               <div
                 style={{
@@ -2616,7 +2616,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                 </div>
               </div>{" "}
               {/* fifth */}
-              <div
+              {/* <div
                 className={`messages-nav-link messages-nav-link-${themeName}`}
                 style={{
                   display: width > 1440 ? "" : "none",
@@ -2671,7 +2671,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                     Lists{" "}
                   </span>
                 </div>
-              </div>
+              </div> */}
               {/* sixth */}
               <div
                 className={`profile-nav-link profile-nav-link-${themeName}`}
@@ -2727,7 +2727,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                 </div>
               </div>{" "}
               {/* seventh */}
-              <div
+              {/* <div
                 className={`profile-nav-link profile-nav-link-${themeName}`}
                 style={{
                   cursor: "default",
@@ -2780,7 +2780,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                     Communities
                   </span>
                 </div>
-              </div>{" "}
+              </div>{" "} */}
               {/* eighth */}
               <div
                 className={`profile-nav-link profile-nav-link-${themeName}`}
@@ -2973,7 +2973,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                       }`}
                     >
                       {" "}
-                      {width <= 1440 && (
+                      {/* {width <= 1440 && (
                         <div
                           onClick={() => {
                             popupState.close();
@@ -3097,7 +3097,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                             </div>
                           </div>
                         </div>
-                      )}
+                      )} */}
                       <div
                         onClick={() => {
                           popupState.close();
@@ -3221,7 +3221,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                           </div>
                         </div>
                       </div>
-                      <div
+                      {/* <div
                         onClick={() => {
                           popupState.close();
                           navigate(`/help/connectify`);
@@ -3343,8 +3343,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div
+                      </div> */}
+                      {/* <div
                         onClick={() => {
                           popupState.close();
                           navigate("/jobs");
@@ -3498,8 +3498,8 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div
+                      </div> */}
+                      {/* <div
                         onClick={() => {
                           popupState.close();
                           navigate("/i/spaces/start");
@@ -3621,7 +3621,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                             </div>
                           </div>
                         </div>
-                      </div>{" "}
+                      </div>{" "} */}
                       <div
                         onClick={() => {
                           popupState.close();

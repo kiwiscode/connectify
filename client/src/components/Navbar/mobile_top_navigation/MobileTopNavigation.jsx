@@ -747,7 +747,7 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                 </div>
               </div>
             </div>
-            <div
+            {/* <div
               onClick={() => {
                 navigate(`/${userInfo.username}/lists`);
               }}
@@ -868,7 +868,7 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
             <div
               onClick={() => {
                 navigate(`/i/bookmarks`);
@@ -1113,7 +1113,7 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                 </div>
               </div>
             </div>
-            <div
+            {/* <div
               onClick={() => {
                 navigate(`/help/connectify`);
               }}
@@ -1234,8 +1234,8 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                   </div>
                 </div>
               </div>
-            </div>
-            <div
+            </div> */}
+            {/* <div
               onClick={() => navigate("/jobs")}
               className={
                 themeName === "dark-theme"
@@ -1375,7 +1375,7 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
             <div
               onClick={() => navigate("/settings")}
               className={

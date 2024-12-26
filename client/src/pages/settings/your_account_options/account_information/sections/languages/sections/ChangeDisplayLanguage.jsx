@@ -10,6 +10,7 @@ import axios from "axios";
 import { UserContext } from "../../../../../../../context/UserContext";
 import BootstrapTooltip from "../../../../../../../components/BootstrapToolTip/BootstrapToolTip";
 import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandler";
+import { v4 as uuidv4 } from "uuid";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
@@ -339,7 +340,7 @@ function ChangeDisplayLanguage() {
             }}
           >
             {languages.map((language) => (
-              <option key={language._id} value={language.name}>
+              <option key={uuidv4()} value={language.name}>
                 {language.name}
               </option>
             ))}

@@ -30,7 +30,7 @@ import { CommentModal } from "../ui/Modal";
 import { QRCodeSVG } from "qrcode.react";
 import { ThemeContext } from "../../context/ThemeContext";
 import UnfollowModal from "../unfollow-modal/UnfollowModal";
-
+import { v4 as uuidv4 } from "uuid";
 const API_URL = import.meta.env.VITE_APP_API_URL;
 const TWILIO_NUMBER = import.meta.env.VITE_APP_TWILIO_ACCOUNT_NUMBER;
 
@@ -9356,7 +9356,7 @@ function RightSideColumn({
                           >
                             <option value="">{en["ZZ"]}</option>
                             {sortedCountries.map((country) => (
-                              <option key={country._id} value={country}>
+                              <option key={uuidv4()} value={country}>
                                 +{getCountryCallingCode(country)} {en[country]}
                               </option>
                             ))}
@@ -17736,7 +17736,7 @@ function RightSideColumn({
                           >
                             <option value="">{en["ZZ"]}</option>
                             {sortedCountries.map((country) => (
-                              <option key={country._id} value={country}>
+                              <option key={uuidv4()} value={country}>
                                 +{getCountryCallingCode(country)} {en[country]}
                               </option>
                             ))}
@@ -18881,13 +18881,12 @@ function RightSideColumn({
                       null;
                     }
                     return (
-                      <>
+                      <div key={eachUser._id}>
                         {eachUser._id !== userInfo._id && (
                           <div
                             style={{
                               width: "100%",
                             }}
-                            key={eachUser._id}
                           >
                             <div>
                               <Stack
@@ -19162,7 +19161,7 @@ function RightSideColumn({
                             </div>
                           </div>
                         )}
-                      </>
+                      </div>
                     );
                   })
                 : null}

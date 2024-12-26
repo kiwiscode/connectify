@@ -2396,411 +2396,307 @@ function MainPage({ isNewPostShared }) {
               {posts.length > 0 ? (
                 <>
                   {posts.slice(0, visibleTweets).map((post, index) => (
-                    <>
-                      <div key={post._id}>
-                        {post.deactivatedOwner ||
-                        (post.userId?.isPrivate &&
-                          !checkIfFollowing(post.userId._id) &&
-                          post.userId._id !== userInfo._id) ? null : (
+                    <div key={post._id}>
+                      {post.deactivatedOwner ||
+                      (post.userId?.isPrivate &&
+                        !checkIfFollowing(post.userId._id) &&
+                        post.userId._id !== userInfo._id) ? null : (
+                        <div
+                          onClick={() => {
+                            setclickedPostBox(post);
+                          }}
+                          className={
+                            themeName === "dark-theme"
+                              ? `each-post-${themeName}`
+                              : "each-post"
+                          }
+                        >
                           <div
+                            style={{
+                              textDecoration: "none",
+                              cursor: "pointer",
+                            }}
                             onClick={() => {
                               setclickedPostBox(post);
                             }}
-                            className={
-                              themeName === "dark-theme"
-                                ? `each-post-${themeName}`
-                                : "each-post"
-                            }
+                            className="posts-details outside-of-inner-circle-actions"
                           >
+                            {" "}
                             <div
                               style={{
-                                textDecoration: "none",
-                                cursor: "pointer",
+                                position: "relative",
                               }}
-                              onClick={() => {
-                                setclickedPostBox(post);
-                              }}
-                              className="posts-details outside-of-inner-circle-actions"
+                              className="post-head"
                             >
-                              {" "}
-                              <div
-                                style={{
-                                  position: "relative",
-                                }}
-                                className="post-head"
-                              >
-                                {/* start to check */}
-                                {post.reposted.length > 0 &&
-                                post.isReposted &&
-                                post.reposted[0]._id === userInfo._id ? (
-                                  <div
-                                    className="you-reposted-head"
+                              {/* start to check */}
+                              {post.reposted.length > 0 &&
+                              post.isReposted &&
+                              post.reposted[0]._id === userInfo._id ? (
+                                <div
+                                  className="you-reposted-head"
+                                  style={{
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  <svg
                                     style={{
-                                      cursor: "pointer",
+                                      marginLeft: "10px",
+                                      position: "relative",
+                                      top: "5px",
+                                      left: "20px",
                                     }}
+                                    width={`16px`}
+                                    height={`16px`}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="repost-svg-post-box svg-repost-post box svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                    fill={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)"
+                                    }
                                   >
-                                    <svg
-                                      style={{
-                                        marginLeft: "10px",
-                                        position: "relative",
-                                        top: "5px",
-                                        left: "20px",
-                                      }}
-                                      width={`16px`}
-                                      height={`16px`}
-                                      viewBox="0 0 24 24"
-                                      aria-hidden="true"
-                                      className="repost-svg-post-box svg-repost-post box svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                      fill={
+                                    <g>
+                                      <path
+                                        stroke="rgb(83, 100, 113)"
+                                        strokeWidth="0.1"
+                                        d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                      ></path>
+                                    </g>
+                                  </svg>
+                                  <Link
+                                    className={`hover-reposted-text hover-reposted-text-${themeName} chirp-bold-font`}
+                                    style={{
+                                      fontSize: font13.fontSize,
+                                      lineHeight: font13.lineHeight,
+                                      color:
                                         themeName === "dark-theme"
                                           ? "#71767A"
-                                          : "rgb(83, 100, 113)"
-                                      }
-                                    >
-                                      <g>
-                                        <path
-                                          stroke="rgb(83, 100, 113)"
-                                          strokeWidth="0.1"
-                                          d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
-                                        ></path>
-                                      </g>
-                                    </svg>
-                                    <Link
-                                      className={`hover-reposted-text hover-reposted-text-${themeName} chirp-bold-font`}
-                                      style={{
-                                        fontSize: font13.fontSize,
-                                        lineHeight: font13.lineHeight,
-                                        color:
-                                          themeName === "dark-theme"
-                                            ? "#71767A"
-                                            : "rgb(83, 100, 113)",
-                                        marginLeft: "10px",
-                                        cursor: "pointer",
-                                        textDecoration: "none",
-                                        position: "relative",
-                                        top: "5px",
-                                        left: "15px",
-                                      }}
-                                      onClick={() => setclickedPostBox(post)}
-                                      to={`/profile/${post.reposted[0]._id}`}
-                                    >
-                                      You reposted
-                                    </Link>{" "}
-                                  </div>
-                                ) : null}
-
-                                {/* start to check */}
-                                {post.reposted.length > 0 &&
-                                post.isReposted &&
-                                post.reposted[0]._id !== userInfo._id ? (
-                                  <div
-                                    style={{
+                                          : "rgb(83, 100, 113)",
+                                      marginLeft: "10px",
                                       cursor: "pointer",
+                                      textDecoration: "none",
+                                      position: "relative",
+                                      top: "5px",
+                                      left: "15px",
                                     }}
+                                    onClick={() => setclickedPostBox(post)}
+                                    to={`/profile/${post.reposted[0]._id}`}
                                   >
-                                    <svg
-                                      style={{
-                                        marginLeft: "10px",
-                                        position: "relative",
-                                        top: "5px",
-                                        left: "20px",
-                                      }}
-                                      width={`16px`}
-                                      height={`16px`}
-                                      viewBox="0 0 24 24"
-                                      aria-hidden="true"
-                                      className="repost-svg-post-box svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
-                                      fill={
-                                        themeName === "dark-theme"
-                                          ? "#71767A"
-                                          : "rgb(83, 100, 113)"
-                                      }
-                                    >
-                                      <g>
-                                        <path
-                                          stroke="rgb(83, 100, 113)"
-                                          strokeWidth="0.1"
-                                          d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
-                                        ></path>
-                                      </g>
-                                    </svg>
-                                    <span>
-                                      {post.reposted[0].fullname ? (
-                                        <Link
-                                          style={{
-                                            fontSize: font13.fontSize,
-                                            lineHeight: font13.lineHeight,
-                                            color:
-                                              themeName === "dark-theme"
-                                                ? "#71767A"
-                                                : "rgb(83, 100, 113)",
-                                            marginLeft: "10px",
-                                            cursor: "pointer",
-                                            textDecoration: "none",
-                                            position: "relative",
-                                            top: "5px",
-                                            left: "15px",
-                                          }}
-                                          className={`hover-reposted-text hover-reposted-text-${themeName} chirp-bold-font`}
-                                          onClick={() =>
-                                            setclickedPostBox(post)
-                                          }
-                                          to={`/profile/${post.reposted[0]._id}`}
-                                        >
-                                          {post.reposted[0].fullname} reposted
-                                        </Link>
-                                      ) : null}
-                                    </span>{" "}
-                                  </div>
-                                ) : null}
-                              </div>
-                              {/* post box new styling test start to check  */}
-                              {/* post boxun tamamı start to check  */}
-                              {/* owner img,fullname,username,created date,three dots start to check */}
-                              <Stack
-                                style={{
-                                  cursor: "pointer",
-                                }}
-                                onClick={() => setclickedPostBox(post)}
-                                className="outside-of-inner-circle-post-info-user-info-svg-three-dots"
-                                direction="horizontal"
-                                gap={1}
-                              >
-                                {" "}
-                                {/* profile image start to check */}
-                                <div className="p-1 ">
-                                  {post.userId.imageUrl.slice(0, 3) !==
-                                  "../" ? (
-                                    <Link
-                                      className="post-circle-profile-image-on-point"
-                                      style={{ cursor: "pointer" }}
-                                      to={`/profile/${
-                                        post ? post.userId._id : null
-                                      }`}
-                                    >
-                                      <img
-                                        width={40}
-                                        height={40}
-                                        src={
-                                          post?.userId?.imageUrl
-                                            ? post?.userId?.imageUrl
-                                            : null
-                                        }
-                                        alt="??"
-                                        style={{ borderRadius: "50%" }}
-                                      />
-                                    </Link>
-                                  ) : (
-                                    <Link
-                                      className="post-circle-profile-svg-on-point"
-                                      to={`/profile/${
-                                        post.userId ? post.userId._id : null
-                                      }`}
-                                      style={{ cursor: "pointer" }}
-                                    >
-                                      {" "}
-                                      <img
-                                        style={{ borderRadius: "50%" }}
-                                        width="40"
-                                        height="40"
-                                        src={defaultProfileImage}
-                                        alt=""
-                                      />
-                                    </Link>
-                                  )}
+                                    You reposted
+                                  </Link>{" "}
                                 </div>
-                                {/* profile image finish to check  */}
-                                {/* post owner full name + verified account svg + post owner user name + post created date start to check  */}
-                                <div className="p-1">
-                                  {post.userId ? (
-                                    <div>
+                              ) : null}
+
+                              {/* start to check */}
+                              {post.reposted.length > 0 &&
+                              post.isReposted &&
+                              post.reposted[0]._id !== userInfo._id ? (
+                                <div
+                                  style={{
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  <svg
+                                    style={{
+                                      marginLeft: "10px",
+                                      position: "relative",
+                                      top: "5px",
+                                      left: "20px",
+                                    }}
+                                    width={`16px`}
+                                    height={`16px`}
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="repost-svg-post-box svg-repost r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+                                    fill={
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)"
+                                    }
+                                  >
+                                    <g>
+                                      <path
+                                        stroke="rgb(83, 100, 113)"
+                                        strokeWidth="0.1"
+                                        d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"
+                                      ></path>
+                                    </g>
+                                  </svg>
+                                  <span>
+                                    {post.reposted[0].fullname ? (
                                       <Link
-                                        className="post-circle-postowner-fullname"
-                                        to={`/profile/${post.userId._id}`}
                                         style={{
-                                          textDecoration: "none",
-                                          color: "black",
-                                        }}
-                                      >
-                                        <span
-                                          className="hover-fullname chirp-bold-font"
-                                          style={{
-                                            color:
-                                              themeName === "dark-theme"
-                                                ? "white"
-                                                : "",
-                                            fontSize: font15.fontSize,
-                                            lineHeight: font15.lineHeight,
-                                            overflow: "hidden",
-                                            textOverflow: "ellipsis",
-                                            whiteSpace: "nowrap",
-                                            width: "120px",
-                                          }}
-                                        >
-                                          {post.authorFullName}
-                                        </span>
-                                      </Link>{" "}
-                                      {post?.userId?.isPrivate && (
-                                        <span
-                                          style={{
-                                            marginRight: "5px",
-                                          }}
-                                        >
-                                          <svg
-                                            fill={
-                                              themeName === "dark-theme"
-                                                ? "#E6E9EA"
-                                                : "#0F141A"
-                                            }
-                                            width={`${1.25}em`}
-                                            height={`${1.25}em`}
-                                            viewBox="0 0 24 24"
-                                            aria-label="Protected account"
-                                            role="img"
-                                            className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-lrvibr r-m6rgpd r-3t4u6i r-18jsvk2 r-f9ja8p r-og9te1"
-                                            data-testid="icon-lock"
-                                          >
-                                            <g>
-                                              <path d="M17.5 7H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.39 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.89 7 17.5 7zM13 14.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2 0 .74-.4 1.39-1 1.73zM15 7H9v-.25c0-1.66 1.35-3 3-3 1.66 0 3 1.34 3 3V7z"></path>
-                                            </g>
-                                          </svg>
-                                        </span>
-                                      )}
-                                      {post?.userId.hasSubscription ||
-                                      (!subscription?.isActive &&
-                                        subscription?.remainingTimeSubscription &&
-                                        subscription?.cancelledDate &&
-                                        subscription?.owner ===
-                                          post?.userId._id) ||
-                                      remainingTimeSubscriptionsOwnerIds.includes(
-                                        post?.userId._id
-                                      ) ? (
-                                        <span>
-                                          {/* start to check  */}{" "}
-                                          <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
-                                            <svg
-                                              width={`${1.25}em`}
-                                              height={`${1.25}em`}
-                                              viewBox="0 0 22 22"
-                                              aria-label="Verified account"
-                                              role="img"
-                                              className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
-                                              data-testid="verified-icon"
-                                              color="rgba(29,155,240,1.00)"
-                                              fill="currentColor"
-                                            >
-                                              <g>
-                                                <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
-                                              </g>
-                                            </svg>
-                                          </span>{" "}
-                                        </span>
-                                      ) : null}
-                                      <Link
-                                        className="chirp-regular-font"
-                                        to={`/profile/${post.userId._id}`}
-                                        style={{
-                                          textDecoration: "none",
+                                          fontSize: font13.fontSize,
+                                          lineHeight: font13.lineHeight,
                                           color:
                                             themeName === "dark-theme"
                                               ? "#71767A"
                                               : "rgb(83, 100, 113)",
+                                          marginLeft: "10px",
+                                          cursor: "pointer",
+                                          textDecoration: "none",
+                                          position: "relative",
+                                          top: "5px",
+                                          left: "15px",
+                                        }}
+                                        className={`hover-reposted-text hover-reposted-text-${themeName} chirp-bold-font`}
+                                        onClick={() => setclickedPostBox(post)}
+                                        to={`/profile/${post.reposted[0]._id}`}
+                                      >
+                                        {post.reposted[0].fullname} reposted
+                                      </Link>
+                                    ) : null}
+                                  </span>{" "}
+                                </div>
+                              ) : null}
+                            </div>
+                            {/* post box new styling test start to check  */}
+                            {/* post boxun tamamı start to check  */}
+                            {/* owner img,fullname,username,created date,three dots start to check */}
+                            <Stack
+                              style={{
+                                cursor: "pointer",
+                              }}
+                              onClick={() => setclickedPostBox(post)}
+                              className="outside-of-inner-circle-post-info-user-info-svg-three-dots"
+                              direction="horizontal"
+                              gap={1}
+                            >
+                              {" "}
+                              {/* profile image start to check */}
+                              <div className="p-1 ">
+                                {post.userId.imageUrl.slice(0, 3) !== "../" ? (
+                                  <Link
+                                    className="post-circle-profile-image-on-point"
+                                    style={{ cursor: "pointer" }}
+                                    to={`/profile/${
+                                      post ? post.userId._id : null
+                                    }`}
+                                  >
+                                    <img
+                                      width={40}
+                                      height={40}
+                                      src={
+                                        post?.userId?.imageUrl
+                                          ? post?.userId?.imageUrl
+                                          : null
+                                      }
+                                      alt="??"
+                                      style={{ borderRadius: "50%" }}
+                                    />
+                                  </Link>
+                                ) : (
+                                  <Link
+                                    className="post-circle-profile-svg-on-point"
+                                    to={`/profile/${
+                                      post.userId ? post.userId._id : null
+                                    }`}
+                                    style={{ cursor: "pointer" }}
+                                  >
+                                    {" "}
+                                    <img
+                                      style={{ borderRadius: "50%" }}
+                                      width="40"
+                                      height="40"
+                                      src={defaultProfileImage}
+                                      alt=""
+                                    />
+                                  </Link>
+                                )}
+                              </div>
+                              {/* profile image finish to check  */}
+                              {/* post owner full name + verified account svg + post owner user name + post created date start to check  */}
+                              <div className="p-1">
+                                {post.userId ? (
+                                  <div>
+                                    <Link
+                                      className="post-circle-postowner-fullname"
+                                      to={`/profile/${post.userId._id}`}
+                                      style={{
+                                        textDecoration: "none",
+                                        color: "black",
+                                      }}
+                                    >
+                                      <span
+                                        className="hover-fullname chirp-bold-font"
+                                        style={{
+                                          color:
+                                            themeName === "dark-theme"
+                                              ? "white"
+                                              : "",
                                           fontSize: font15.fontSize,
                                           lineHeight: font15.lineHeight,
+                                          overflow: "hidden",
+                                          textOverflow: "ellipsis",
+                                          whiteSpace: "nowrap",
+                                          width: "120px",
                                         }}
                                       >
-                                        <span className="post-circle-postowner-username">
-                                          <span className="chirp-regular-font">
-                                            @{post.authorUserName}
-                                          </span>
-                                        </span>
-                                      </Link>
-                                      <Link
+                                        {post.authorFullName}
+                                      </span>
+                                    </Link>{" "}
+                                    {post?.userId?.isPrivate && (
+                                      <span
                                         style={{
-                                          textDecoration: "none",
+                                          marginRight: "5px",
                                         }}
-                                        to={`/${post.userId.username}/status/${
-                                          !post.isReposted
-                                            ? post._id
-                                            : post
-                                                .repostedFromThisOriginalPost[0]
-                                                ?._id
-                                        }`}
                                       >
-                                        <span
-                                          className="post-circle-date-post-detail chirp-regular-font"
-                                          style={{
-                                            color:
-                                              themeName === "dark-theme"
-                                                ? "#71767A"
-                                                : "rgb(83, 100, 113)",
-                                            fontSize: font15.fontSize,
-                                            lineHeight: font15.lineHeight,
-                                          }}
+                                        <svg
+                                          fill={
+                                            themeName === "dark-theme"
+                                              ? "#E6E9EA"
+                                              : "#0F141A"
+                                          }
+                                          width={`${1.25}em`}
+                                          height={`${1.25}em`}
+                                          viewBox="0 0 24 24"
+                                          aria-label="Protected account"
+                                          role="img"
+                                          className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-lrvibr r-m6rgpd r-3t4u6i r-18jsvk2 r-f9ja8p r-og9te1"
+                                          data-testid="icon-lock"
                                         >
-                                          {" "}
-                                          ·{" "}
-                                          <BootstrapTooltip
-                                            title={extraDetailedDate(
-                                              post.createdAt
-                                            )}
-                                            themeName={
-                                              themeName === "dark-theme"
-                                                ? "dark-theme"
-                                                : "light-theme"
-                                            }
+                                          <g>
+                                            <path d="M17.5 7H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.39 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.89 7 17.5 7zM13 14.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2 0 .74-.4 1.39-1 1.73zM15 7H9v-.25c0-1.66 1.35-3 3-3 1.66 0 3 1.34 3 3V7z"></path>
+                                          </g>
+                                        </svg>
+                                      </span>
+                                    )}
+                                    {post?.userId.hasSubscription ||
+                                    (!subscription?.isActive &&
+                                      subscription?.remainingTimeSubscription &&
+                                      subscription?.cancelledDate &&
+                                      subscription?.owner ===
+                                        post?.userId._id) ||
+                                    remainingTimeSubscriptionsOwnerIds.includes(
+                                      post?.userId._id
+                                    ) ? (
+                                      <span>
+                                        {/* start to check  */}{" "}
+                                        <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                                          <svg
+                                            width={`${1.25}em`}
+                                            height={`${1.25}em`}
+                                            viewBox="0 0 22 22"
+                                            aria-label="Verified account"
+                                            role="img"
+                                            className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                                            data-testid="verified-icon"
+                                            color="rgba(29,155,240,1.00)"
+                                            fill="currentColor"
                                           >
-                                            <span className="date-post-detail chirp-regular-font">
-                                              {getCreatedDate(post.createdAt)}
-                                            </span>
-                                          </BootstrapTooltip>
-                                        </span>
-                                      </Link>
-                                      {/* finish to check  */}
-                                    </div>
-                                  ) : null}
-                                </div>
-                                {/* post owner full name + verified account svg + post owner user name + post created date  finish to check  */}
-                                {/* three dots svg start to check */}
-                                <div className="p-1 ms-auto">
-                                  <PostPopover
-                                    postDeletionProcess={
-                                      handleDeletePostFromHomePage
-                                    }
-                                    post={post}
-                                    refreshPosts={handleShowPostsHomePage}
-                                  />
-                                </div>
-                                {/* three dots svg finish to check */}
-                              </Stack>
-                              {/* owner img,fullname,username,created date,three dots finish to check */}
-                              {/* post content start to check  */}
-                              <Stack
-                                to={`/${post.userId.username}/status/${
-                                  !post.isReposted
-                                    ? post._id
-                                    : post.repostedFromThisOriginalPost[0]?._id
-                                }`}
-                                onClick={() => setclickedPostBox(post)}
-                                className="outside-of-inner-circle-action-comment-text"
-                                direction="vertical"
-                                gap={1}
-                              >
-                                {" "}
-                                {post.isComment ? (
-                                  <div
-                                    to={`/${post.userId.username}/status/${
-                                      !post.isReposted
-                                        ? post._id
-                                        : post.repostedFromThisOriginalPost[0]
-                                            ?._id
-                                    }`}
-                                    onClick={() => setclickedPostBox(post)}
-                                    className="p-2 parent-comment-text"
-                                  >
-                                    <span
+                                            <g>
+                                              <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                                            </g>
+                                          </svg>
+                                        </span>{" "}
+                                      </span>
+                                    ) : null}
+                                    <Link
                                       className="chirp-regular-font"
+                                      to={`/profile/${post.userId._id}`}
                                       style={{
+                                        textDecoration: "none",
                                         color:
                                           themeName === "dark-theme"
                                             ? "#71767A"
@@ -2809,217 +2705,303 @@ function MainPage({ isNewPostShared }) {
                                         lineHeight: font15.lineHeight,
                                       }}
                                     >
-                                      Replying to {""}
-                                    </span>
+                                      <span className="post-circle-postowner-username">
+                                        <span className="chirp-regular-font">
+                                          @{post.authorUserName}
+                                        </span>
+                                      </span>
+                                    </Link>
                                     <Link
-                                      to={`/profile/${post.commentedForThisUsersPost._id}`}
                                       style={{
                                         textDecoration: "none",
                                       }}
+                                      to={`/${post.userId.username}/status/${
+                                        !post.isReposted
+                                          ? post._id
+                                          : post.repostedFromThisOriginalPost[0]
+                                              ?._id
+                                      }`}
                                     >
                                       <span
-                                        className="replying-to-text chirp-regular-font"
+                                        className="post-circle-date-post-detail chirp-regular-font"
                                         style={{
-                                          color: "rgb(29, 155, 240)",
-                                          cursor: "pointer",
+                                          color:
+                                            themeName === "dark-theme"
+                                              ? "#71767A"
+                                              : "rgb(83, 100, 113)",
                                           fontSize: font15.fontSize,
                                           lineHeight: font15.lineHeight,
                                         }}
                                       >
-                                        @
-                                        {
-                                          post.commentedForThisUsersPost
-                                            .username
-                                        }
+                                        {" "}
+                                        ·{" "}
+                                        <BootstrapTooltip
+                                          title={extraDetailedDate(
+                                            post.createdAt
+                                          )}
+                                          themeName={
+                                            themeName === "dark-theme"
+                                              ? "dark-theme"
+                                              : "light-theme"
+                                          }
+                                        >
+                                          <span className="date-post-detail chirp-regular-font">
+                                            {getCreatedDate(post.createdAt)}
+                                          </span>
+                                        </BootstrapTooltip>
                                       </span>
                                     </Link>
+                                    {/* finish to check  */}
                                   </div>
                                 ) : null}
-                                <Link
+                              </div>
+                              {/* post owner full name + verified account svg + post owner user name + post created date  finish to check  */}
+                              {/* three dots svg start to check */}
+                              <div className="p-1 ms-auto">
+                                <PostPopover
+                                  postDeletionProcess={
+                                    handleDeletePostFromHomePage
+                                  }
+                                  post={post}
+                                  refreshPosts={handleShowPostsHomePage}
+                                />
+                              </div>
+                              {/* three dots svg finish to check */}
+                            </Stack>
+                            {/* owner img,fullname,username,created date,three dots finish to check */}
+                            {/* post content start to check  */}
+                            <Stack
+                              to={`/${post.userId.username}/status/${
+                                !post.isReposted
+                                  ? post._id
+                                  : post.repostedFromThisOriginalPost[0]?._id
+                              }`}
+                              onClick={() => setclickedPostBox(post)}
+                              className="outside-of-inner-circle-action-comment-text"
+                              direction="vertical"
+                              gap={1}
+                            >
+                              {" "}
+                              {post.isComment ? (
+                                <div
                                   to={`/${post.userId.username}/status/${
                                     !post.isReposted
                                       ? post._id
                                       : post.repostedFromThisOriginalPost[0]
                                           ?._id
                                   }`}
-                                  style={{
-                                    textDecoration: "none",
-                                    color: "rgb(15, 20, 25)",
-                                  }}
+                                  onClick={() => setclickedPostBox(post)}
+                                  className="p-2 parent-comment-text"
                                 >
-                                  <div
-                                    className="p-2 chirp-regular-font"
+                                  <span
+                                    className="chirp-regular-font"
                                     style={{
-                                      fontSize: font15.fontSize,
-                                      lineHeight: font15.lineHeight,
-                                      overflowWrap: "break-word",
-                                      maxWidth: "100%",
-                                      cursor: "pointer",
                                       color:
                                         themeName === "dark-theme"
-                                          ? "white"
-                                          : "",
+                                          ? "#71767A"
+                                          : "rgb(83, 100, 113)",
+                                      fontSize: font15.fontSize,
+                                      lineHeight: font15.lineHeight,
                                     }}
                                   >
-                                    {post.content}
-                                  </div>
-                                </Link>
-                              </Stack>
-                              {/* post content finish to check  */}
-                              {/* start to check NOTE if there is no internet connection images would be hidden because of 'cloudinary connection' */}
-                              {post.image.url !== "image@url" ? (
-                                <>
+                                    Replying to {""}
+                                  </span>
                                   <Link
-                                    to={`/${post.userId.username}/status/${
-                                      !post.isReposted
-                                        ? post._id
-                                        : post.repostedFromThisOriginalPost[0]
-                                            ._id
-                                    }/photo/${1}`}
+                                    to={`/profile/${post.commentedForThisUsersPost._id}`}
                                     style={{
                                       textDecoration: "none",
                                     }}
                                   >
-                                    <div
+                                    <span
+                                      className="replying-to-text chirp-regular-font"
                                       style={{
-                                        overflow: "hidden",
-                                        borderRadius: "8px",
-                                        padding: "12px",
+                                        color: "rgb(29, 155, 240)",
+                                        cursor: "pointer",
+                                        fontSize: font15.fontSize,
+                                        lineHeight: font15.lineHeight,
                                       }}
                                     >
-                                      <img
-                                        src={post.image.url}
-                                        alt="Description"
-                                        style={{
-                                          width: "100%",
-                                          maxWidth: "100%",
-                                          display: "block",
-                                          borderRadius: "16px",
-                                        }}
-                                      />
-                                    </div>
+                                      @{post.commentedForThisUsersPost.username}
+                                    </span>
                                   </Link>
-                                </>
+                                </div>
                               ) : null}
-                              {/* finish to check NOTE if there is no internet connection images would be hidden because of 'cloudinary connection' */}
-                              {/* new version favorite repost comment start to check */}
-                              <Stack
-                                className="mt-0 parent-footer-stack"
-                                onClick={() => setclickedPostBox(post)}
-                                direction="horizontal"
+                              <Link
+                                to={`/${post.userId.username}/status/${
+                                  !post.isReposted
+                                    ? post._id
+                                    : post.repostedFromThisOriginalPost[0]?._id
+                                }`}
                                 style={{
-                                  justifyContent: "space-between",
-                                  margin: "5px 0px 5px 0px",
-                                  cursor: "pointer",
+                                  textDecoration: "none",
+                                  color: "rgb(15, 20, 25)",
                                 }}
                               >
                                 <div
+                                  className="p-2 chirp-regular-font"
                                   style={{
-                                    width: "100px",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
+                                    overflowWrap: "break-word",
+                                    maxWidth: "100%",
+                                    cursor: "pointer",
+                                    color:
+                                      themeName === "dark-theme" ? "white" : "",
                                   }}
-                                  onClick={() => setclickedPostBox(post)}
-                                  className="p-1 next-to-comment"
                                 >
-                                  <CommentModal
-                                    post={post ? post : null}
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    refreshPosts={handleShowPostsHomePage}
-                                    sendDataToParent={
-                                      handleDataFromCommentModal
-                                    }
-                                    postSharedMessage={postSharedMessage}
-                                  />
+                                  {post.content}
                                 </div>
-                                <div
-                                  style={{
-                                    width: "100px",
-                                  }}
-                                  onClick={() => setclickedPostBox(post)}
-                                  className="p-1 next-to-repost"
-                                >
-                                  <RepostAction
-                                    post={post ? post : null}
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    refreshPosts={handleShowPostsHomePage}
-                                    setLoadingFalse={setLoadingFalse}
-                                    setLoadingTrue={setLoadingTrue}
-                                    postIndex={index}
-                                  />
-                                </div>
-                                <div
-                                  style={{
-                                    width: "100px",
-                                  }}
+                              </Link>
+                            </Stack>
+                            {/* post content finish to check  */}
+                            {/* start to check NOTE if there is no internet connection images would be hidden because of 'cloudinary connection' */}
+                            {post.image.url !== "image@url" ? (
+                              <>
+                                <Link
                                   to={`/${post.userId.username}/status/${
                                     !post.isReposted
                                       ? post._id
-                                      : post.repostedFromThisOriginalPost[0]
-                                          ?._id
-                                  }`}
-                                  onClick={() => setclickedPostBox(post)}
-                                  className="p-1 next-to-like"
-                                >
-                                  <LikeAction
-                                    post={post ? post : null}
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    refreshPosts={handleShowPostsHomePage}
-                                    setLoadingFalse={setLoadingFalse}
-                                    setLoadingTrue={setLoadingTrue}
-                                    allPosts={posts}
-                                    postIndex={index}
-                                  />
-                                </div>{" "}
-                                <div
+                                      : post.repostedFromThisOriginalPost[0]._id
+                                  }/photo/${1}`}
                                   style={{
-                                    width: "100px",
+                                    textDecoration: "none",
                                   }}
-                                  to={`/${post.userId.username}/status/${
-                                    !post.isReposted
-                                      ? post._id
-                                      : post.repostedFromThisOriginalPost[0]
-                                          ?._id
-                                  }`}
-                                  onClick={() => setclickedPostBox(post)}
-                                  className="p-1 next-to-like"
                                 >
-                                  {" "}
-                                  <BookmarkAction
-                                    post={post ? post : null}
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    refreshPosts={handleShowPostsHomePage}
-                                    setLoadingFalse={setLoadingFalse}
-                                    setLoadingTrue={setLoadingTrue}
-                                    allPosts={posts}
-                                    postIndex={index}
-                                  />
-                                </div>
-                              </Stack>
-                              {/* new version favorite repost comment finish to check */}
-                              {/* post boxun tamamı finish to check  */}
-                              {/* post box new styling test finish to check  */}
-                            </div>
-
-                            <div
-                              onClick={() => {
-                                setclickedPostBox(post);
-                              }}
-                              className="border-extra"
+                                  <div
+                                    style={{
+                                      overflow: "hidden",
+                                      borderRadius: "8px",
+                                      padding: "12px",
+                                    }}
+                                  >
+                                    <img
+                                      src={post.image.url}
+                                      alt="Description"
+                                      style={{
+                                        width: "100%",
+                                        maxWidth: "100%",
+                                        display: "block",
+                                        borderRadius: "16px",
+                                      }}
+                                    />
+                                  </div>
+                                </Link>
+                              </>
+                            ) : null}
+                            {/* finish to check NOTE if there is no internet connection images would be hidden because of 'cloudinary connection' */}
+                            {/* new version favorite repost comment start to check */}
+                            <Stack
+                              className="mt-0 parent-footer-stack"
+                              onClick={() => setclickedPostBox(post)}
+                              direction="horizontal"
                               style={{
-                                borderBottom:
-                                  themeName !== "dark-theme"
-                                    ? "1px solid rgba(0, 0, 0, 0.1)"
-                                    : // : "0.1px solid rgb(70, 70, 70)",
-                                      "1px solid rgb(70, 70, 70)",
+                                justifyContent: "space-between",
+                                margin: "5px 0px 5px 0px",
+                                cursor: "pointer",
                               }}
-                            ></div>
+                            >
+                              <div
+                                style={{
+                                  width: "100px",
+                                }}
+                                onClick={() => setclickedPostBox(post)}
+                                className="p-1 next-to-comment"
+                              >
+                                <CommentModal
+                                  post={post ? post : null}
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  refreshPosts={handleShowPostsHomePage}
+                                  sendDataToParent={handleDataFromCommentModal}
+                                  postSharedMessage={postSharedMessage}
+                                />
+                              </div>
+                              <div
+                                style={{
+                                  width: "100px",
+                                }}
+                                onClick={() => setclickedPostBox(post)}
+                                className="p-1 next-to-repost"
+                              >
+                                <RepostAction
+                                  post={post ? post : null}
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  refreshPosts={handleShowPostsHomePage}
+                                  setLoadingFalse={setLoadingFalse}
+                                  setLoadingTrue={setLoadingTrue}
+                                  postIndex={index}
+                                />
+                              </div>
+                              <div
+                                style={{
+                                  width: "100px",
+                                }}
+                                to={`/${post.userId.username}/status/${
+                                  !post.isReposted
+                                    ? post._id
+                                    : post.repostedFromThisOriginalPost[0]?._id
+                                }`}
+                                onClick={() => setclickedPostBox(post)}
+                                className="p-1 next-to-like"
+                              >
+                                <LikeAction
+                                  post={post ? post : null}
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  refreshPosts={handleShowPostsHomePage}
+                                  setLoadingFalse={setLoadingFalse}
+                                  setLoadingTrue={setLoadingTrue}
+                                  allPosts={posts}
+                                  postIndex={index}
+                                />
+                              </div>{" "}
+                              <div
+                                style={{
+                                  width: "100px",
+                                }}
+                                to={`/${post.userId.username}/status/${
+                                  !post.isReposted
+                                    ? post._id
+                                    : post.repostedFromThisOriginalPost[0]?._id
+                                }`}
+                                onClick={() => setclickedPostBox(post)}
+                                className="p-1 next-to-like"
+                              >
+                                {" "}
+                                <BookmarkAction
+                                  post={post ? post : null}
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  refreshPosts={handleShowPostsHomePage}
+                                  setLoadingFalse={setLoadingFalse}
+                                  setLoadingTrue={setLoadingTrue}
+                                  allPosts={posts}
+                                  postIndex={index}
+                                />
+                              </div>
+                            </Stack>
+                            {/* new version favorite repost comment finish to check */}
+                            {/* post boxun tamamı finish to check  */}
+                            {/* post box new styling test finish to check  */}
                           </div>
-                        )}
-                      </div>
-                    </>
+
+                          <div
+                            onClick={() => {
+                              setclickedPostBox(post);
+                            }}
+                            className="border-extra"
+                            style={{
+                              borderBottom:
+                                themeName !== "dark-theme"
+                                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                                  : // : "0.1px solid rgb(70, 70, 70)",
+                                    "1px solid rgb(70, 70, 70)",
+                            }}
+                          ></div>
+                        </div>
+                      )}
+                    </div>
                   ))}
 
                   {visibleTweets < posts.length && (

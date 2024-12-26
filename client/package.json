@@ -59,7 +59,8 @@
     "react-transition-group": "^4.4.5",
     "slick-carousel": "^1.8.1",
     "socket.io-client": "^4.8.0",
-    "twitter-api-v2": "^1.16.4"
+    "twitter-api-v2": "^1.16.4",
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^6.0.0",

@@ -9,6 +9,8 @@ import SettingsNavigation from "../../../../../../../components/SettingsNavigati
 import axios from "axios";
 import LoadingSpinner from "../../../../../../../components/ui/LoadingSpinner";
 import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandler";
+import { v4 as uuidv4 } from "uuid";
+
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function LanguageSelector() {
@@ -402,7 +404,7 @@ function LanguageSelector() {
                             ?.sort()
                             .map((eachSpokenLanguage) => {
                               return (
-                                <>
+                                <div key={uuidv4()}>
                                   <div
                                     onClick={() => {
                                       if (
@@ -581,7 +583,7 @@ function LanguageSelector() {
                                       }}
                                     ></div>
                                   )}
-                                </>
+                                </div>
                               );
                             })}
                         </div>
@@ -589,7 +591,7 @@ function LanguageSelector() {
                           .slice(0, visibleLanguages)
                           .map((eachLanguage) => {
                             return (
-                              <>
+                              <div key={uuidv4()}>
                                 {!spoken_languages.includes(
                                   eachLanguage.name
                                 ) && (
@@ -749,7 +751,7 @@ function LanguageSelector() {
                                     )}
                                   </>
                                 )}
-                              </>
+                              </div>
                             );
                           })}{" "}
                       </div>
