@@ -3885,7 +3885,7 @@ function SignUpPage() {
           </div>
           <div className="responsive-input-group">
             <div>
-              <Button
+              {/* <Button
                 onClick={handleGoogleSignUp}
                 style={{
                   backgroundColor: "transparent",
@@ -3945,30 +3945,13 @@ function SignUpPage() {
                     <path fill="none" d="M0 0h48v48H0z"></path>
                   </g>
                 </svg>
-              </Button>
-
-              <Divider
-                className={`ant-divider-theme ant-divider-${themeName}`}
-                style={{
-                  margin: "5px 0px",
-                  padding: "0px",
-                  maxHeight: "20px",
-                  width: "300px",
-                  minWidth: "300px",
-                  color: themeName === "dark-theme" ? "white" : "",
-                }}
-                plain
-              >
-                or
-              </Divider>
-
+              </Button> */}
               <Button
                 onClick={handleShowCreateAccountModal}
                 className="create-btn chirp-bold-font"
               >
                 Create account
               </Button>
-
               <p
                 style={{
                   fontSize: font11.fontSize,
@@ -3999,7 +3982,21 @@ function SignUpPage() {
                   <span style={{ color: " rgb(29, 155, 240)" }}>Cokie Use</span>
                 </a>
                 .
-              </p>
+              </p>{" "}
+              <Divider
+                className={`ant-divider-theme ant-divider-${themeName}`}
+                style={{
+                  margin: "5px 0px",
+                  padding: "0px",
+                  maxHeight: "20px",
+                  width: "300px",
+                  minWidth: "300px",
+                  color: themeName === "dark-theme" ? "white" : "",
+                }}
+                plain
+              >
+                or
+              </Divider>
               <LogInPage />
             </div>
           </div>

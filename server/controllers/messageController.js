@@ -288,7 +288,7 @@ const getUnreadMessages = async (req, res) => {
       res.status(404).json({ errorMessage: "User not found" });
     }
 
-    const unReadMessages = user.messages.filter((eachMessageRoom) => {
+    const unReadMessages = user?.messages?.filter((eachMessageRoom) => {
       return eachMessageRoom.readed === false;
     });
 

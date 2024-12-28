@@ -27,6 +27,7 @@ import BookmarkAction from "../components/ui/BookmarkAction";
 import MobileTopNavigation from "../components/Navbar/mobile_top_navigation/MobileTopNavigation";
 import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext";
 import { useFontSizeHandler } from "../utils/useFontSizeHandler";
+import { borderBottom, borderRight } from "@mui/system";
 function MainPage({ isNewPostShared }) {
   const [{ themeName }] = useContext(ThemeContext);
   const { userInfo, getToken, updateUser } = useContext(UserContext);
@@ -1763,7 +1764,7 @@ function MainPage({ isNewPostShared }) {
           borderTop: "none ",
           borderBottom: "none",
           padding: "0px",
-          margin: "0px",
+          position: "relative",
         }}
       >
         <div
@@ -1793,11 +1794,6 @@ function MainPage({ isNewPostShared }) {
                 : "null",
             backdropFilter: width > 500 && "blur(12px)",
             zIndex: width > 500 && 1,
-            borderBottom:
-              themeName !== "dark-theme"
-                ? "1px solid rgba(0, 0, 0, 0.1)"
-                : // : "0.1px solid rgb(70, 70, 70)",
-                  "1px solid rgb(70, 70, 70)",
           }}
         >
           {width <= 500 && (
@@ -1810,6 +1806,12 @@ function MainPage({ isNewPostShared }) {
           <div
             style={{
               display: "flex",
+              borderBottom:
+                width <= 500 && themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : width <= 500 // : "0.1px solid rgb(70, 70, 70)",
+                  ? "1px solid rgb(70, 70, 70)"
+                  : "none",
             }}
           >
             <span
@@ -1956,6 +1958,11 @@ function MainPage({ isNewPostShared }) {
           <div
             style={{
               position: "relative",
+              borderTop:
+                themeName !== "dark-theme"
+                  ? "1px solid rgba(0, 0, 0, 0.1)"
+                  : // : "0.1px solid rgb(70, 70, 70)",
+                    "1px solid rgb(70, 70, 70)",
             }}
           >
             <div
