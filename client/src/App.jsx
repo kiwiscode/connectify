@@ -262,7 +262,7 @@ const socket = io(import.meta.env.VITE_APP_API_URL);
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
-  const { userInfo } = useContext(UserContext);
+  const { userInfo, getToken } = useContext(UserContext);
   const [{ theme, themeName }] = useContext(ThemeContext);
   const location = useLocation();
   const path = location.pathname;
@@ -519,10 +519,10 @@ function App() {
   }, [path, doNotShowRightSideBarColumnInTheseRoutes]);
 
   useEffect(() => {
-    if (!localStorage.getItem("token")) {
+    if (!getToken()) {
       navigate(`/`);
     }
-  }, []);
+  }, [location.pathname, getToken()]);
 
   return (
     <>
