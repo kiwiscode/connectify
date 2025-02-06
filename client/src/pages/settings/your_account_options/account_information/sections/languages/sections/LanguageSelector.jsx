@@ -1155,7 +1155,7 @@ function LanguageSelector() {
         </div>{" "}
         <div
           onClick={() => {
-            navigate("/settings/your_twitter_data/language");
+            navigate("/settings/your_c_data/language");
           }}
           className={
             themeName === "dark-theme"

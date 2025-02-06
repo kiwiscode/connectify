@@ -8,6 +8,8 @@ import io from "socket.io-client";
 import { NavigationHistoryContext } from "./context/NavigationHistoryContext";
 import { UserContext } from "./context/UserContext";
 
+import axios from "axios";
+
 const HomePage = lazy(() => import("./pages/HomePage"));
 const MainPage = lazy(() => import("./pages/MainPage"));
 const ExplorePage = lazy(() => import("./pages/ExplorePage"));
@@ -235,9 +237,9 @@ const Enable_Automated_Account = lazy(() =>
     "./pages/settings/your_account_options/account_information/sections/automation/sections/Enable_Automated_Account"
   )
 );
-const YourTwitterDataLanguage = lazy(() =>
+const YourCDataLanguage = lazy(() =>
   import(
-    "./pages/settings/your_account_options/account_information/sections/languages/sections/YourTwitterDataLanguage"
+    "./pages/settings/your_account_options/account_information/sections/languages/sections/YourCDataLanguage"
   )
 );
 const LanguageSelector = lazy(() =>
@@ -262,6 +264,7 @@ const socket = io(import.meta.env.VITE_APP_API_URL);
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
+  const API_URL = import.meta.env.VITE_APP_API_URL;
   const { userInfo, getToken } = useContext(UserContext);
   const [{ theme, themeName }] = useContext(ThemeContext);
   const location = useLocation();
@@ -338,6 +341,8 @@ function App() {
     path,
     openVerifiedOrganizationSubscriptionTypedModal,
     openIndividualEligibilityVerifyNumberScreen,
+    setopenIndividualEligibilityVerifyNumberScreen,
+    setOpenVerifiedOrganizationSubscriptionTypedModal,
   ]);
 
   const [premiumInfo, setPremiumInfo] = useState({});
@@ -412,7 +417,7 @@ function App() {
     "/i/flow/password_reset",
     "/i/flow/verify_account_ownership",
     "/i/flow",
-    "/i/flow/subscription_eligibility_check",
+    // "/i/flow/subscription_eligibility_check",
     "/i/verified-choose",
     "/i/flow/add_phone",
     "/i/flow/language_selector",
@@ -464,7 +469,7 @@ function App() {
     "/i/flow/subscription_eligibility_check",
     "/settings",
     "/settings/account",
-    "/settings/your_twitter_data/account",
+    "/settings/your_c_data/account",
     "/settings/password",
     "/account/send_password_reset",
     "/account/confirm_pin_reset",
@@ -480,14 +485,14 @@ function App() {
     "/settings/email",
     "/i/flow/password_reset",
     "/settings/languages",
-    "/settings/your_twitter_data/language",
+    "/settings/your_c_data/language",
     "/i/flow/language_selector",
     "/settings/language",
     "/i/flow/add_email",
-    "/settings/your_twitter_data/age",
+    "/settings/your_c_data/age",
     "/settings/account/automation",
     "/i/flow/enable_automated_account",
-    "/settings/your_twitter_data/gender",
+    "/settings/your_c_data/gender",
     "/settings/country",
     "/settings/audience_and_tagging",
     "/settings/tagging",
@@ -559,44 +564,44 @@ function App() {
             overflow: path.startsWith("/messages/") ? "hidden" : "",
           }}
         >
-          <Container
-            style={{
-              minHeight: "100dvh",
-            }}
-            fluid
+          <Suspense
+            fallback={
+              <LoadingSpinner
+                isSuspense={true}
+                strokeColor={"rgb(29, 155, 240)"}
+              ></LoadingSpinner>
+            }
           >
-            <Row
+            <Container
               style={{
-                borderTop: "none",
-                borderBottom: "none",
-                height: !path.startsWith("/account") ? "100%" : "",
-                minHeight: "100vh",
+                minHeight: "100dvh",
               }}
+              fluid
             >
-              {(routesArray.includes(path) ||
-                path.startsWith("/messages") ||
-                path.startsWith("/profile") ||
-                path.endsWith("/requests") ||
-                path.endsWith("/following") ||
-                path.endsWith("/followers") ||
-                path.includes("/status")) &&
-                showLeftSideNavbar === true &&
-                !path.startsWith("/account") &&
-                !path.endsWith("/communities/explore") &&
-                !path.endsWith("/photo/1") && (
-                  <LeftSideNavBar
-                    refreshPosts={handleShareNewPost}
-                    setIsPostShared={handlePostSharingIsDone}
-                  />
-                )}{" "}
-              <Suspense
-                fallback={
-                  <LoadingSpinner
-                    isSuspense={true}
-                    strokeColor={"rgb(29, 155, 240)"}
-                  ></LoadingSpinner>
-                }
+              <Row
+                style={{
+                  borderTop: "none",
+                  borderBottom: "none",
+                  height: !path.startsWith("/account") ? "100%" : "",
+                  minHeight: "100vh",
+                }}
               >
+                {(routesArray.includes(path) ||
+                  path.startsWith("/messages") ||
+                  path.startsWith("/profile") ||
+                  path.endsWith("/requests") ||
+                  path.endsWith("/following") ||
+                  path.endsWith("/followers") ||
+                  path.includes("/status")) &&
+                  showLeftSideNavbar === true &&
+                  !path.startsWith("/account") &&
+                  !path.endsWith("/communities/explore") &&
+                  !path.endsWith("/photo/1") && (
+                    <LeftSideNavBar
+                      refreshPosts={handleShareNewPost}
+                      setIsPostShared={handlePostSharingIsDone}
+                    />
+                  )}{" "}
                 <Routes>
                   <Route path="/" element={<HomePage />} />
 
@@ -701,7 +706,7 @@ function App() {
                     element={<YourAccountMain />}
                   ></Route>
                   <Route
-                    path="/settings/your_twitter_data/account"
+                    path="/settings/your_c_data/account"
                     element={<AccountInformationMain />}
                   ></Route>
                   <Route
@@ -760,8 +765,8 @@ function App() {
                     element={<Languages />}
                   ></Route>
                   <Route
-                    path="/settings/your_twitter_data/language"
-                    element={<YourTwitterDataLanguage />}
+                    path="/settings/your_c_data/language"
+                    element={<YourCDataLanguage />}
                   ></Route>
                   <Route
                     path="/i/flow/language_selector"
@@ -776,7 +781,7 @@ function App() {
                     element={<ChangeYourEmail />}
                   ></Route>
                   <Route
-                    path="/settings/your_twitter_data/age"
+                    path="/settings/your_c_data/age"
                     element={<Age />}
                   ></Route>
                   <Route
@@ -788,7 +793,7 @@ function App() {
                     element={<Enable_Automated_Account />}
                   ></Route>
                   <Route
-                    path="/settings/your_twitter_data/gender"
+                    path="/settings/your_c_data/gender"
                     element={<Gender />}
                   ></Route>
                   <Route path="/settings/country" element={<Country />}></Route>
@@ -866,31 +871,31 @@ function App() {
 
                   <Route path="/*" element={<NotFoundPage />}></Route>
                 </Routes>
-              </Suspense>
-              {(routesArray.includes(path) ||
-                path.startsWith("/messages") ||
-                path.startsWith("/profile") ||
-                path.endsWith("/requests") ||
-                path.endsWith("/following") ||
-                path.endsWith("/followers") ||
-                path.includes("/status")) &&
-                showRightSideBarColumn === true &&
-                !path.startsWith("/settings") &&
-                !path.startsWith("/account") &&
-                !path.endsWith("/communities/explore") &&
-                !path.endsWith("/photo/1") && (
-                  <RightSideColumn
-                    isVerifiedOrgsSignUpRoute={
-                      openVerifiedOrganizationSubscriptionTypedModal
-                    }
-                    isSubscriptionEligibilityCheckRouteForIndividualSubscription={
-                      openIndividualEligibilityVerifyNumberScreen
-                    }
-                    premiumInfoFromParentAppJsx={premiumInfo}
-                  />
-                )}
-            </Row>
-          </Container>
+                {(routesArray.includes(path) ||
+                  path.startsWith("/messages") ||
+                  path.startsWith("/profile") ||
+                  path.endsWith("/requests") ||
+                  path.endsWith("/following") ||
+                  path.endsWith("/followers") ||
+                  path.includes("/status")) &&
+                  showRightSideBarColumn === true &&
+                  !path.startsWith("/settings") &&
+                  !path.startsWith("/account") &&
+                  !path.endsWith("/communities/explore") &&
+                  !path.endsWith("/photo/1") && (
+                    <RightSideColumn
+                      isVerifiedOrgsSignUpRoute={
+                        openVerifiedOrganizationSubscriptionTypedModal
+                      }
+                      isSubscriptionEligibilityCheckRouteForIndividualSubscription={
+                        openIndividualEligibilityVerifyNumberScreen
+                      }
+                      premiumInfoFromParentAppJsx={premiumInfo}
+                    />
+                  )}
+              </Row>
+            </Container>
+          </Suspense>
         </div>
       </SubscriptionStatusProvider>
     </>

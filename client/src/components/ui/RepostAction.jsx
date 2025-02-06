@@ -421,7 +421,7 @@ function RepostAction({
                       </span>
                     </div>
 
-                    <div
+                    {/* <div
                       onMouseEnter={() => {
                         setHoveredOption("Quote");
                       }}
@@ -471,7 +471,7 @@ function RepostAction({
                       >
                         Quote
                       </span>
-                    </div>
+                    </div> */}
                   </div>
                 ) : (
                   <div>
@@ -530,7 +530,7 @@ function RepostAction({
                         Repost
                       </span>
                     </div>
-                    <div
+                    {/* <div
                       onMouseEnter={() => {
                         setHoveredOption("Quote");
                       }}
@@ -579,7 +579,7 @@ function RepostAction({
                       >
                         Quote
                       </span>
-                    </div>
+                    </div> */}
                   </div>
                 )}
               </div>

@@ -165,7 +165,7 @@ function AccessibilityDisplayAndLanguagesMain() {
               opacity: "0.5",
             }}
           >
-            <div
+            {/* <div
               style={{
                 width: "100%",
                 display: "flex",
@@ -233,7 +233,7 @@ function AccessibilityDisplayAndLanguagesMain() {
                   </g>
                 </svg>
               </div>
-            </div>
+            </div> */}
           </div>
           <div
             className={
@@ -391,7 +391,7 @@ function AccessibilityDisplayAndLanguagesMain() {
               </div>
             </div>
           </div>
-          <div
+          {/* <div
             className={
               themeName === "dark-theme"
                 ? "has-children-dark-theme"
@@ -472,8 +472,8 @@ function AccessibilityDisplayAndLanguagesMain() {
                 </svg>
               </div>
             </div>
-          </div>
-          <div
+          </div> */}
+          {/* <div
             className={
               themeName === "dark-theme"
                 ? "has-children-dark-theme"
@@ -540,7 +540,7 @@ function AccessibilityDisplayAndLanguagesMain() {
                 </svg>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </Col>
     </>

@@ -991,7 +991,7 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                 </div>
               </div>
             </div>
-            <div
+            {/* <div
               onClick={() => {
                 navigate(`/settings/monetization`);
               }}
@@ -1112,7 +1112,7 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
             {/* <div
               onClick={() => {
                 navigate(`/help/connectify`);

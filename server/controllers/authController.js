@@ -390,15 +390,15 @@ const handleLogin = (req, res, next) => {
 
 const handleDeactivatedUserLoginBack = (req, res) => {
   const { authentication } = req.body;
-
-  if (!authentication.usernameOrEmail || !authentication.password) {
+  if (!authentication.multi_factor_authentication) {
     res.status(403).json({
       errorMessage:
         "All fields are mandatory.Please provide username or email,and password",
     });
     return;
   }
-  const userFirstInfoUsernameOrEmail = authentication.usernameOrEmail;
+  const userFirstInfoUsernameOrEmail =
+    authentication.multi_factor_authentication;
   const userFirstInfoUserPassword = authentication.password;
   User.findOne({
     $or: [

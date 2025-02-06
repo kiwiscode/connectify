@@ -664,7 +664,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                           fontSize: font15.fontSize,
                           lineHeight: font15.lineHeight,
                         }}
-                      >{`You deactivated your account on ${userdeactivateddate}.On ${userdeletiondate}, it will no longer be possible for you to restore your Connectify account if it was accidentally or wrongfully deactivated. By clicking "Yes, reactivate", you will halt the deactivation process and reactivate your account.`}</div>
+                      >{`You deactivated your account on ${userdeactivateddate}. On ${userdeletiondate}, it will no longer be possible for you to restore your Connectify account if it was accidentally or wrongfully deactivated. By clicking "Yes, reactivate", you will halt the deactivation process and reactivate your account.`}</div>
                     </div>
                     <Button
                       style={{
@@ -796,7 +796,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                           lineHeight: font15.lineHeight,
                           textAlign: "left",
                         }}
-                      >{`You deactivated your account on ${userdeactivateddate}.On ${userdeletiondate}, it will no longer be possible for you to restore your Connectify account if it was accidentally or wrongfully deactivated. By clicking "Yes, reactivate", you will halt the deactivation process and reactivate your account.`}</div>
+                      >{`You deactivated your account on ${userdeactivateddate}. On ${userdeletiondate}, it will no longer be possible for you to restore your Connectify account if it was accidentally or wrongfully deactivated. By clicking "Yes, reactivate", you will halt the deactivation process and reactivate your account.`}</div>
                     </div>
 
                     <Button

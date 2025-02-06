@@ -233,13 +233,17 @@ function SecurityAndAccountAccessMain() {
               </div>
             </div>
           </div>
-          <div
-            onClick={() => navigate("/settings/apps_and_sessions")}
+          {/* <div
+            // onClick={() => navigate("/settings/apps_and_sessions")}
             className={
               themeName === "dark-theme"
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            style={{
+              opacity: 0.5,
+              cursor: "default",
+            }}
           >
             <div
               style={{
@@ -310,14 +314,18 @@ function SecurityAndAccountAccessMain() {
                 </svg>
               </div>
             </div>
-          </div>
-          <div
-            onClick={() => navigate("/settings/connected_accounts")}
+          </div> */}
+          {/* <div
+            // onClick={() => navigate("/settings/connected_accounts")}
             className={
               themeName === "dark-theme"
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            style={{
+              opacity: 0.5,
+              cursor: "default",
+            }}
           >
             <div
               style={{
@@ -387,14 +395,18 @@ function SecurityAndAccountAccessMain() {
                 </svg>
               </div>
             </div>
-          </div>
-          <div
-            onClick={() => navigate("/settings/delegate")}
+          </div> */}
+          {/* <div
+            // onClick={() => navigate("/settings/delegate")}
             className={
               themeName === "dark-theme"
                 ? "has-children-dark-theme"
                 : "has-children-light-theme"
             }
+            style={{
+              opacity: 0.5,
+              cursor: "default",
+            }}
           >
             <div
               style={{
@@ -464,7 +476,7 @@ function SecurityAndAccountAccessMain() {
                 </svg>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </Col>
     </>

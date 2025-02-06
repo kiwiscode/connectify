@@ -1610,7 +1610,7 @@ function AccountInformationMain() {
                 </div>
               </div>{" "}
               <div
-                onClick={() => navigate("/settings/your_twitter_data/gender")}
+                onClick={() => navigate("/settings/your_c_data/gender")}
                 className={
                   themeName === "dark-theme"
                     ? "has-children-dark-theme"
@@ -1770,7 +1770,7 @@ function AccountInformationMain() {
                 }}
               ></div>
               <div
-                onClick={() => navigate("/settings/your_twitter_data/age")}
+                onClick={() => navigate("/settings/your_c_data/age")}
                 className={
                   themeName === "dark-theme"
                     ? "has-children-dark-theme"

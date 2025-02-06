@@ -1529,7 +1529,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                               </div>
                             </div>
                           </div> */}
-                          <div
+                          {/* <div
                             onClick={() => {
                               popupState.close();
                               navigate(`/settings/monetization`);
@@ -1651,7 +1651,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          </div> */}
                           {/* <div
                             onClick={() => {
                               popupState.close();
@@ -3098,7 +3098,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                           </div>
                         </div>
                       )} */}
-                      <div
+                      {/* <div
                         onClick={() => {
                           popupState.close();
                           navigate(`/settings/monetization`);
@@ -3220,7 +3220,7 @@ function LeftSideNavBar({ refreshPosts, setIsPostShared }) {
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </div> */}
                       {/* <div
                         onClick={() => {
                           popupState.close();

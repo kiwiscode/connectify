@@ -1205,6 +1205,20 @@ function UserProfile({ isNewPostShared }) {
     }
   }, [coverImage, postsWindow, favoriteWindow, userInfo]);
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Escape") {
+      setShowBigProfileCoverImage(null);
+      setshowBigPP(null);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   return (
     <>
       {/* {contextHolder} */}

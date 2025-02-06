@@ -154,7 +154,7 @@ function YourAccountMain() {
           }}
         >
           <div
-            onClick={() => navigate("/settings/your_twitter_data/account")}
+            onClick={() => navigate("/settings/your_c_data/account")}
             className={
               themeName === "dark-theme"
                 ? "has-children-dark-theme"

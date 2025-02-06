@@ -1,4 +1,4 @@
-import { startTransition, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import useWindowDimensions from "../../hooks/getWindowDimensions";
 import { ThemeContext } from "../../context/ThemeContext";
 import { NavigationHistoryContext } from "../../context/NavigationHistoryContext";
@@ -288,7 +288,7 @@ function SettingsNavigation() {
                 </svg>
               </div>
             </div>
-            <div
+            {/* <div
               onClick={() => {
                 navigate("/settings/monetization");
               }}
@@ -326,7 +326,7 @@ function SettingsNavigation() {
                   </g>
                 </svg>
               </div>
-            </div>
+            </div> */}
             <div
               className="has-children chirp-regular-font"
               onClick={() => {
@@ -477,7 +477,7 @@ function SettingsNavigation() {
                 </svg>
               </div>
             </div>
-            <div
+            {/* <div
               onClick={() => {
                 navigate("/settings/notifications");
               }}
@@ -515,7 +515,7 @@ function SettingsNavigation() {
                   </g>
                 </svg>
               </div>
-            </div>
+            </div> */}
             <div
               onClick={() => {
                 navigate("/settings/accessibility_display_and_languages");
@@ -558,7 +558,7 @@ function SettingsNavigation() {
                 </svg>
               </div>
             </div>
-            <div
+            {/* <div
               onClick={() => {
                 navigate("/settings/about");
               }}
@@ -596,17 +596,17 @@ function SettingsNavigation() {
                   </g>
                 </svg>
               </div>
-            </div>
-            <div
-              onClick={() => {
-                startTransition(() => {
-                  navigate("/help_connectify");
-                });
-              }}
+            </div> */}
+            {/* <div
+              // onClick={() => {
+              //     navigate("/help_connectify");
+              // }}
               className="has-children chirp-regular-font"
               style={{
                 display: "flex",
                 justifyContent: "space-between",
+                opacity: 0.5,
+                cursor: "default",
               }}
             >
               <div
@@ -618,14 +618,18 @@ function SettingsNavigation() {
               >
                 Help Center
               </div>
-              <div>
+              <div
+                style={{
+                  cursor: "default",
+                }}
+              >
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <g>
                     <path d="M8 6h10v10h-2V9.41L5.957 19.46l-1.414-1.42L14.586 8H8V6z"></path>
                   </g>
                 </svg>
               </div>
-            </div>
+            </div> */}
           </div>
           {/* setting options ...finish to check  */}
         </Stack>

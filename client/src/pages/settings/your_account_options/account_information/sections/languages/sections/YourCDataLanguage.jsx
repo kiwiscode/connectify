@@ -8,7 +8,7 @@ import SettingsNavigation from "../../../../../../../components/SettingsNavigati
 import { NavigationHistoryContext } from "../../../../../../../context/NavigationHistoryContext";
 import { useFontSizeHandler } from "../../../../../../../utils/useFontSizeHandler";
 
-function YourTwitterDataLanguage() {
+function YourCDataLanguage() {
   const { contextHolder } = useAntdMessageHandler();
   const { width } = useWindowDimensions();
   const [{ themeName }] = useContext(ThemeContext);
@@ -438,4 +438,4 @@ function YourTwitterDataLanguage() {
   );
 }
 
-export default YourTwitterDataLanguage;
+export default YourCDataLanguage;

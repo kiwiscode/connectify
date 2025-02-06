@@ -426,7 +426,7 @@ function Settings() {
                 </svg>
               </div>
             </div>
-            <div
+            {/* <div
               onClick={() => {
                 navigate("/settings/monetization");
               }}
@@ -456,7 +456,7 @@ function Settings() {
                   </g>
                 </svg>
               </div>
-            </div>
+            </div> */}
             <div
               className="has-children"
               onClick={() => {

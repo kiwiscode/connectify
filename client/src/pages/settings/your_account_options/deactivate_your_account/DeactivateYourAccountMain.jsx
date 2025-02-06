@@ -337,7 +337,7 @@ function DeactivateYourAccountMain() {
               If you just want to change your @username, you don’t need to
               deactivate your account — edit it in your{" "}
               <span
-                onClick={() => navigate("/settings/your_twitter_data/account")}
+                onClick={() => navigate("/settings/your_c_data/account")}
                 className="hover-blue-underline"
               >
                 {" "}
@@ -371,7 +371,7 @@ function DeactivateYourAccountMain() {
               account,{" "}
               <span
                 onClick={() => {
-                  navigate("/settings/your_twitter_data/account");
+                  navigate("/settings/your_c_data/account");
                 }}
                 className="hover-blue-underline"
               >

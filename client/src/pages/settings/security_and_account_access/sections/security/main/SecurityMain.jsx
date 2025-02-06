@@ -159,6 +159,7 @@ function SecurityMain() {
             style={{
               display: "flex",
               justifyContent: "space-between",
+              opacity: 0.5,
             }}
           >
             <div
@@ -245,6 +246,7 @@ function SecurityMain() {
             style={{
               display: "flex",
               justifyContent: "space-between",
+              opacity: 0.5,
             }}
           >
             <div
@@ -331,6 +333,8 @@ function SecurityMain() {
             style={{
               display: "flex",
               justifyContent: "space-between",
+              opacity: "0.5",
+              cursor: "default",
             }}
           >
             <div
@@ -368,25 +372,25 @@ function SecurityMain() {
               }}
             >
               <div
-                onClick={() => setfirstClicked(!firstClicked)}
+                // onClick={() => setfirstClicked(!firstClicked)}
                 style={{
                   width: "36px",
                   height: "36px",
                   borderRadius: "50%",
-                  cursor: "pointer",
+                  // cursor: "pointer",
                   position: "relative",
                 }}
-                className={
-                  themeName === "dark-theme" && firstClicked
-                    ? "hover-background-effect-clicked-dark-theme"
-                    : themeName !== "dark-theme" && firstClicked
-                    ? "hover-background-effect-clicked-light-theme"
-                    : themeName === "dark-theme" && !firstClicked
-                    ? "hover-background-effect-dark-theme"
-                    : themeName !== "dark-theme" && !firstClicked
-                    ? "hover-background-effect-light-theme"
-                    : ""
-                }
+                // className={
+                //   themeName === "dark-theme" && firstClicked
+                //     ? "hover-background-effect-clicked-dark-theme"
+                //     : themeName !== "dark-theme" && firstClicked
+                //     ? "hover-background-effect-clicked-light-theme"
+                //     : themeName === "dark-theme" && !firstClicked
+                //     ? "hover-background-effect-dark-theme"
+                //     : themeName !== "dark-theme" && !firstClicked
+                //     ? "hover-background-effect-light-theme"
+                //     : ""
+                // }
               >
                 <div
                   style={{

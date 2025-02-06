@@ -1187,7 +1187,7 @@ function SignUpPage() {
                               color: "#536471",
                               flex: "255.5px",
                               padding: "4px",
-                              border: "1px solid",
+                              border: "1px solid rgb(207, 217, 222)",
                               borderWidth: styleOfBoxMonth ? "2px" : "1px",
                               borderColor: styleOfBoxMonth
                                 ? "#1d9bf0                          "
@@ -1560,8 +1560,6 @@ function SignUpPage() {
                                   : themeName === "dark-theme"
                                   ? "2px solid rgb(70,70,70)"
                                   : "2px solid #536471",
-
-                                borderWidth: "2px ",
                                 width: "20px",
                                 height: "20px",
                                 position: "relative",
@@ -1657,8 +1655,6 @@ function SignUpPage() {
                                   : themeName === "dark-theme"
                                   ? "2px solid rgb(70,70,70)"
                                   : "2px solid #536471",
-
-                                borderWidth: "2px ",
                                 width: "20px",
                                 height: "20px",
                                 position: "relative",
@@ -1759,7 +1755,6 @@ function SignUpPage() {
                                   ? "2px solid rgb(70,70,70)"
                                   : "2px solid #536471",
 
-                                borderWidth: "2px ",
                                 width: "20px",
                                 height: "20px",
                                 position: "relative",
@@ -2718,7 +2713,7 @@ function SignUpPage() {
                               color: "#536471",
                               flex: "50%",
                               padding: "4px",
-                              border: "1px solid",
+                              border: "1px solid rgb(207, 217, 222)",
                               borderWidth: styleOfBoxMonth ? "2px" : "1px",
                               borderColor: styleOfBoxMonth
                                 ? "#1d9bf0                          "
@@ -3097,8 +3092,6 @@ function SignUpPage() {
                                     : themeName === "dark-theme"
                                     ? "2px solid rgb(70,70,70)"
                                     : "2px solid #536471",
-
-                                  borderWidth: "2px ",
                                   width: "20px",
                                   height: "20px",
                                   position: "relative",
@@ -3196,8 +3189,6 @@ function SignUpPage() {
                                     : themeName === "dark-theme"
                                     ? "2px solid rgb(70,70,70)"
                                     : "2px solid #536471",
-
-                                  borderWidth: "2px ",
                                   width: "20px",
                                   height: "20px",
                                   position: "relative",
@@ -3301,7 +3292,6 @@ function SignUpPage() {
                                     ? "2px solid rgb(70,70,70)"
                                     : "2px solid #536471",
 
-                                  borderWidth: "2px ",
                                   width: "20px",
                                   height: "20px",
                                   position: "relative",
