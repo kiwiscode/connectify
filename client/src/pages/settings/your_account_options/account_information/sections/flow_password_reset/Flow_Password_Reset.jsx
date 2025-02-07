@@ -19,7 +19,7 @@ import { UserContext } from "../../../../../../context/UserContext";
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
 function Flow_Password_Reset() {
-  const { getToken, updateUser } = useContext(UserContext);
+  const { getToken, updateUser, userInfo } = useContext(UserContext);
   const { themeName } = useContext(ThemeContext);
   const { showCustomMessage, contextHolder } = useAntdMessageHandler();
   const {
@@ -80,7 +80,10 @@ function Flow_Password_Reset() {
   // accountu bul
   const handleFindConnectifyAccount = () => {
     axios
-      .post(`${API_URL}/check-find-account`, { findConnectifyAccount })
+      .post(`${API_URL}/check-find-account`, {
+        findConnectifyAccount,
+        userId: userInfo._id,
+      })
       .then((response) => {
         if (
           response.status === 201 &&
@@ -94,7 +97,7 @@ function Flow_Password_Reset() {
           }, 500);
         } else if (
           response.status === 201 &&
-          response.data.message === "The user entered an username."
+          response.data.message === "The user entered a username."
         ) {
           setTabLoading(true);
           setForgotPasswordInProcessUser(response.data.user);

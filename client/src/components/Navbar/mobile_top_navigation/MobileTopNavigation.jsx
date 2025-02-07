@@ -1508,7 +1508,7 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                 opacity: "0.5",
               }}
             ></div>
-            <div
+            {/* <div
               className={
                 themeName === "dark-theme"
                   ? "hover-effect-dark-theme-pointer-plus chirp-bold-font"
@@ -1535,7 +1535,7 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
               }}
             >
               Imprint
-            </div>
+            </div> */}
           </div>
         </div>
       )}

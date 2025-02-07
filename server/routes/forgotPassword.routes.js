@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express();
-const authenticateToken = require("../middleware/jwtMiddleware");
 const forgotPasswordController = require("../controllers/forgotPasswordController");
+
 router.post(
   "/check-find-account",
   forgotPasswordController.handleGetForgotPasswordProcessUser

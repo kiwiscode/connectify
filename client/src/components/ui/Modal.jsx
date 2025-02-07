@@ -270,7 +270,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
           }, 500);
         } else if (
           response.status === 201 &&
-          response.data.message === "The user entered an username."
+          response.data.message === "The user entered a username."
         ) {
           setTabLoading(true);
           setForgotPasswordInProcessUser(response.data.user);

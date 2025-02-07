@@ -19712,7 +19712,7 @@ function RightSideColumn({
                 </div>
               </div>
             )}
-            <div
+            {/* <div
               className="p-3 mt-1"
               style={{
                 maxWidth: "350px",
@@ -19740,7 +19740,7 @@ function RightSideColumn({
                 <li>Ads info</li>
                 <li>© 2024 Connectify Corp.</li>
               </ul>
-            </div>{" "}
+            </div>{" "} */}
           </div>
         </Col>
       )}

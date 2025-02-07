@@ -10,7 +10,7 @@ function IndexFooter() {
   const { width } = useWindowDimensions();
   return (
     <>
-      <div
+      {/* <div
         style={{
           textAlign: "center",
           width: "100%",
@@ -106,7 +106,7 @@ function IndexFooter() {
         >
           kiwisc0de
         </a>
-      </div>
+      </div> */}
     </>
   );
 }

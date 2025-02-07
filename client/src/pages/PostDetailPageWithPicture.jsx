@@ -228,6 +228,19 @@ function PostDetailPageWithPicture() {
 
   const detailedImgRef = useRef(null);
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Escape") {
+      navigate(-1);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   return (
     <>
       {contextHolder}

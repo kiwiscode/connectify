@@ -9,39 +9,45 @@ emailProcess();
 
 let sendEmailAfterChanginPassword;
 emailProcessAfterChanginPassword();
-const handleGetForgotPasswordProcessUser = (req, res) => {
-  const { findConnectifyAccount } = req.body;
+const handleGetForgotPasswordProcessUser = async (req, res) => {
+  try {
+    const { findConnectifyAccount, userId } = req.body;
 
-  const emailRegex =
-    /^[a-zA-Z0-9._%+-]+@(gmail|outlook|hotmail|yahoo|proton|zoho|mail|aol|yandex)\.(com|org|net|gov|edu|mil|co|info|de|co.uk|ca|me|tr|com.tr)$/;
-  User.find({
-    $or: [
-      { username: findConnectifyAccount },
-      { email: findConnectifyAccount },
-    ],
-  })
-    .then((userFromDB) => {
-      if (userFromDB.length) {
-        if (findConnectifyAccount.match(emailRegex)) {
-          res.status(201).json({
-            user: userFromDB[0],
-            message: "The user entered an email address.",
-          });
-        } else {
-          res.status(201).json({
-            user: userFromDB[0],
-            message: "The user entered an username.",
-          });
-        }
-      } else {
-        res.status(404).json({
-          errorMessage: "Sorry, we could not find your account.        ",
-        });
-      }
-    })
-    .catch((error) => {
-      res.status(501).json({ errorMessage: "Internal server error!" });
-    });
+    console.log("user id:", userId);
+    console.log("find connectify account:", findConnectifyAccount);
+
+    const emailRegex =
+      /^[a-zA-Z0-9._%+-]+@(gmail|outlook|hotmail|yahoo|proton|zoho|mail|aol|yandex)\.(com|org|net|gov|edu|mil|co|info|de|co.uk|ca|me|tr|com.tr)$/;
+
+    const query = {
+      $or: [
+        { username: findConnectifyAccount },
+        { email: findConnectifyAccount },
+      ],
+    };
+
+    if (userId) {
+      query._id = userId;
+    }
+
+    const userFromDB = await User.find(query);
+
+    if (userFromDB.length) {
+      res.status(201).json({
+        user: userFromDB[0],
+        message: findConnectifyAccount.match(emailRegex)
+          ? "The user entered an email address."
+          : "The user entered a username.",
+      });
+    } else {
+      res.status(404).json({
+        errorMessage: "Sorry, we could not find your account.",
+      });
+    }
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(501).json({ errorMessage: "Internal server error!" });
+  }
 };
 
 function emailProcess() {
@@ -350,20 +356,20 @@ const handleLoginAfterForgotPasswordProcess = (req, res) => {
     });
 };
 
-const handleiSEmailAndUsernameMatchForgotPasswordProcess = (req, res) => {
-  const { findConnectifyAccount, confirmUsername } = req.body;
+const handleiSEmailAndUsernameMatchForgotPasswordProcess = async (req, res) => {
+  try {
+    const { findConnectifyAccount, confirmUsername } = req.body;
 
-  User.find({ email: findConnectifyAccount })
-    .then((user) => {
-      if (user[0].username === confirmUsername) {
-        res.status(201).json({ error: false, message: "Success!" });
-      } else {
-        res.status(501).json({ error: true, message: "Failed!" });
-      }
-    })
-    .catch(() => {
-      res.status(404).json({ errorMessage: "User not found !" });
-    });
+    const user = await User.findOne({ email: findConnectifyAccount });
+
+    if (user.username === confirmUsername) {
+      res.status(201).json({ error: false, message: "Success!" });
+    } else {
+      res.status(501).json({ error: true, message: "Failed!" });
+    }
+  } catch (error) {
+    return res.status(404).json({ errorMessage: "User not found!" });
+  }
 };
 
 module.exports = {
