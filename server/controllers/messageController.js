@@ -145,6 +145,7 @@ const handleAddMessageToRoom = async (req, res) => {
   try {
     const { messageData } = req.body;
     const { chatRoomId } = req.params;
+    const { userId } = req.user;
     const [userId1, userId2] = chatRoomId.split("-");
     const roomIdArray = [userId1, userId2];
 
@@ -181,16 +182,6 @@ const handleAddMessageToRoom = async (req, res) => {
       membersOfChat: [userId1, userId2],
     });
 
-    // burası problem çıkarıyor olabilir, silinebilir socket.js deki update ile çakışıyor gibiler
-    // if (currentUserId === user1._id.toString()) {
-    //   user1.messages[chatRoomIndexForUser1].readed = true;
-    //   user2.messages[chatRoomIndexForUser2].readed = false;
-    // }
-    // if (currentUserId === user2._id.toString()) {
-    //   user2.messages[chatRoomIndexForUser2].readed = true;
-    //   user1.messages[chatRoomIndexForUser1].readed = false;
-    // }
-
     user1.messages[chatRoomIndexForUser1].chat.push({
       sender: messageData.sender,
       text: messageData.text,
@@ -207,7 +198,7 @@ const handleAddMessageToRoom = async (req, res) => {
     if (chatRoomIndexForUser1 !== 0) {
       const currentMessageForUser1 = user1.messages[chatRoomIndexForUser1]; // Geçerli mesajı kaydet
 
-      // current mesajı olduğu yerden siş
+      // current mesajı olduğu yerden sil
       user1.messages.splice(chatRoomIndexForUser1, 1);
 
       // current mesaj odasını unshift ile ilk sıraya at
@@ -218,17 +209,31 @@ const handleAddMessageToRoom = async (req, res) => {
     if (chatRoomIndexForUser2 !== 0) {
       const currentMessageForUser2 = user2.messages[chatRoomIndexForUser2]; // Geçerli mesajı kaydet
 
-      // current mesajı olduğu yerden siş
+      // current mesajı olduğu yerden sil
       user2.messages.splice(chatRoomIndexForUser2, 1);
 
       // current mesaj odasını unshift ile ilk sıraya at
       user2.messages.unshift(currentMessageForUser2);
     }
 
+    console.log("user 1 id:", user1._id.toString());
+    console.log("user 2 id:", user2._id.toString());
+
+    console.log("chat room index for user 1:", chatRoomIndexForUser1);
+    console.log("chat room index for user 2:", chatRoomIndexForUser2);
+
     await user1.save();
     await user2.save();
 
-    res.status(200).json({ chats: user1.messages[chatRoomIndexForUser1].chat });
+    const currentChatForActiveUser =
+      user1._id.toString() === userId
+        ? user1.messages[0].chat
+        : user2._id.toString() === userId
+        ? user2.messages[0].chat
+        : null;
+
+    // res.status(200).json({ chats: user1.messages[chatRoomIndexForUser1].chat });
+    res.status(200).json({ chats: currentChatForActiveUser });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).send("Server Error");
@@ -238,6 +243,7 @@ const handleAddMessageToRoom = async (req, res) => {
 const handleGetChat = async (req, res) => {
   const { chatRoomId } = req.params;
   const [userId1, userId2] = chatRoomId.split("-");
+  const { userId } = req.user;
 
   const roomIdArray = [userId1, userId2];
 
@@ -264,15 +270,28 @@ const handleGetChat = async (req, res) => {
       return res.status(404).send("One or both users does not have this room");
     }
 
+    const activeUser = await User.findById(userId);
+
+    console.log("active user:", activeUser.username);
+
     // Kullanıcının messages'ını filtrele ve odayı bul
-    const user1Messages = user1.messages.filter(
+    const userSpecificMessage = activeUser.messages.filter(
       (message) =>
         message.room === roomIdArray.join("-") ||
         message.room === roomIdArray.reverse().join("-")
     )[0];
 
+    // Kullanıcının messages'ını filtrele ve odayı bul
+    // const userSpecificMessage = user1.messages.filter(
+    //   (message) =>
+    //     message.room === roomIdArray.join("-") ||
+    //     message.room === roomIdArray.reverse().join("-")
+    // )[0];
+
+    console.log("user 1 messages:", userSpecificMessage);
+
     // Odaya ait mesajları JSON olarak döndür
-    res.status(200).json({ chatRoomId, messages: user1Messages });
+    res.status(200).json({ chatRoomId, messages: userSpecificMessage });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).send("Server Error");

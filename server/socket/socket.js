@@ -60,20 +60,33 @@ module.exports = (io) => {
     const userIds = roomName.split("-"); // roomName'den user id'lerini çıkarıyoruz
     const user1Id = userIds[0];
     const user2Id = userIds[1];
-    const activeUserId = senderId === user1Id ? user1Id : user2Id;
-    const receiverId = senderId !== user1Id ? user1Id : user2Id;
+    const senderUserId = senderId === user1Id ? user1Id : user2Id;
+    const receiverUserId = senderId === user1Id ? user2Id : user1Id;
     try {
       // Aktif olan kullanıcılar
       const room = rooms.find((r) => r.room === roomName);
 
       if (room) {
-        const activeUser1 = room.activeUser1;
-        const activeUser2 = room.activeUser2;
+        const activeUser1UserName = room.activeUser1;
+        const activeUser2UserName = room.activeUser2;
+
+        const activeUser1Info = await User.findOne({
+          username: activeUser1UserName,
+        });
+        const activeUser2Info = await User.findOne({
+          username: activeUser2UserName,
+        });
+
+        const activeUser1Id = activeUser1Info?._id.toString();
+        const activeUser2Id = activeUser2Info?._id.toString();
+
+        console.log("active user 1 id:", activeUser1Id?.toString());
+        console.log("active user 2 id:", activeUser2Id?.toString());
 
         // Eğer hem activeUser1 hem de activeUser2 aktifse, her iki kullanıcı için mesajları "readed: true" işaretle
-        if (activeUser1 && activeUser2) {
+        if (activeUser1Id && activeUser2Id) {
           await User.findByIdAndUpdate(
-            user1Id,
+            activeUser1Id,
             {
               $set: {
                 "messages.$[msg].readed": true,
@@ -86,7 +99,7 @@ module.exports = (io) => {
           );
 
           await User.findByIdAndUpdate(
-            user2Id,
+            activeUser2Id,
             {
               $set: {
                 "messages.$[msg].readed": true,
@@ -99,11 +112,11 @@ module.exports = (io) => {
           );
 
           console.log("burası çalıştı ve bitti.");
-        } else if (activeUser1) {
+        } else if (activeUser1Id) {
           // Sadece activeUser1 aktifse onun mesajlarını okundu olarak işaretle, activeUser2'nin mesajlarını okundu değil olarak tut
 
           await User.findByIdAndUpdate(
-            activeUserId,
+            activeUser1Id === senderUserId ? activeUser1Id : activeUser2Id,
             {
               $set: {
                 "messages.$[msg].readed": true,
@@ -116,7 +129,7 @@ module.exports = (io) => {
           );
 
           await User.findByIdAndUpdate(
-            receiverId,
+            receiverUserId,
             {
               $set: {
                 "messages.$[msg].readed": false,
@@ -129,6 +142,39 @@ module.exports = (io) => {
           );
 
           console.log("burası çalıştı ve bitti 2. condition");
+
+          console.log("receiver user id:", receiverUserId);
+          console.log("active user id:", activeUser1Id);
+        } else if (activeUser2Id) {
+          // Sadece activeUser1 aktifse onun mesajlarını okundu olarak işaretle, activeUser2'nin mesajlarını okundu değil olarak tut
+
+          await User.findByIdAndUpdate(
+            activeUser2Id === senderUserId ? activeUser2Id : activeUser1Id,
+            {
+              $set: {
+                "messages.$[msg].readed": true,
+              },
+            },
+            {
+              arrayFilters: [{ "msg.room": roomName }],
+              new: true,
+            }
+          );
+
+          await User.findByIdAndUpdate(
+            receiverUserId,
+            {
+              $set: {
+                "messages.$[msg].readed": false,
+              },
+            },
+            {
+              arrayFilters: [{ "msg.room": roomName }],
+              new: true,
+            }
+          );
+
+          console.log("burası çalıştı ve bitti 3. condition");
         }
       }
     } catch (err) {
@@ -173,7 +219,9 @@ module.exports = (io) => {
 
     // Mesaj alındığında
     socket.on("chatMessage", (roomName, message) => {
+      console.log("room name:", roomName);
       console.log("message:", message);
+
       const senderId = message.sender;
       // Mesaj gönderildiğinde anlık olarak mesaj okuma durumu güncellenir
       updateMessageStatus(roomName, senderId);
