@@ -387,8 +387,10 @@ function RepostAction({
                               themeName !== "dark-theme"
                             ? "#f7f7f7"
                             : "",
-
                         padding: "10px 18.77px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
                       }}
                     >
                       <span>
@@ -499,6 +501,9 @@ function RepostAction({
                             ? "#f7f7f7"
                             : "",
                         padding: "10px 18.77px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
                       }}
                     >
                       <span>

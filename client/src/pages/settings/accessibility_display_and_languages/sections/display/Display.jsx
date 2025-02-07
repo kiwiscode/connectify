@@ -1396,7 +1396,8 @@ function Display() {
               justifyContent: "space-evenly",
               flexDirection: width <= 700 ? "column" : "row",
               paddingRight: "16px",
-              gap: width <= 700 ? "8px" : null,
+              // gap: width <= 700 ? "8px" : null,
+              gap: "12px",
             }}
           >
             {" "}
@@ -1404,8 +1405,9 @@ function Display() {
               onClick={() => toggleThemeBetweenLightDarkMode()}
               style={{
                 height: "62px",
-                width: width <= 700 ? "100%" : "180px",
-                maxWidth: width <= 700 ? "100%" : "180px",
+                // width: width <= 700 ? "100%" : "180px",
+                // maxWidth: width <= 700 ? "100%" : "180px",
+                width: "100%",
                 maxHeight: "62px",
                 display: "flex",
                 justifyContent: "center",
@@ -1545,7 +1547,7 @@ function Display() {
                 </div>
               </div>
             </div>
-            <div
+            {/* <div
               style={{
                 height: "62px",
                 width: width <= 700 ? "100%" : "180px",
@@ -1662,13 +1664,14 @@ function Display() {
                   Dim
                 </div>
               </div>
-            </div>
+            </div> */}
             <div
               onClick={() => toggleThemeBetweenLightDarkMode()}
               style={{
                 height: "62px",
-                width: width <= 700 ? "100%" : "180px",
-                maxWidth: width <= 700 ? "100%" : "180px",
+                // width: width <= 700 ? "100%" : "180px",
+                // maxWidth: width <= 700 ? "100%" : "180px",
+                width: "100%",
                 maxHeight: "62px",
                 display: "flex",
                 justifyContent: "center",
