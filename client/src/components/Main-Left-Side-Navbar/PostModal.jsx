@@ -269,7 +269,7 @@ function PostModal({
                 value={content}
                 maxLength={maxCharacters}
                 className="input-post chirp-regular-font"
-                placeholder="What is happening?!"
+                placeholder="What is happening?!asd"
                 style={{
                   resize: "none",
                   padding: "8px",

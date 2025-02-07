@@ -6077,8 +6077,8 @@ function CommentModal({
             </BootstrapTooltip>
             {/* comment modal svg finish to check  */}
 
-            {/* emoji mart start to check */}
             <div>
+              {/* emoji mart start to check */}
               <PopupState variant="popover" popupId="demo-popup-popover">
                 {(popupState) => (
                   <div>
@@ -6131,8 +6131,6 @@ function CommentModal({
                       open={popupState.open}
                       onClose={popupState.close}
                       {...bindPopover(popupState)}
-                      // anchorReference="anchorPosition"
-                      // anchorPosition={{ top: 0, left: 0 }}
                       anchorOrigin={{
                         vertical: "bottom",
                         horizontal: "center",
@@ -6141,12 +6139,6 @@ function CommentModal({
                         vertical: "top",
                         horizontal: 140,
                       }}
-                      // transformOrigin creates problem start to check
-                      // transformOrigin={{
-                      //   vertical: "top",
-                      //   horizontal: "center",
-                      // }}
-                      // transformOrigin creates problem finish to check
                       className={`${
                         themeName === "dark-theme"
                           ? "popover-material-ui-dark-theme"
@@ -6154,6 +6146,9 @@ function CommentModal({
                           ? "popover-material-ui-light-theme"
                           : "hideshowMessageDeletePopover "
                       }`}
+                      style={{
+                        zIndex: 99999, // should bigger than post modal
+                      }}
                     >
                       <Picker
                         autoFocus

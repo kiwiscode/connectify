@@ -10,7 +10,7 @@ function IndexFooter() {
   const { width } = useWindowDimensions();
   return (
     <>
-      {/* <div
+      <div
         style={{
           textAlign: "center",
           width: "100%",
@@ -25,7 +25,7 @@ function IndexFooter() {
           width <= 1440 ? "mt-3" : "mt-5"
         }  footer-container-${themeName}`}
       >
-        <a href="">
+        {/* <a href="">
           <span>About</span>
         </a>
         <a href="">
@@ -85,7 +85,7 @@ function IndexFooter() {
         </a>
         <a href="">
           <span>Settings</span>
-        </a>
+        </a> */}
         <span
           style={{
             color: "rgb(83, 100, 113)",
@@ -106,7 +106,7 @@ function IndexFooter() {
         >
           kiwisc0de
         </a>
-      </div> */}
+      </div>
     </>
   );
 }
