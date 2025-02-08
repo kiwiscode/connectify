@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const MONGO_URI = process.env.MONGO_URI;
+const MONGODB_URL = process.env.MONGODB_URL;
 
-console.log("mongo db uri:", MONGO_URI);
+console.log("mongo db uri:", MONGODB_URL);
 
 mongoose
-  .connect(MONGO_URI)
+  .connect(MONGODB_URL)
   .then((x) => {
     const databaseName = x.connections[0].name;
     console.log(
