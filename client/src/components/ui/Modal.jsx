@@ -944,7 +944,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 >
                                   Sign in to C
                                 </div>
-                                <Button
+                                {/* <Button
                                   onClick={handleGoogleSignUp}
                                   style={{
                                     backgroundColor:
@@ -1005,7 +1005,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                       ></path>
                                     </g>
                                   </svg>
-                                </Button>
+                                </Button> */}
                               </div>
                               <Divider
                                 className={`theme-divider-${themeName}`}
@@ -3039,7 +3039,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             >
                               Sign in to C
                             </div>
-                            <Button
+                            {/* <Button
                               onClick={handleGoogleSignUp}
                               style={{
                                 backgroundColor:
@@ -3097,7 +3097,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   <path fill="none" d="M0 0h48v48H0z"></path>
                                 </g>
                               </svg>
-                            </Button>
+                            </Button> */}
                           </div>
                           <Divider
                             className={`theme-divider-${themeName}`}
