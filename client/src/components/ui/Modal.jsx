@@ -1007,7 +1007,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                   </svg>
                                 </Button> */}
                               </div>
-                              <Divider
+                              {/* <Divider
                                 className={`theme-divider-${themeName}`}
                                 style={{
                                   width: "300px",
@@ -1026,7 +1026,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                                 >
                                   or
                                 </span>
-                              </Divider>
+                              </Divider> */}
                               <TextField
                                 autoFocus
                                 className="mt-2"
@@ -3099,7 +3099,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                               </svg>
                             </Button> */}
                           </div>
-                          <Divider
+                          {/* <Divider
                             className={`theme-divider-${themeName}`}
                             style={{
                               width: "300px",
@@ -3118,7 +3118,7 @@ function SigninModal({ deactivatedScreen, widthSmaller700 }) {
                             >
                               or
                             </span>
-                          </Divider>
+                          </Divider> */}
                           <TextField
                             autoFocus
                             className="mt-1"
