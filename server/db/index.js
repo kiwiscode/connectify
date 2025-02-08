@@ -3,6 +3,8 @@ require("dotenv").config();
 
 const MONGODB_URL = process.env.MONGODB_URL;
 
+console.log("mongodb url:", MONGODB_URL);
+
 mongoose
   .connect(MONGODB_URL)
   .then((x) => {
