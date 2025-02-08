@@ -21,16 +21,16 @@ app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 app.set("trust proxy", 1);
 app.use(getUserIp);
 
+const FRONTEND_URL = process.env.FRONTEND_URL;
+
 const socketIo = require("socket.io");
 const io = socketIo(server, {
   cors: {
-    origin: process.env.FRONTEND_URL,
+    origin: FRONTEND_URL,
     methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
     credentials: true,
   },
 });
-
-const FRONTEND_URL = process.env.FRONTEND_URL;
 
 require("./socket/socket.js")(io);
 
