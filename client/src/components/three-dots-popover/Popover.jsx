@@ -181,8 +181,6 @@ function PostPopover({
       });
   };
 
-  console.log("post user:", post?.userId);
-
   // {profileInfo.followers
   //   ? getFollowerIds(profileInfo.followers).includes(
   //       userInfo._id
