@@ -19691,7 +19691,7 @@ function RightSideColumn({
                 <li>Imprint</li>
                 <li>Accessibility</li>
                 <li>Ads info</li>
-                <li>© 2024 Connectify Corp.</li>
+                <li>© 2025 Connectify Corp.</li>
               </ul>
             </div>{" "} */}
           </div>

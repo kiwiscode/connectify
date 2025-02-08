@@ -91,7 +91,7 @@ function IndexFooter() {
             color: "rgb(83, 100, 113)",
           }}
         >
-          © 2024 C
+          © 2025 C
         </span>{" "}
         <a
           style={{
