@@ -30,11 +30,13 @@ const io = socketIo(server, {
   },
 });
 
+const FRONTEND_URL = process.env.FRONTEND_URL;
+
 require("./socket/socket.js")(io);
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: FRONTEND_URL,
     methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
     credentials: true,
   })
