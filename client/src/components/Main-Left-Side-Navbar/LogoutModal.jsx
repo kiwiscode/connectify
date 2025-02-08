@@ -350,6 +350,7 @@ function LogoutModal({ isMobileNavigationBarTop }) {
                 lineHeight: font15.lineHeight,
                 position: "relative",
                 top: "12px",
+                marginBottom: `20px`,
               }}
             >
               Cancel

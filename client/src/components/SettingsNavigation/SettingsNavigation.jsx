@@ -395,7 +395,7 @@ function SettingsNavigation() {
                 </svg>
               </div>
             </div>
-            <div
+            {/* <div
               onClick={() => {
                 navigate("/settings/security_and_account_access");
               }}
@@ -436,7 +436,7 @@ function SettingsNavigation() {
                   </g>
                 </svg>
               </div>
-            </div>
+            </div> */}
             <div
               onClick={() => {
                 navigate("/settings/privacy_and_safety");

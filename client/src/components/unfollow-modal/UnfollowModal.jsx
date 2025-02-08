@@ -29,10 +29,12 @@ function UnfollowModal({
       className="unfollow-modal-general-class"
       show={showUnfollowModal}
       onHide={handleClose}
-      style={{
-        margin: "0px",
-        padding: "0px",
-      }}
+      style={
+        {
+          // margin: "0px",
+          // padding: "0px",
+        }
+      }
     >
       <Modal.Body className="" style={{}}>
         <div style={{}} className="">
@@ -92,6 +94,7 @@ function UnfollowModal({
               color: themeName === "dark-theme" ? "white" : "black",
               fontSize: font15.fontSize,
               lineHeight: font15.lineHeight,
+              marginBottom: `20px`,
             }}
             className={`mt-2 forgot-password-btn ${themeName}-black-btn chirp-bold-font`}
             variant="light"

@@ -14228,17 +14228,15 @@ function RightSideColumn({
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
+                        overflowY: "auto",
+                        padding: "16px 0px",
                       }}
                     >
                       <div
                         style={{
-                          position: "absolute",
+                          width: "81.5%",
                           display: "flex",
-                          flexDirection: "row",
                           gap: "2.5%",
-                          padding: "16px",
-                          maxHeight: "120px",
-                          width: "87%",
                         }}
                       >
                         <div
@@ -14248,10 +14246,9 @@ function RightSideColumn({
                           }}
                           className={`individual-subscription-box individual-subscription-box-${themeName}`}
                           style={{
+                            padding: "8px",
                             flex: 1,
-
-                            maxHeight: "96px",
-                            padding: "12px",
+                            maxHeight: "110px",
                             cursor: "pointer",
                             borderWidth: "1px",
                             borderRadius: "16px",
@@ -14343,9 +14340,9 @@ function RightSideColumn({
                             setindividualSubOptionPremiumPlusAnnualTab(false);
                           }}
                           style={{
+                            padding: "8px",
                             flex: 1,
-                            maxHeight: "96px",
-                            padding: "12px",
+                            maxHeight: "110px",
                             cursor: "pointer",
                             borderWidth: "1px",
                             borderRadius: "16px",
@@ -14412,9 +14409,7 @@ function RightSideColumn({
                       <div
                         style={{
                           width: "81.5%",
-                          position: "relative",
-                          top: "115px",
-                          margin: "0 auto",
+                          marginTop: "24px",
                         }}
                       >
                         {phoneVerifiedErrorMessage ? (
@@ -14472,7 +14467,7 @@ function RightSideColumn({
                         </Button>
                       </div>
                       <div
-                        className="mt-1 chirp-regular-font"
+                        className="chirp-regular-font"
                         style={{
                           width: "81.5%",
                           margin: "0 auto",
@@ -14484,10 +14479,9 @@ function RightSideColumn({
                               : "1px solid black",
                           borderRadius: "8px",
                           padding: "6px",
-                          position: "relative",
-                          top: "120px",
                           color:
                             themeName === "dark-theme" ? "#71767A" : "#697884",
+                          marginTop: "24px",
                         }}
                       >
                         {`By subscribing, you agree to our `}
@@ -14534,17 +14528,15 @@ function RightSideColumn({
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
+                        overflowY: "auto",
+                        padding: "16px 0px",
                       }}
                     >
                       <div
                         style={{
-                          position: "absolute",
+                          width: "81.5%",
                           display: "flex",
-                          flexDirection: "row",
                           gap: "2.5%",
-                          padding: "16px",
-                          maxHeight: "120px",
-                          width: "87%",
                         }}
                       >
                         <div
@@ -14554,9 +14546,9 @@ function RightSideColumn({
                           }}
                           className={`individual-subscription-box individual-subscription-box-${themeName}`}
                           style={{
+                            padding: "8px",
                             flex: 1,
-                            maxHeight: "96px",
-                            padding: "12px",
+                            maxHeight: "110px",
                             cursor: "pointer",
                             borderWidth: "1px",
                             borderRadius: "16px",
@@ -14647,9 +14639,9 @@ function RightSideColumn({
                             setindividualSubOptionPremiumPlusAnnualTab(false);
                           }}
                           style={{
+                            padding: "8px",
                             flex: 1,
-                            maxHeight: "96px",
-                            padding: "12px",
+                            maxHeight: "110px",
                             cursor: "pointer",
                             borderWidth: "1px",
                             borderRadius: "16px",
@@ -14716,10 +14708,7 @@ function RightSideColumn({
                       <div
                         style={{
                           width: "81.5%",
-
-                          position: "relative",
-                          top: "115px",
-                          margin: "0 auto",
+                          marginTop: "24px",
                         }}
                       >
                         {" "}
@@ -14778,7 +14767,7 @@ function RightSideColumn({
                         </Button>
                       </div>
                       <div
-                        className="mt-1 chirp-regular-font"
+                        className="chirp-regular-font"
                         style={{
                           width: "81.5%",
                           margin: "0 auto",
@@ -14790,10 +14779,9 @@ function RightSideColumn({
                               : "1px solid black",
                           borderRadius: "8px",
                           padding: "6px",
-                          position: "relative",
-                          top: "120px",
                           color:
                             themeName === "dark-theme" ? "#71767A" : "#697884",
+                          marginTop: "24px",
                         }}
                       >
                         {`By subscribing, you agree to our `}
@@ -14840,17 +14828,15 @@ function RightSideColumn({
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
+                        overflowY: "auto",
+                        padding: "16px 0px",
                       }}
                     >
                       <div
                         style={{
-                          position: "absolute",
+                          width: "81.5%",
                           display: "flex",
-                          flexDirection: "row",
                           gap: "2.5%",
-                          padding: "16px",
-                          maxHeight: "120px",
-                          width: "87%",
                         }}
                       >
                         <div
@@ -14860,9 +14846,9 @@ function RightSideColumn({
                           }}
                           className={`individual-subscription-box individual-subscription-box-${themeName}`}
                           style={{
+                            padding: "8px",
                             flex: 1,
-                            maxHeight: "96px",
-                            padding: "12px",
+                            maxHeight: "110px",
                             cursor: "pointer",
                             borderWidth: "1px",
                             borderRadius: "16px",
@@ -14953,9 +14939,9 @@ function RightSideColumn({
                             setindividualSubOptionPremiumPlusAnnualTab(false);
                           }}
                           style={{
+                            padding: "8px",
                             flex: 1,
-                            maxHeight: "96px",
-                            padding: "12px",
+                            maxHeight: "110px",
                             cursor: "pointer",
                             borderWidth: "1px",
                             borderRadius: "16px",
@@ -15022,9 +15008,7 @@ function RightSideColumn({
                       <div
                         style={{
                           width: "81.5%",
-                          position: "relative",
-                          top: "115px",
-                          margin: "0 auto",
+                          marginTop: "24px",
                         }}
                       >
                         {" "}
@@ -15082,7 +15066,7 @@ function RightSideColumn({
                         </Button>
                       </div>
                       <div
-                        className="mt-1 chirp-regular-font"
+                        className="chirp-regular-font"
                         style={{
                           width: "81.5%",
                           margin: "0 auto",
@@ -15096,8 +15080,7 @@ function RightSideColumn({
                             themeName === "dark-theme" ? "#71767A" : "#697884",
                           borderRadius: "8px",
                           padding: "6px",
-                          position: "relative",
-                          top: "120px",
+                          marginTop: "24px",
                         }}
                       >
                         {`By subscribing, you agree to our `}
@@ -15125,165 +15108,18 @@ function RightSideColumn({
                 </>
               ) : tabIndex === 1 && isOrganizationSubscriptionClicked ? (
                 <>
-                  {" "}
-                  <>
-                    <Modal.Body
-                      className={`scrollbar-add full-access-sub-index-first full-access-sub-index-first-${themeName} scrollbar-add-${themeName}`}
-                      style={{
-                        height: "100%",
-                        overflowY: "auto",
-                      }}
-                    >
-                      {subTabIndexFromOrganizationSelect !== 3 ? (
-                        <>
-                          <div
-                            onClick={() => {
-                              handleCloseSubscriptionModal();
-                            }}
-                            style={{
-                              cursor: "pointer",
-                              position: "relative",
-                              // right: "30px",
-                              width: "100%",
-                            }}
-                          >
-                            <div
-                              className={`close-button close-button-${themeName}`}
-                              style={{
-                                display: " flex",
-                                flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "center",
-
-                                width: "36px",
-                                height: "36px",
-                                borderRadius: "50%",
-                              }}
-                            >
-                              {/* close signin modal icon start to check  */}
-                              <svg
-                                style={{
-                                  border: "none",
-                                  margin: "5px",
-                                }}
-                                onClick={() =>
-                                  isVerifiedOrgsSignUpRoute
-                                    ? handleNavigateClickCloseBtn
-                                    : handleCloseSubscriptionModal
-                                }
-                                width={20}
-                                height={20}
-                                color={
-                                  themeName === "dark-theme"
-                                    ? "white"
-                                    : "rgb(15,20,25)"
-                                }
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
-                              >
-                                <g>
-                                  <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-                                </g>
-                              </svg>{" "}
-                              {/* close signin modal icon finish to check  */}
-                            </div>{" "}
-                          </div>
-                          <div
-                            className="chirp-bold-font"
-                            style={{
-                              fontSize: font20.fontSize,
-                              lineHeight: font20.lineHeight,
-                              position: "relative",
-                              bottom: "30px",
-                              color:
-                                themeName === "dark-theme" ? "white" : "black",
-                            }}
-                          >
-                            Verified Organizations
-                          </div>
-                          <div
-                            className=""
-                            style={{
-                              backgroundColor:
-                                themeName === "dark-theme"
-                                  ? "rgb(32,35,39)"
-                                  : "black",
-                              borderRadius: "9999px",
-                              display: "flex",
-                              alignItems: "center",
-                              position: "relative",
-                              bottom: "15px",
-                              padding: "2px",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width:
-                                  font15.fontSize === "Default"
-                                    ? "164px"
-                                    : font15.fontSize === "Small"
-                                    ? "156px"
-                                    : font15.fontSize === "Extra small"
-                                    ? "152px"
-                                    : font15.fontSize === "Large"
-                                    ? "184px"
-                                    : font15.fontSize === "Extra large"
-                                    ? "196px"
-                                    : null,
-                                height:
-                                  font15.fontSize === "Default"
-                                    ? "36px"
-                                    : font15.fontSize === "Small"
-                                    ? "35px"
-                                    : font15.fontSize === "Extra small"
-                                    ? "34px"
-                                    : font15.fontSize === "Large"
-                                    ? "38px"
-                                    : font15.fontSize === "Extra large"
-                                    ? "42px"
-                                    : null,
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                            >
-                              <button
-                                onClick={() => {
-                                  basicPlanClick();
-                                }}
-                                style={tabStyleOrganizationBasicStyle}
-                              >
-                                <span
-                                  style={{
-                                    padding: "6px",
-                                  }}
-                                  className="chirp-bold-font"
-                                >
-                                  Basic
-                                </span>
-                              </button>
-                              <button
-                                onClick={() => {
-                                  fullAccessPlanClick();
-                                }}
-                                style={tabStyleOrganizationFullAccessStyle}
-                              >
-                                <span className="chirp-bold-font" style={{}}>
-                                  Full Access
-                                </span>
-                              </button>
-                            </div>
-                          </div>
-                        </>
-                      ) : (
+                  <Modal.Body
+                    className={`scrollbar-add full-access-sub-index-first full-access-sub-index-first-${themeName} scrollbar-add-${themeName}`}
+                    style={{
+                      height: "100%",
+                      overflowY: "auto",
+                    }}
+                  >
+                    {subTabIndexFromOrganizationSelect !== 3 ? (
+                      <>
                         <div
                           onClick={() => {
-                            setSubTabIndexFromOrganizationSelect(
-                              subTabIndexFromOrganizationSelect - 1
-                            );
-                            setTabStyleOrganizationFullAccessPlan(true);
+                            handleCloseSubscriptionModal();
                           }}
                           style={{
                             cursor: "pointer",
@@ -15292,14 +15128,7 @@ function RightSideColumn({
                             width: "100%",
                           }}
                         >
-                          {" "}
                           <div
-                            onClick={() => {
-                              setSubTabIndexFromOrganizationSelect(
-                                subTabIndexFromOrganizationSelect - 1
-                              );
-                              setTabStyleOrganizationFullAccessPlan(true);
-                            }}
                             className={`close-button close-button-${themeName}`}
                             style={{
                               display: " flex",
@@ -15314,1191 +15143,1928 @@ function RightSideColumn({
                           >
                             {/* close signin modal icon start to check  */}
                             <svg
+                              style={{
+                                border: "none",
+                                margin: "5px",
+                              }}
+                              onClick={() =>
+                                isVerifiedOrgsSignUpRoute
+                                  ? handleNavigateClickCloseBtn
+                                  : handleCloseSubscriptionModal
+                              }
+                              width={20}
+                              height={20}
                               color={
                                 themeName === "dark-theme"
                                   ? "white"
-                                  : `rgb(15,20,25)`
+                                  : "rgb(15,20,25)"
                               }
                               fill="currentColor"
-                              width={20}
-                              height={20}
                               viewBox="0 0 24 24"
                               aria-hidden="true"
-                              className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                              className=" r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                             >
                               <g>
-                                <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                                <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
                               </g>
-                            </svg>
+                            </svg>{" "}
                             {/* close signin modal icon finish to check  */}
                           </div>{" "}
                         </div>
-                      )}
-
-                      {/* seperator  */}
-                      {subTabIndexFromOrganizationSelect === 1 &&
-                      tabStyleOrganizationBasicPlan ? (
-                        <>
+                        <div
+                          className="chirp-bold-font"
+                          style={{
+                            fontSize: font20.fontSize,
+                            lineHeight: font20.lineHeight,
+                            position: "relative",
+                            bottom: "30px",
+                            color:
+                              themeName === "dark-theme" ? "white" : "black",
+                          }}
+                        >
+                          Verified Organizations
+                        </div>
+                        <div
+                          className=""
+                          style={{
+                            backgroundColor:
+                              themeName === "dark-theme"
+                                ? "rgb(32,35,39)"
+                                : "black",
+                            borderRadius: "9999px",
+                            display: "flex",
+                            alignItems: "center",
+                            position: "relative",
+                            bottom: "15px",
+                            padding: "2px",
+                          }}
+                        >
                           <div
                             style={{
-                              width: "89.5%",
-                              backgroundColor:
-                                themeName === "dark-theme"
-                                  ? "#16181C"
-                                  : "rgba(247, 249, 249, 1.00)",
-                              borderRadius: "16px",
-                              padding: "16px",
+                              width:
+                                font15.fontSize === "Default"
+                                  ? "164px"
+                                  : font15.fontSize === "Small"
+                                  ? "156px"
+                                  : font15.fontSize === "Extra small"
+                                  ? "152px"
+                                  : font15.fontSize === "Large"
+                                  ? "184px"
+                                  : font15.fontSize === "Extra large"
+                                  ? "196px"
+                                  : null,
+                              height:
+                                font15.fontSize === "Default"
+                                  ? "36px"
+                                  : font15.fontSize === "Small"
+                                  ? "35px"
+                                  : font15.fontSize === "Extra small"
+                                  ? "34px"
+                                  : font15.fontSize === "Large"
+                                  ? "38px"
+                                  : font15.fontSize === "Extra large"
+                                  ? "42px"
+                                  : null,
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
                             }}
                           >
-                            <div
-                              className="chirp-bold-font"
-                              style={{
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "#71767B"
-                                    : "rgb(83, 100, 113)",
-                                fontSize: font23.fontSize,
-                                lineHeight: font23.lineHeight,
+                            <button
+                              onClick={() => {
+                                basicPlanClick();
                               }}
+                              style={tabStyleOrganizationBasicStyle}
                             >
-                              Basic
-                            </div>
-                            <div
-                              className="chirp-bold-font"
-                              style={{
-                                fontSize: font34.fontSize,
-                                lineHeight: font34.lineHeight,
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "white"
-                                    : "black",
-                              }}
-                            >
-                              Find your customers and grow your business
-                            </div>
-                            <div
-                              className="basic-plan-parent-div chirp-medium-font"
-                              style={{
-                                fontSize: font15.fontSize,
-                                lineHeight: font15.lineHeight,
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "white"
-                                    : "black",
-                              }}
-                            >
-                              <div className="mt-2">
-                                Try advertising and grow your business with
-                                priority support and ads credits.
-                              </div>
-                              <div>
-                                <div
-                                  style={{
-                                    display: "flex",
-                                  }}
-                                >
-                                  <svg
-                                    color={
-                                      themeName === "dark-theme" ? "white" : ""
-                                    }
-                                    fill="currentColor"
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
-                                  >
-                                    <g>
-                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                    </g>
-                                  </svg>
-                                  <span>Gold checkmark</span>
-                                </div>
-                              </div>
-                              <div>
-                                {" "}
-                                <div
-                                  style={{
-                                    display: "flex",
-                                  }}
-                                >
-                                  <svg
-                                    color={
-                                      themeName === "dark-theme" ? "white" : ""
-                                    }
-                                    fill="currentColor"
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
-                                  >
-                                    <g>
-                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                    </g>
-                                  </svg>
-                                  <span>Priority support</span>
-                                </div>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <div
-                                  style={{
-                                    display: "flex",
-                                  }}
-                                >
-                                  <svg
-                                    color={
-                                      themeName === "dark-theme" ? "white" : ""
-                                    }
-                                    fill="currentColor"
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
-                                  >
-                                    <g>
-                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                    </g>
-                                  </svg>
-                                  <span>Premium+</span>
-                                </div>
-                              </div>
-                              <div>
-                                {" "}
-                                <div
-                                  style={{
-                                    display: "flex",
-                                  }}
-                                >
-                                  <svg
-                                    color={
-                                      themeName === "dark-theme" ? "white" : ""
-                                    }
-                                    fill="currentColor"
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
-                                  >
-                                    <g>
-                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                    </g>
-                                  </svg>
-                                  <span>Hiring</span>
-                                </div>
-                              </div>
-                              <div>
-                                {" "}
-                                <div
-                                  style={{
-                                    display: "flex",
-                                  }}
-                                >
-                                  <svg
-                                    color="rgba(83, 100, 113, 1.00)"
-                                    fill="currentColor"
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
-                                  >
-                                    <g>
-                                      <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
-                                    </g>
-                                  </svg>
-                                  <span>2x boost</span>
-                                </div>
-                              </div>
-                              <div>
-                                {" "}
-                                <div
-                                  style={{
-                                    display: "flex",
-                                  }}
-                                >
-                                  <svg
-                                    color="rgba(83, 100, 113, 1.00)"
-                                    fill="currentColor"
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
-                                  >
-                                    <g>
-                                      <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
-                                    </g>
-                                  </svg>
-                                  <span>Affiliations</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div
-                              style={{
-                                fontSize: font15.fontSize,
-                                lineHeight: font15.lineHeight,
-                                color:
-                                  themeName === "dark-theme" ? "white" : "",
-                              }}
-                              className="mt-1 chirp-regular-font"
-                            >
-                              + For a limited time, advertising credit to spend
-                              on your organization{" "}
                               <span
+                                style={{
+                                  padding: "6px",
+                                }}
                                 className="chirp-bold-font"
-                                style={{
-                                  fontSize: font15.fontSize,
-                                  lineHeight: font15.lineHeight,
-                                  textDecoration: "underline",
-                                }}
                               >
-                                {basicAnnualTabStyle
-                                  ? "every year"
-                                  : "every month"}
-                              </span>{" "}
-                              with dedicated support.{" "}
-                              <span
-                                className="learn-more-basic-plan"
-                                style={{
-                                  cursor: "pointer",
-                                  color: "rgb(29, 155, 240)",
-                                }}
-                              >
-                                Learn more
+                                Basic
                               </span>
-                            </div>
+                            </button>
+                            <button
+                              onClick={() => {
+                                fullAccessPlanClick();
+                              }}
+                              style={tabStyleOrganizationFullAccessStyle}
+                            >
+                              <span className="chirp-bold-font" style={{}}>
+                                Full Access
+                              </span>
+                            </button>
                           </div>
-                          <div
-                            style={{
-                              width: "89.5%",
-                              // position: "absolute",
-                              // bottom: "0px",
-                            }}
+                        </div>
+                      </>
+                    ) : (
+                      <div
+                        onClick={() => {
+                          setSubTabIndexFromOrganizationSelect(
+                            subTabIndexFromOrganizationSelect - 1
+                          );
+                          setTabStyleOrganizationFullAccessPlan(true);
+                        }}
+                        style={{
+                          cursor: "pointer",
+                          position: "relative",
+                          // right: "30px",
+                          width: "100%",
+                        }}
+                      >
+                        {" "}
+                        <div
+                          onClick={() => {
+                            setSubTabIndexFromOrganizationSelect(
+                              subTabIndexFromOrganizationSelect - 1
+                            );
+                            setTabStyleOrganizationFullAccessPlan(true);
+                          }}
+                          className={`close-button close-button-${themeName}`}
+                          style={{
+                            display: " flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "center",
+
+                            width: "36px",
+                            height: "36px",
+                            borderRadius: "50%",
+                          }}
+                        >
+                          {/* close signin modal icon start to check  */}
+                          <svg
+                            color={
+                              themeName === "dark-theme"
+                                ? "white"
+                                : `rgb(15,20,25)`
+                            }
+                            fill="currentColor"
+                            width={20}
+                            height={20}
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
                           >
-                            <div
-                              className="mt-3"
-                              style={{
-                                display: "flex",
-                                gap: "2.5%",
-                              }}
-                            >
-                              {/* annual plan start to check  */}
-                              <div
-                                onClick={() => {
-                                  setbasicAnnualTabStyle(true);
-                                  setbasicMonthlyTabStyle(false);
-                                  setorganizationSubPlanPriceBasic("€2,261");
-                                  setorganizationSubPlanTypeBasic(
-                                    "Annual Plan"
-                                  );
-                                  setorganizationSubPlanPriceFullAccess("");
-                                  setorganizationSubPlanTypeFullAccess("");
-                                }}
-                                style={
-                                  ({ activeIndividualOptionTabStyle },
-                                  {
-                                    flex: 1,
-                                    maxHeight: "72px",
-                                    padding: "12px",
-                                    cursor: "pointer",
-                                    borderWidth: "1px",
-                                    borderRadius: "16px",
-                                    backgroundColor:
-                                      themeName === "dark-theme"
-                                        ? "black"
-                                        : "white",
-                                    filter:
-                                      themeName === "dark-theme"
-                                        ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
-                                        : "",
+                            <g>
+                              <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path>
+                            </g>
+                          </svg>
+                          {/* close signin modal icon finish to check  */}
+                        </div>{" "}
+                      </div>
+                    )}
 
-                                    boxShadow:
-                                      themeName === "dark-theme"
-                                        ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
-                                        : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
-                                    border: basicAnnualTabStyle
-                                      ? "2px solid #339bf0"
-                                      : "2px solid transparent",
-                                    transition: "transform 0.3s ease",
-                                  })
-                                }
-                                className={`organization-subscription-box organization-subscription-box-${themeName}`}
-                              >
-                                <div>
-                                  <div
-                                    className="chirp-bold-font"
-                                    style={{
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "white"
-                                          : "rgb(15, 20, 25)",
-                                      fontSize: font17.fontSize,
-                                      lineHeight: font17.lineHeight,
-                                      display: " flex",
-                                    }}
-                                  >
-                                    {" "}
-                                    <div>{yearlyFee} / year</div>
-                                    <div
-                                      className="chirp-bold-font"
-                                      style={{
-                                        fontSize: font11.fontSize,
-                                        lineHeight: font11.lineHeight,
-                                        borderRadius: "9999px",
-                                        height: "20px",
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        position: "relative",
-                                        left: "3px",
-                                        top: "5px",
-                                        backgroundColor:
-                                          themeName === "dark-theme"
-                                            ? "#05241A"
-                                            : "#dcf8eb",
-                                        color:
-                                          themeName === "dark-theme"
-                                            ? "#C2F1DC"
-                                            : "rgb(0, 67, 41)",
-                                      }}
-                                    >
-                                      <span
-                                        style={{
-                                          padding: "4px 4px",
-                                        }}
-                                      >
-                                        Save 16%
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div
-                                    className="chirp-regular-font"
-                                    style={{
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "#71767A"
-                                          : "rgb(83, 100, 113)",
-                                      fontSize: font14.fontSize,
-                                    }}
-                                  >
-                                    {" "}
-                                    Annual plan
-                                  </div>
-                                </div>
-                              </div>
-                              {/* annual plan finish to check  */}
-                              {/* monthly plan start to check  */}
-                              <div
-                                onClick={() => {
-                                  setbasicAnnualTabStyle(false);
-                                  setbasicMonthlyTabStyle(true);
-                                  setorganizationSubPlanPriceBasic("€226.10");
-                                  setorganizationSubPlanTypeBasic(
-                                    "Monthly Plan"
-                                  );
-                                  setorganizationSubPlanPriceFullAccess("");
-                                  setorganizationSubPlanTypeFullAccess("");
-                                }}
-                                style={
-                                  ({ activeOrganizationOptionTabStyle },
-                                  {
-                                    flex: 1,
-                                    maxHeight: "72px",
-                                    padding: "12px",
-                                    cursor: "pointer",
-                                    borderWidth: "1px",
-                                    borderRadius: "16px",
-                                    backgroundColor:
-                                      themeName === "dark-theme"
-                                        ? "black"
-                                        : "white",
-                                    filter:
-                                      themeName === "dark-theme"
-                                        ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
-                                        : "",
-
-                                    boxShadow:
-                                      themeName === "dark-theme"
-                                        ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
-                                        : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
-                                    border: basicMonthlyTabStyle
-                                      ? "2px solid #339bf0"
-                                      : "2px solid transparent",
-                                    transition: "transform 0.3s ease",
-                                  })
-                                }
-                                className={`organization-subscription-box organization-subscription-box-${themeName}`}
-                              >
-                                <div
-                                  style={{
-                                    position: "relative",
-                                  }}
-                                >
-                                  <div
-                                    className="chirp-bold-font"
-                                    style={{
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "white"
-                                          : "rgb(15, 20, 25)",
-                                      fontSize: font17.fontSize,
-                                      lineHeight: font17.lineHeight,
-                                    }}
-                                  >
-                                    {monthyleFee} / month
-                                  </div>{" "}
-                                  <div
-                                    className="chirp-regular-font"
-                                    style={{
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "#71767A"
-                                          : "rgb(83, 100, 113)",
-                                      fontSize: font14.fontSize,
-                                    }}
-                                  >
-                                    Monthly plan
-                                  </div>
-                                </div>
-                              </div>
-                              {/* monthly plan finish to check  */}
-                            </div>
-                            <div
-                              className="mt-3 chirp-regular-font"
-                              style={{
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "#4A4F51"
-                                    : "rgb(83, 100, 113)",
-                                fontSize: font11.fontSize,
-                                lineHeight: font11.lineHeight,
-                                height: "20px",
-                              }}
-                            >
-                              {" "}
-                              <span>
-                                Basic is{" "}
-                                {basicAnnualTabStyle
-                                  ? yearlyFee
-                                  : monthyleFee
-                                  ? monthyleFee
-                                  : null}
-                                /
-                                {basicAnnualTabStyle
-                                  ? "year"
-                                  : monthyleFee
-                                  ? "month"
-                                  : null}{" "}
-                                (tax inclusive).{" "}
-                              </span>
-                              <span
-                                className="learn-more-basic-plan"
-                                style={{
-                                  color: "rgb(29, 155, 240)",
-                                  cursor: "pointer",
-                                }}
-                              >
-                                Learn more
-                              </span>
-                            </div>
-                            <Button
-                              onClick={
-                                !checkoutProcessLoadingBar
-                                  ? () =>
-                                      handleCheckoutStripeApiOrganizationBasic()
-                                  : null
-                              }
-                              className={`mt-4 subscribe-btn-basic-plan subscribe-btn-basic-plan-${themeName}`}
-                              style={{
-                                backgroundColor:
-                                  themeName === "dark-theme"
-                                    ? "rgb(239,243,244)"
-                                    : "#0f1518",
-                                color: "white",
-                                height: "34px",
-                                width: "100%",
-                                borderRadius: "9999px",
-                                border: " none",
-                                opacity: !checkoutProcessLoadingBar
-                                  ? "1"
-                                  : "0.5",
-                              }}
-                              variant="info"
-                            >
-                              {checkoutProcessLoadingBar ? (
-                                <LoadingSpinner
-                                  isCheckoutProcess={true}
-                                  strokeColor={"rgb(29, 155, 240)"}
-                                  fontSize={true}
-                                ></LoadingSpinner>
-                              ) : (
-                                <>
-                                  <div
-                                    className="chirp-bold-font"
-                                    style={{
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "black"
-                                          : "",
-                                      fontSize: font15.fontSize,
-                                      lineHeight: font15.lineHeight,
-                                    }}
-                                  >
-                                    <span>Subscribe</span>
-                                    <span
-                                      style={{
-                                        marginLeft: "5px",
-                                      }}
-                                    >
-                                      &middot;
-                                    </span>
-                                    <span>
-                                      {" "}
-                                      {basicAnnualTabStyle
-                                        ? `${yearlyFee} per year`
-                                        : `${monthyleFee} per month`}{" "}
-                                    </span>
-                                  </div>
-                                </>
-                              )}
-                            </Button>
-                            <div
-                              className="mt-3 chirp-regular-font"
-                              style={{
-                                width: "100%",
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "#4A4F51"
-                                    : "rgb(83, 100, 113)",
-
-                                fontSize: font11.fontSize,
-                                lineHeight: font11.lineHeight,
-                                height: "40px",
-                              }}
-                            >
-                              By clicking Subscribe, you agree to our{" "}
-                              <span
-                                className="text-decoration-thickness-2px"
-                                style={{
-                                  cursor: "pointer",
-                                  color:
-                                    themeName === "dark-theme"
-                                      ? "white"
-                                      : "rgb(15, 20, 25)",
-                                  textDecoration: "underline",
-                                  textDecorationColor:
-                                    themeName === "dark-theme"
-                                      ? "white"
-                                      : "rgb(15, 20, 25)",
-                                }}
-                              >
-                                Purchaser Terms of Service.
-                              </span>{" "}
-                              Subscriptions auto-renew until canceled. All
-                              accounts that sign up must pass manual approval.
-                            </div>
-                          </div>{" "}
-                        </>
-                      ) : subTabIndexFromOrganizationSelect === 2 &&
-                        tabStyleOrganizationFullAccessPlan ? (
-                        <>
+                    {/* seperator  */}
+                    {subTabIndexFromOrganizationSelect === 1 &&
+                    tabStyleOrganizationBasicPlan ? (
+                      <>
+                        <div
+                          style={{
+                            width: "89.5%",
+                            backgroundColor:
+                              themeName === "dark-theme"
+                                ? "#16181C"
+                                : "rgba(247, 249, 249, 1.00)",
+                            borderRadius: "16px",
+                            padding: "16px",
+                          }}
+                        >
                           <div
-                            style={{
-                              width: "89.5%",
-                              backgroundColor:
-                                themeName === "dark-theme"
-                                  ? "#16181c"
-                                  : "rgba(247, 249, 249, 1.00)",
-                              borderRadius: "16px",
-                              padding: "16px",
-                            }}
-                          >
-                            <div
-                              className="chirp-bold-font"
-                              style={{
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "#71767A"
-                                    : "rgb(83, 100, 113)",
-                                fontSize: font23.fontSize,
-                                lineHeight: font23.lineHeight,
-                              }}
-                            >
-                              Full Access
-                            </div>
-                            <div
-                              className="chirp-bold-font"
-                              style={{
-                                fontSize: font34.fontSize,
-                                lineHeight: font34.lineHeight,
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "white"
-                                    : "black",
-                              }}
-                            >
-                              Find your customers and grow your business
-                            </div>
-                            <div
-                              className="basic-plan-parent-div chirp-medium-font"
-                              style={{
-                                fontSize: font15.fontSize,
-                                lineHeight: font15.lineHeight,
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "white"
-                                    : "black",
-                              }}
-                            >
-                              <div className="mt-2">
-                                Reach more customers organically, affiliate your
-                                network, or find your next hire.
-                              </div>
-                              <div>
-                                <div
-                                  style={{
-                                    display: "flex",
-                                  }}
-                                >
-                                  <svg
-                                    color={
-                                      themeName === "dark-theme" ? "white" : ""
-                                    }
-                                    fill="currentColor"
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
-                                  >
-                                    <g>
-                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                    </g>
-                                  </svg>
-                                  <span>Gold checkmark</span>
-                                </div>
-                              </div>
-                              <div>
-                                {" "}
-                                <div
-                                  style={{
-                                    display: "flex",
-                                  }}
-                                >
-                                  <svg
-                                    color={
-                                      themeName === "dark-theme" ? "white" : ""
-                                    }
-                                    fill="currentColor"
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
-                                  >
-                                    <g>
-                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                    </g>
-                                  </svg>
-                                  <span>Priority support</span>
-                                </div>{" "}
-                              </div>
-                              <div>
-                                {" "}
-                                <div
-                                  style={{
-                                    display: "flex",
-                                  }}
-                                >
-                                  <svg
-                                    color={
-                                      themeName === "dark-theme" ? "white" : ""
-                                    }
-                                    fill="currentColor"
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
-                                  >
-                                    <g>
-                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                    </g>
-                                  </svg>
-                                  <span>Premium+</span>
-                                </div>
-                              </div>
-                              <div>
-                                {" "}
-                                <div
-                                  style={{
-                                    display: "flex",
-                                  }}
-                                >
-                                  <svg
-                                    color={
-                                      themeName === "dark-theme" ? "white" : ""
-                                    }
-                                    fill="currentColor"
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
-                                  >
-                                    <g>
-                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                    </g>
-                                  </svg>
-                                  <span>Hiring</span>
-                                </div>
-                              </div>
-                              <div>
-                                {" "}
-                                <div
-                                  style={{
-                                    display: "flex",
-                                  }}
-                                >
-                                  <svg
-                                    color={
-                                      themeName === "dark-theme" ? "white" : ""
-                                    }
-                                    fill="currentColor"
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
-                                  >
-                                    <g>
-                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                    </g>
-                                  </svg>
-                                  <span>2x boost</span>
-                                </div>
-                              </div>
-                              <div>
-                                {" "}
-                                <div
-                                  style={{
-                                    display: "flex",
-                                  }}
-                                >
-                                  <svg
-                                    color={
-                                      themeName === "dark-theme" ? "white" : ""
-                                    }
-                                    fill="currentColor"
-                                    width={`${1.25}em`}
-                                    height={`${1.25}em`}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
-                                  >
-                                    <g>
-                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                    </g>
-                                  </svg>
-                                  <span>Affiliations</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div
-                              style={{
-                                fontSize: font15.fontSize,
-                                lineHeight: font15.lineHeight,
-                                color:
-                                  themeName === "dark-theme" ? "white" : "",
-                              }}
-                              className="mt-1 chirp-regular-font"
-                            >
-                              + For a limited time, advertising credit to spend
-                              on your organization{" "}
-                              <span
-                                className="chirp-bold-font"
-                                style={{
-                                  fontSize: font15.fontSize,
-                                  lineHeight: font15.lineHeight,
-                                  textDecoration: "underline",
-                                }}
-                              >
-                                {basicAnnualTabStyle
-                                  ? "every year"
-                                  : "every month"}
-                              </span>{" "}
-                              with dedicated support.{" "}
-                              <span
-                                className="learn-more-basic-plan"
-                                style={{
-                                  cursor: "pointer",
-                                  color: "rgb(29, 155, 240)",
-                                }}
-                              >
-                                Learn more
-                              </span>
-                            </div>
-                          </div>
-                          <div
-                            style={{
-                              width: "89.5%",
-                            }}
-                          >
-                            <div
-                              className="mt-3"
-                              style={{
-                                display: "flex",
-                                gap: "2.5%",
-                              }}
-                            >
-                              {/* annual plan start to check  */}
-                              <div
-                                onClick={() => {
-                                  setfullAccessAnnualTabStyle(true);
-                                  setfullAccessMonthlyTabStyle(false);
-                                  setorganizationSubPlanPriceFullAccess(
-                                    "€11,305"
-                                  );
-                                  setorganizationSubPlanTypeFullAccess(
-                                    "Annual Plan"
-                                  );
-                                  setorganizationSubPlanPriceBasic("");
-                                  setorganizationSubPlanTypeBasic("");
-                                }}
-                                style={
-                                  ({ activeIndividualOptionTabStyle },
-                                  {
-                                    flex: 1,
-                                    maxHeight: "72px",
-                                    padding: "12px",
-                                    cursor: "pointer",
-                                    borderWidth: "1px",
-                                    borderRadius: "16px",
-                                    backgroundColor:
-                                      themeName === "dark-theme"
-                                        ? "black"
-                                        : "white",
-                                    filter:
-                                      themeName === "dark-theme"
-                                        ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
-                                        : "",
-
-                                    boxShadow:
-                                      themeName === "dark-theme"
-                                        ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
-                                        : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
-                                    border: fullAccessAnnualTabStyle
-                                      ? "2px solid #339bf0"
-                                      : "2px solid transparent",
-                                    transition: "transform 0.3s ease",
-                                  })
-                                }
-                                className={`organization-subscription-box organization-subscription-box-${themeName}`}
-                              >
-                                <div>
-                                  <div
-                                    className="chirp-bold-font"
-                                    style={{
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "white"
-                                          : "rgb(15, 20, 25)",
-                                      fontSize: font17.fontSize,
-                                      lineHeight: font17.lineHeight,
-                                      display: " flex",
-                                    }}
-                                  >
-                                    {" "}
-                                    <div>€11,305 / year</div>
-                                    <div
-                                      className="chirp-bold-font"
-                                      style={{
-                                        borderRadius: "9999px",
-                                        height: "20px",
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        position: "relative",
-                                        left: "3px",
-                                        top: "5px",
-                                        backgroundColor:
-                                          themeName === "dark-theme"
-                                            ? "#05241A"
-                                            : "#dcf8eb",
-                                        color:
-                                          themeName === "dark-theme"
-                                            ? "#C2F1DC"
-                                            : "rgb(0, 67, 41)",
-                                        fontSize: font11.fontSize,
-                                        lineHeight: font11.lineHeight,
-                                      }}
-                                    >
-                                      <span
-                                        style={{
-                                          padding: "4px 4px",
-                                        }}
-                                      >
-                                        Save 16%
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div
-                                    className="chirp-regular-font"
-                                    style={{
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "#71767A"
-                                          : "rgb(83, 100, 113)",
-                                      fontSize: font14.fontSize,
-                                    }}
-                                  >
-                                    {" "}
-                                    Annual plan
-                                  </div>
-                                </div>
-                              </div>
-                              {/* annual plan finish to check  */}
-                              {/* monthly plan start to check  */}
-                              <div
-                                onClick={() => {
-                                  setfullAccessAnnualTabStyle(false);
-                                  setfullAccessMonthlyTabStyle(true);
-                                  setorganizationSubPlanPriceFullAccess(
-                                    "€1,130.50"
-                                  );
-                                  setorganizationSubPlanTypeFullAccess(
-                                    "Monthly Plan"
-                                  );
-                                  setorganizationSubPlanPriceBasic("");
-                                  setorganizationSubPlanTypeBasic("");
-                                }}
-                                style={
-                                  ({ activeOrganizationOptionTabStyle },
-                                  {
-                                    flex: 1,
-                                    maxHeight: "72px",
-                                    padding: "12px",
-                                    cursor: "pointer",
-                                    borderWidth: "1px",
-                                    borderRadius: "16px",
-                                    backgroundColor:
-                                      themeName === "dark-theme"
-                                        ? "black"
-                                        : "white",
-                                    filter:
-                                      themeName === "dark-theme"
-                                        ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
-                                        : "",
-
-                                    boxShadow:
-                                      themeName === "dark-theme"
-                                        ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
-                                        : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
-                                    border: fullAccessMonthlyTabStyle
-                                      ? "2px solid #339bf0"
-                                      : "2px solid transparent",
-                                    transition: "transform 0.3s ease",
-                                  })
-                                }
-                                className={`organization-subscription-box organization-subscription-box-${themeName}`}
-                              >
-                                <div
-                                  style={{
-                                    position: "relative",
-                                  }}
-                                >
-                                  <div
-                                    className="chirp-bold-font"
-                                    style={{
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "white"
-                                          : "rgb(15, 20, 25)",
-                                      fontSize: font17.fontSize,
-                                      lineHeight: font17.lineHeight,
-                                    }}
-                                  >
-                                    €1,130.50 / month
-                                  </div>{" "}
-                                  <div
-                                    className="chirp-regular-font"
-                                    style={{
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "#71767A"
-                                          : "rgb(83, 100, 113)",
-                                      fontSize: font14.fontSize,
-                                    }}
-                                  >
-                                    Monthly plan
-                                  </div>
-                                </div>
-                              </div>
-                              {/* monthly plan finish to check  */}
-                            </div>
-                            <div
-                              className="mt-3 chirp-regular-font"
-                              style={{
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "#4A4F51"
-                                    : "rgb(83, 100, 113)",
-                                fontSize: font11.fontSize,
-                                lineHeight: font11.lineHeight,
-                                height: "20px",
-                              }}
-                            >
-                              {" "}
-                              <span>
-                                Full Access is{" "}
-                                {fullAccessAnnualTabStyle
-                                  ? yearlyFeeFullAccess
-                                  : monthyleFeeFullAccess
-                                  ? monthyleFeeFullAccess
-                                  : null}
-                                /
-                                {fullAccessAnnualTabStyle
-                                  ? "year"
-                                  : monthyleFeeFullAccess
-                                  ? "month"
-                                  : null}{" "}
-                                (tax inclusive). Each additional affiliated
-                                account is{" "}
-                                {fullAccessAnnualTabStyle
-                                  ? "€714 per handle per year"
-                                  : fullAccessMonthlyTabStyle
-                                  ? "€59.50 per handle per month"
-                                  : ""}{" "}
-                                (tax inclusive).{" "}
-                              </span>
-                              <span
-                                className="learn-more-basic-plan"
-                                style={{
-                                  color: "rgb(29, 155, 240)",
-                                  cursor: "pointer",
-                                }}
-                              >
-                                Learn more
-                              </span>
-                            </div>
-                            <Button
-                              onClick={() =>
-                                handleFullAccessOrganizationPlanModal()
-                              }
-                              className={`mt-4 subscribe-btn-full-access-plan subscribe-btn-full-access-plan-${themeName}`}
-                              style={{
-                                backgroundColor:
-                                  themeName === "dark-theme"
-                                    ? "rgb(239,243,244)"
-                                    : "#0f1518",
-                                color: "white",
-                                height: "34px",
-                                width: "100%",
-                                borderRadius: "9999px",
-                                border: " none",
-                              }}
-                              variant="info"
-                            >
-                              <div
-                                className="chirp-bold-font"
-                                style={{
-                                  color:
-                                    themeName === "dark-theme" ? "black" : "",
-                                  fontSize: font15.fontSize,
-                                  lineHeight: font15.lineHeight,
-                                }}
-                              >
-                                <span>Subscribe</span>
-                                <span
-                                  style={{
-                                    marginLeft: "5px",
-                                  }}
-                                >
-                                  &middot;
-                                </span>
-                                <span>
-                                  {" "}
-                                  {fullAccessAnnualTabStyle
-                                    ? `€11,305 per year`
-                                    : `€1,130.50 per month`}{" "}
-                                </span>
-                              </div>
-                            </Button>
-                            <div
-                              className="mt-3 chirp-regular-font"
-                              style={{
-                                width: "100%",
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "#4A4F51"
-                                    : "rgb(83, 100, 113)",
-                                fontSize: font11.fontSize,
-                                lineHeight: font11.lineHeight,
-                                height: "40px",
-                              }}
-                            >
-                              By clicking Subscribe, you agree to our{" "}
-                              <span
-                                className="text-decoration-thickness-2px"
-                                style={{
-                                  cursor: "pointer",
-                                  color:
-                                    themeName === "dark-theme"
-                                      ? "white"
-                                      : "rgb(15, 20, 25)",
-                                  textDecoration: "underline",
-                                  textDecorationColor:
-                                    themeName === "dark-theme"
-                                      ? "white"
-                                      : "rgb(15, 20, 25)",
-                                }}
-                              >
-                                Purchaser Terms of Service.
-                              </span>{" "}
-                              Subscriptions auto-renew until canceled. Accounts
-                              that sign up are reviewed for authenticity. If an
-                              account signs up and is not an organization, you
-                              will be rejected and not refunded.
-                            </div>
-                          </div>{" "}
-                        </>
-                      ) : subTabIndexFromOrganizationSelect === 3 ? (
-                        <>
-                          {" "}
-                          <div
-                            className="mt-4 chirp-heavy-font"
+                            className="chirp-bold-font"
                             style={{
                               color:
-                                themeName === "dark-theme" ? "white" : "black",
-                              width: "81.5%",
-                              fontSize: font31.fontSize,
-                              lineHeight: font31.lineHeight,
+                                themeName === "dark-theme"
+                                  ? "#71767B"
+                                  : "rgb(83, 100, 113)",
+                              fontSize: font23.fontSize,
+                              lineHeight: font23.lineHeight,
                             }}
                           >
-                            Apply for Full Access
+                            Basic
+                          </div>
+                          <div
+                            className="chirp-bold-font"
+                            style={{
+                              fontSize: font34.fontSize,
+                              lineHeight: font34.lineHeight,
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
+                            }}
+                          >
+                            Find your customers and grow your business
+                          </div>
+                          <div
+                            className="basic-plan-parent-div chirp-medium-font"
+                            style={{
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
+                            }}
+                          >
+                            <div className="mt-2">
+                              Try advertising and grow your business with
+                              priority support and ads credits.
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                }}
+                              >
+                                <svg
+                                  color={
+                                    themeName === "dark-theme" ? "white" : ""
+                                  }
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
+                                >
+                                  <g>
+                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                  </g>
+                                </svg>
+                                <span>Gold checkmark</span>
+                              </div>
+                            </div>
+                            <div>
+                              {" "}
+                              <div
+                                style={{
+                                  display: "flex",
+                                }}
+                              >
+                                <svg
+                                  color={
+                                    themeName === "dark-theme" ? "white" : ""
+                                  }
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
+                                >
+                                  <g>
+                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                  </g>
+                                </svg>
+                                <span>Priority support</span>
+                              </div>{" "}
+                            </div>
+                            <div>
+                              {" "}
+                              <div
+                                style={{
+                                  display: "flex",
+                                }}
+                              >
+                                <svg
+                                  color={
+                                    themeName === "dark-theme" ? "white" : ""
+                                  }
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
+                                >
+                                  <g>
+                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                  </g>
+                                </svg>
+                                <span>Premium+</span>
+                              </div>
+                            </div>
+                            <div>
+                              {" "}
+                              <div
+                                style={{
+                                  display: "flex",
+                                }}
+                              >
+                                <svg
+                                  color={
+                                    themeName === "dark-theme" ? "white" : ""
+                                  }
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
+                                >
+                                  <g>
+                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                  </g>
+                                </svg>
+                                <span>Hiring</span>
+                              </div>
+                            </div>
+                            <div>
+                              {" "}
+                              <div
+                                style={{
+                                  display: "flex",
+                                }}
+                              >
+                                <svg
+                                  color="rgba(83, 100, 113, 1.00)"
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                >
+                                  <g>
+                                    <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
+                                  </g>
+                                </svg>
+                                <span>2x boost</span>
+                              </div>
+                            </div>
+                            <div>
+                              {" "}
+                              <div
+                                style={{
+                                  display: "flex",
+                                }}
+                              >
+                                <svg
+                                  color="rgba(83, 100, 113, 1.00)"
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-14j79pv"
+                                >
+                                  <g>
+                                    <path d="M14 13c0 .74-.4 1.39-1 1.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2zm3.5-6H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.38 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.88 7 17.5 7zM9 6.75c0-1.66 1.34-3 3-3s3 1.34 3 3V7H9v-.25zm9 11.75c0 .28-.22.5-.5.5h-11c-.28 0-.5-.22-.5-.5v-9c0-.28.22-.5.5-.5h11c.28 0 .5.22.5.5v9z"></path>
+                                  </g>
+                                </svg>
+                                <span>Affiliations</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
+                              color: themeName === "dark-theme" ? "white" : "",
+                            }}
+                            className="mt-1 chirp-regular-font"
+                          >
+                            + For a limited time, advertising credit to spend on
+                            your organization{" "}
+                            <span
+                              className="chirp-bold-font"
+                              style={{
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
+                                textDecoration: "underline",
+                              }}
+                            >
+                              {basicAnnualTabStyle
+                                ? "every year"
+                                : "every month"}
+                            </span>{" "}
+                            with dedicated support.{" "}
+                            <span
+                              className="learn-more-basic-plan"
+                              style={{
+                                cursor: "pointer",
+                                color: "rgb(29, 155, 240)",
+                              }}
+                            >
+                              Learn more
+                            </span>
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            width: "89.5%",
+                            // position: "absolute",
+                            // bottom: "0px",
+                          }}
+                        >
+                          <div
+                            className="mt-3"
+                            style={{
+                              display: "flex",
+                              gap: "2.5%",
+                            }}
+                          >
+                            {/* annual plan start to check  */}
+                            <div
+                              onClick={() => {
+                                setbasicAnnualTabStyle(true);
+                                setbasicMonthlyTabStyle(false);
+                                setorganizationSubPlanPriceBasic("€2,261");
+                                setorganizationSubPlanTypeBasic("Annual Plan");
+                                setorganizationSubPlanPriceFullAccess("");
+                                setorganizationSubPlanTypeFullAccess("");
+                              }}
+                              style={
+                                ({ activeIndividualOptionTabStyle },
+                                {
+                                  flex: 1,
+                                  maxHeight: "72px",
+                                  padding: "12px",
+                                  cursor: "pointer",
+                                  borderWidth: "1px",
+                                  borderRadius: "16px",
+                                  backgroundColor:
+                                    themeName === "dark-theme"
+                                      ? "black"
+                                      : "white",
+                                  filter:
+                                    themeName === "dark-theme"
+                                      ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                                      : "",
+
+                                  boxShadow:
+                                    themeName === "dark-theme"
+                                      ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                                      : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
+                                  border: basicAnnualTabStyle
+                                    ? "2px solid #339bf0"
+                                    : "2px solid transparent",
+                                  transition: "transform 0.3s ease",
+                                })
+                              }
+                              className={`organization-subscription-box organization-subscription-box-${themeName}`}
+                            >
+                              <div>
+                                <div
+                                  className="chirp-bold-font"
+                                  style={{
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "white"
+                                        : "rgb(15, 20, 25)",
+                                    fontSize: font17.fontSize,
+                                    lineHeight: font17.lineHeight,
+                                    display: " flex",
+                                  }}
+                                >
+                                  {" "}
+                                  <div>{yearlyFee} / year</div>
+                                  <div
+                                    className="chirp-bold-font"
+                                    style={{
+                                      fontSize: font11.fontSize,
+                                      lineHeight: font11.lineHeight,
+                                      borderRadius: "9999px",
+                                      height: "20px",
+                                      display: "flex",
+                                      justifyContent: "center",
+                                      alignItems: "center",
+                                      position: "relative",
+                                      left: "3px",
+                                      top: "5px",
+                                      backgroundColor:
+                                        themeName === "dark-theme"
+                                          ? "#05241A"
+                                          : "#dcf8eb",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "#C2F1DC"
+                                          : "rgb(0, 67, 41)",
+                                    }}
+                                  >
+                                    <span
+                                      style={{
+                                        padding: "4px 4px",
+                                      }}
+                                    >
+                                      Save 16%
+                                    </span>
+                                  </div>
+                                </div>
+                                <div
+                                  className="chirp-regular-font"
+                                  style={{
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)",
+                                    fontSize: font14.fontSize,
+                                  }}
+                                >
+                                  {" "}
+                                  Annual plan
+                                </div>
+                              </div>
+                            </div>
+                            {/* annual plan finish to check  */}
+                            {/* monthly plan start to check  */}
+                            <div
+                              onClick={() => {
+                                setbasicAnnualTabStyle(false);
+                                setbasicMonthlyTabStyle(true);
+                                setorganizationSubPlanPriceBasic("€226.10");
+                                setorganizationSubPlanTypeBasic("Monthly Plan");
+                                setorganizationSubPlanPriceFullAccess("");
+                                setorganizationSubPlanTypeFullAccess("");
+                              }}
+                              style={
+                                ({ activeOrganizationOptionTabStyle },
+                                {
+                                  flex: 1,
+                                  maxHeight: "72px",
+                                  padding: "12px",
+                                  cursor: "pointer",
+                                  borderWidth: "1px",
+                                  borderRadius: "16px",
+                                  backgroundColor:
+                                    themeName === "dark-theme"
+                                      ? "black"
+                                      : "white",
+                                  filter:
+                                    themeName === "dark-theme"
+                                      ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                                      : "",
+
+                                  boxShadow:
+                                    themeName === "dark-theme"
+                                      ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                                      : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
+                                  border: basicMonthlyTabStyle
+                                    ? "2px solid #339bf0"
+                                    : "2px solid transparent",
+                                  transition: "transform 0.3s ease",
+                                })
+                              }
+                              className={`organization-subscription-box organization-subscription-box-${themeName}`}
+                            >
+                              <div
+                                style={{
+                                  position: "relative",
+                                }}
+                              >
+                                <div
+                                  className="chirp-bold-font"
+                                  style={{
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "white"
+                                        : "rgb(15, 20, 25)",
+                                    fontSize: font17.fontSize,
+                                    lineHeight: font17.lineHeight,
+                                  }}
+                                >
+                                  {monthyleFee} / month
+                                </div>{" "}
+                                <div
+                                  className="chirp-regular-font"
+                                  style={{
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)",
+                                    fontSize: font14.fontSize,
+                                  }}
+                                >
+                                  Monthly plan
+                                </div>
+                              </div>
+                            </div>
+                            {/* monthly plan finish to check  */}
                           </div>
                           <div
                             className="mt-3 chirp-regular-font"
                             style={{
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#4A4F51"
+                                  : "rgb(83, 100, 113)",
+                              fontSize: font11.fontSize,
+                              lineHeight: font11.lineHeight,
+                              height: "20px",
+                            }}
+                          >
+                            {" "}
+                            <span>
+                              Basic is{" "}
+                              {basicAnnualTabStyle
+                                ? yearlyFee
+                                : monthyleFee
+                                ? monthyleFee
+                                : null}
+                              /
+                              {basicAnnualTabStyle
+                                ? "year"
+                                : monthyleFee
+                                ? "month"
+                                : null}{" "}
+                              (tax inclusive).{" "}
+                            </span>
+                            <span
+                              className="learn-more-basic-plan"
+                              style={{
+                                color: "rgb(29, 155, 240)",
+                                cursor: "pointer",
+                              }}
+                            >
+                              Learn more
+                            </span>
+                          </div>
+                          <Button
+                            onClick={
+                              !checkoutProcessLoadingBar
+                                ? () =>
+                                    handleCheckoutStripeApiOrganizationBasic()
+                                : null
+                            }
+                            className={`mt-4 subscribe-btn-basic-plan subscribe-btn-basic-plan-${themeName}`}
+                            style={{
+                              backgroundColor:
+                                themeName === "dark-theme"
+                                  ? "rgb(239,243,244)"
+                                  : "#0f1518",
+                              color: "white",
+                              height: "34px",
+                              width: "100%",
+                              borderRadius: "9999px",
+                              border: " none",
+                              opacity: !checkoutProcessLoadingBar ? "1" : "0.5",
+                            }}
+                            variant="info"
+                          >
+                            {checkoutProcessLoadingBar ? (
+                              <LoadingSpinner
+                                isCheckoutProcess={true}
+                                strokeColor={"rgb(29, 155, 240)"}
+                                fontSize={true}
+                              ></LoadingSpinner>
+                            ) : (
+                              <>
+                                <div
+                                  className="chirp-bold-font"
+                                  style={{
+                                    color:
+                                      themeName === "dark-theme" ? "black" : "",
+                                    fontSize: font15.fontSize,
+                                    lineHeight: font15.lineHeight,
+                                  }}
+                                >
+                                  <span>Subscribe</span>
+                                  <span
+                                    style={{
+                                      marginLeft: "5px",
+                                    }}
+                                  >
+                                    &middot;
+                                  </span>
+                                  <span>
+                                    {" "}
+                                    {basicAnnualTabStyle
+                                      ? `${yearlyFee} per year`
+                                      : `${monthyleFee} per month`}{" "}
+                                  </span>
+                                </div>
+                              </>
+                            )}
+                          </Button>
+                          <div
+                            className="mt-3 chirp-regular-font"
+                            style={{
+                              width: "100%",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#4A4F51"
+                                  : "rgb(83, 100, 113)",
+
+                              fontSize: font11.fontSize,
+                              lineHeight: font11.lineHeight,
+                              height: "40px",
+                            }}
+                          >
+                            By clicking Subscribe, you agree to our{" "}
+                            <span
+                              className="text-decoration-thickness-2px"
+                              style={{
+                                cursor: "pointer",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "rgb(15, 20, 25)",
+                                textDecoration: "underline",
+                                textDecorationColor:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "rgb(15, 20, 25)",
+                              }}
+                            >
+                              Purchaser Terms of Service.
+                            </span>{" "}
+                            Subscriptions auto-renew until canceled. All
+                            accounts that sign up must pass manual approval.
+                          </div>
+                        </div>{" "}
+                      </>
+                    ) : subTabIndexFromOrganizationSelect === 2 &&
+                      tabStyleOrganizationFullAccessPlan ? (
+                      <>
+                        <div
+                          style={{
+                            width: "89.5%",
+                            backgroundColor:
+                              themeName === "dark-theme"
+                                ? "#16181c"
+                                : "rgba(247, 249, 249, 1.00)",
+                            borderRadius: "16px",
+                            padding: "16px",
+                          }}
+                        >
+                          <div
+                            className="chirp-bold-font"
+                            style={{
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#71767A"
+                                  : "rgb(83, 100, 113)",
+                              fontSize: font23.fontSize,
+                              lineHeight: font23.lineHeight,
+                            }}
+                          >
+                            Full Access
+                          </div>
+                          <div
+                            className="chirp-bold-font"
+                            style={{
+                              fontSize: font34.fontSize,
+                              lineHeight: font34.lineHeight,
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
+                            }}
+                          >
+                            Find your customers and grow your business
+                          </div>
+                          <div
+                            className="basic-plan-parent-div chirp-medium-font"
+                            style={{
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
+                            }}
+                          >
+                            <div className="mt-2">
+                              Reach more customers organically, affiliate your
+                              network, or find your next hire.
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                }}
+                              >
+                                <svg
+                                  color={
+                                    themeName === "dark-theme" ? "white" : ""
+                                  }
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
+                                >
+                                  <g>
+                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                  </g>
+                                </svg>
+                                <span>Gold checkmark</span>
+                              </div>
+                            </div>
+                            <div>
+                              {" "}
+                              <div
+                                style={{
+                                  display: "flex",
+                                }}
+                              >
+                                <svg
+                                  color={
+                                    themeName === "dark-theme" ? "white" : ""
+                                  }
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
+                                >
+                                  <g>
+                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                  </g>
+                                </svg>
+                                <span>Priority support</span>
+                              </div>{" "}
+                            </div>
+                            <div>
+                              {" "}
+                              <div
+                                style={{
+                                  display: "flex",
+                                }}
+                              >
+                                <svg
+                                  color={
+                                    themeName === "dark-theme" ? "white" : ""
+                                  }
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
+                                >
+                                  <g>
+                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                  </g>
+                                </svg>
+                                <span>Premium+</span>
+                              </div>
+                            </div>
+                            <div>
+                              {" "}
+                              <div
+                                style={{
+                                  display: "flex",
+                                }}
+                              >
+                                <svg
+                                  color={
+                                    themeName === "dark-theme" ? "white" : ""
+                                  }
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
+                                >
+                                  <g>
+                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                  </g>
+                                </svg>
+                                <span>Hiring</span>
+                              </div>
+                            </div>
+                            <div>
+                              {" "}
+                              <div
+                                style={{
+                                  display: "flex",
+                                }}
+                              >
+                                <svg
+                                  color={
+                                    themeName === "dark-theme" ? "white" : ""
+                                  }
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
+                                >
+                                  <g>
+                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                  </g>
+                                </svg>
+                                <span>2x boost</span>
+                              </div>
+                            </div>
+                            <div>
+                              {" "}
+                              <div
+                                style={{
+                                  display: "flex",
+                                }}
+                              >
+                                <svg
+                                  color={
+                                    themeName === "dark-theme" ? "white" : ""
+                                  }
+                                  fill="currentColor"
+                                  width={`${1.25}em`}
+                                  height={`${1.25}em`}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr"
+                                >
+                                  <g>
+                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                  </g>
+                                </svg>
+                                <span>Affiliations</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              fontSize: font15.fontSize,
+                              lineHeight: font15.lineHeight,
+                              color: themeName === "dark-theme" ? "white" : "",
+                            }}
+                            className="mt-1 chirp-regular-font"
+                          >
+                            + For a limited time, advertising credit to spend on
+                            your organization{" "}
+                            <span
+                              className="chirp-bold-font"
+                              style={{
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
+                                textDecoration: "underline",
+                              }}
+                            >
+                              {basicAnnualTabStyle
+                                ? "every year"
+                                : "every month"}
+                            </span>{" "}
+                            with dedicated support.{" "}
+                            <span
+                              className="learn-more-basic-plan"
+                              style={{
+                                cursor: "pointer",
+                                color: "rgb(29, 155, 240)",
+                              }}
+                            >
+                              Learn more
+                            </span>
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            width: "89.5%",
+                          }}
+                        >
+                          <div
+                            className="mt-3"
+                            style={{
+                              display: "flex",
+                              gap: "2.5%",
+                            }}
+                          >
+                            {/* annual plan start to check  */}
+                            <div
+                              onClick={() => {
+                                setfullAccessAnnualTabStyle(true);
+                                setfullAccessMonthlyTabStyle(false);
+                                setorganizationSubPlanPriceFullAccess(
+                                  "€11,305"
+                                );
+                                setorganizationSubPlanTypeFullAccess(
+                                  "Annual Plan"
+                                );
+                                setorganizationSubPlanPriceBasic("");
+                                setorganizationSubPlanTypeBasic("");
+                              }}
+                              style={
+                                ({ activeIndividualOptionTabStyle },
+                                {
+                                  flex: 1,
+                                  maxHeight: "72px",
+                                  padding: "12px",
+                                  cursor: "pointer",
+                                  borderWidth: "1px",
+                                  borderRadius: "16px",
+                                  backgroundColor:
+                                    themeName === "dark-theme"
+                                      ? "black"
+                                      : "white",
+                                  filter:
+                                    themeName === "dark-theme"
+                                      ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                                      : "",
+
+                                  boxShadow:
+                                    themeName === "dark-theme"
+                                      ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                                      : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
+                                  border: fullAccessAnnualTabStyle
+                                    ? "2px solid #339bf0"
+                                    : "2px solid transparent",
+                                  transition: "transform 0.3s ease",
+                                })
+                              }
+                              className={`organization-subscription-box organization-subscription-box-${themeName}`}
+                            >
+                              <div>
+                                <div
+                                  className="chirp-bold-font"
+                                  style={{
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "white"
+                                        : "rgb(15, 20, 25)",
+                                    fontSize: font17.fontSize,
+                                    lineHeight: font17.lineHeight,
+                                    display: " flex",
+                                  }}
+                                >
+                                  {" "}
+                                  <div>€11,305 / year</div>
+                                  <div
+                                    className="chirp-bold-font"
+                                    style={{
+                                      borderRadius: "9999px",
+                                      height: "20px",
+                                      display: "flex",
+                                      justifyContent: "center",
+                                      alignItems: "center",
+                                      position: "relative",
+                                      left: "3px",
+                                      top: "5px",
+                                      backgroundColor:
+                                        themeName === "dark-theme"
+                                          ? "#05241A"
+                                          : "#dcf8eb",
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "#C2F1DC"
+                                          : "rgb(0, 67, 41)",
+                                      fontSize: font11.fontSize,
+                                      lineHeight: font11.lineHeight,
+                                    }}
+                                  >
+                                    <span
+                                      style={{
+                                        padding: "4px 4px",
+                                      }}
+                                    >
+                                      Save 16%
+                                    </span>
+                                  </div>
+                                </div>
+                                <div
+                                  className="chirp-regular-font"
+                                  style={{
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)",
+                                    fontSize: font14.fontSize,
+                                  }}
+                                >
+                                  {" "}
+                                  Annual plan
+                                </div>
+                              </div>
+                            </div>
+                            {/* annual plan finish to check  */}
+                            {/* monthly plan start to check  */}
+                            <div
+                              onClick={() => {
+                                setfullAccessAnnualTabStyle(false);
+                                setfullAccessMonthlyTabStyle(true);
+                                setorganizationSubPlanPriceFullAccess(
+                                  "€1,130.50"
+                                );
+                                setorganizationSubPlanTypeFullAccess(
+                                  "Monthly Plan"
+                                );
+                                setorganizationSubPlanPriceBasic("");
+                                setorganizationSubPlanTypeBasic("");
+                              }}
+                              style={
+                                ({ activeOrganizationOptionTabStyle },
+                                {
+                                  flex: 1,
+                                  maxHeight: "72px",
+                                  padding: "12px",
+                                  cursor: "pointer",
+                                  borderWidth: "1px",
+                                  borderRadius: "16px",
+                                  backgroundColor:
+                                    themeName === "dark-theme"
+                                      ? "black"
+                                      : "white",
+                                  filter:
+                                    themeName === "dark-theme"
+                                      ? "drop-shadow(rgb(51, 54, 57) 1px -1px 1px)"
+                                      : "",
+
+                                  boxShadow:
+                                    themeName === "dark-theme"
+                                      ? "rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px"
+                                      : "0 0 15px rgba(101, 119,134,0.2), 0 0 5px 3px rgba(101,119,134,0.15)",
+                                  border: fullAccessMonthlyTabStyle
+                                    ? "2px solid #339bf0"
+                                    : "2px solid transparent",
+                                  transition: "transform 0.3s ease",
+                                })
+                              }
+                              className={`organization-subscription-box organization-subscription-box-${themeName}`}
+                            >
+                              <div
+                                style={{
+                                  position: "relative",
+                                }}
+                              >
+                                <div
+                                  className="chirp-bold-font"
+                                  style={{
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "white"
+                                        : "rgb(15, 20, 25)",
+                                    fontSize: font17.fontSize,
+                                    lineHeight: font17.lineHeight,
+                                  }}
+                                >
+                                  €1,130.50 / month
+                                </div>{" "}
+                                <div
+                                  className="chirp-regular-font"
+                                  style={{
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "#71767A"
+                                        : "rgb(83, 100, 113)",
+                                    fontSize: font14.fontSize,
+                                  }}
+                                >
+                                  Monthly plan
+                                </div>
+                              </div>
+                            </div>
+                            {/* monthly plan finish to check  */}
+                          </div>
+                          <div
+                            className="mt-3 chirp-regular-font"
+                            style={{
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#4A4F51"
+                                  : "rgb(83, 100, 113)",
+                              fontSize: font11.fontSize,
+                              lineHeight: font11.lineHeight,
+                              height: "20px",
+                            }}
+                          >
+                            {" "}
+                            <span>
+                              Full Access is{" "}
+                              {fullAccessAnnualTabStyle
+                                ? yearlyFeeFullAccess
+                                : monthyleFeeFullAccess
+                                ? monthyleFeeFullAccess
+                                : null}
+                              /
+                              {fullAccessAnnualTabStyle
+                                ? "year"
+                                : monthyleFeeFullAccess
+                                ? "month"
+                                : null}{" "}
+                              (tax inclusive). Each additional affiliated
+                              account is{" "}
+                              {fullAccessAnnualTabStyle
+                                ? "€714 per handle per year"
+                                : fullAccessMonthlyTabStyle
+                                ? "€59.50 per handle per month"
+                                : ""}{" "}
+                              (tax inclusive).{" "}
+                            </span>
+                            <span
+                              className="learn-more-basic-plan"
+                              style={{
+                                color: "rgb(29, 155, 240)",
+                                cursor: "pointer",
+                              }}
+                            >
+                              Learn more
+                            </span>
+                          </div>
+                          <Button
+                            onClick={() =>
+                              handleFullAccessOrganizationPlanModal()
+                            }
+                            className={`mt-4 subscribe-btn-full-access-plan subscribe-btn-full-access-plan-${themeName}`}
+                            style={{
+                              backgroundColor:
+                                themeName === "dark-theme"
+                                  ? "rgb(239,243,244)"
+                                  : "#0f1518",
+                              color: "white",
+                              height: "34px",
+                              width: "100%",
+                              borderRadius: "9999px",
+                              border: " none",
+                            }}
+                            variant="info"
+                          >
+                            <div
+                              className="chirp-bold-font"
+                              style={{
+                                color:
+                                  themeName === "dark-theme" ? "black" : "",
+                                fontSize: font15.fontSize,
+                                lineHeight: font15.lineHeight,
+                              }}
+                            >
+                              <span>Subscribe</span>
+                              <span
+                                style={{
+                                  marginLeft: "5px",
+                                }}
+                              >
+                                &middot;
+                              </span>
+                              <span>
+                                {" "}
+                                {fullAccessAnnualTabStyle
+                                  ? `€11,305 per year`
+                                  : `€1,130.50 per month`}{" "}
+                              </span>
+                            </div>
+                          </Button>
+                          <div
+                            className="mt-3 chirp-regular-font"
+                            style={{
+                              width: "100%",
+                              color:
+                                themeName === "dark-theme"
+                                  ? "#4A4F51"
+                                  : "rgb(83, 100, 113)",
+                              fontSize: font11.fontSize,
+                              lineHeight: font11.lineHeight,
+                              height: "40px",
+                            }}
+                          >
+                            By clicking Subscribe, you agree to our{" "}
+                            <span
+                              className="text-decoration-thickness-2px"
+                              style={{
+                                cursor: "pointer",
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "rgb(15, 20, 25)",
+                                textDecoration: "underline",
+                                textDecorationColor:
+                                  themeName === "dark-theme"
+                                    ? "white"
+                                    : "rgb(15, 20, 25)",
+                              }}
+                            >
+                              Purchaser Terms of Service.
+                            </span>{" "}
+                            Subscriptions auto-renew until canceled. Accounts
+                            that sign up are reviewed for authenticity. If an
+                            account signs up and is not an organization, you
+                            will be rejected and not refunded.
+                          </div>
+                        </div>{" "}
+                      </>
+                    ) : subTabIndexFromOrganizationSelect === 3 ? (
+                      <>
+                        {" "}
+                        <div
+                          className="mt-4 chirp-heavy-font"
+                          style={{
+                            color:
+                              themeName === "dark-theme" ? "white" : "black",
+                            width: "81.5%",
+                            fontSize: font31.fontSize,
+                            lineHeight: font31.lineHeight,
+                          }}
+                        >
+                          Apply for Full Access
+                        </div>
+                        <div
+                          className="mt-3 chirp-regular-font"
+                          style={{
+                            width: "81.5%",
+                            color:
+                              themeName === "dark-theme"
+                                ? "#71767A"
+                                : "rgb(83, 100, 113)",
+                            fontSize: font15.fontSize,
+                            lineHeight: font15.lineHeight,
+                          }}
+                        >
+                          We’ll use this information to assess your application.
+                          Upon receipt of payment and if eligible, you’ll be
+                          invited to activate your account. For information
+                          learn more{" "}
+                          <span
+                            className="apply-for-access-text-underline"
+                            style={{
+                              color: "rgb(29, 155, 240)",
+                              cursor: "pointer",
+                            }}
+                          >
+                            here
+                          </span>
+                          .
+                        </div>
+                        {/* text fields start to check  */}
+                        <TextField
+                          className="mt-3"
+                          value={organizationName}
+                          onChange={(e) => setOrganizationName(e.target.value)}
+                          type="text"
+                          id="outlined-basic"
+                          variant={"outlined"}
+                          label={`Organization name`}
+                          style={{
+                            width: "81.5%",
+                            height: "58px",
+                          }}
+                          error={organizationNameFilled && !organizationName}
+                          InputLabelProps={{
+                            style: {
+                              color: themeName === "dark-theme" ? "white" : "",
+                            },
+                          }}
+                          InputProps={{
+                            style: {
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
+                            },
+                          }}
+                          sx={{
+                            color: "green",
+                            "& .Mui-focused input + fieldset": {
+                              border:
+                                organizationNameFilled && !organizationName
+                                  ? "2px solid rgb(244, 33, 46)!important"
+                                  : "2px solid #1d9bf0 !important",
+                            },
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderRadius: "initial !important",
+                              borderColor:
+                                organizationNameFilled && !organizationName
+                                  ? "rgb(244, 33, 46)!important"
+                                  : themeName !== "dark-theme"
+                                  ? "#cfd9de !important"
+                                  : "#333639 !important",
+                            },
+                            "& .MuiInputLabel-shrink": {
+                              color:
+                                organizationNameFilled && !organizationName
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#1f9cf0 !important",
+                            },
+                          }}
+                        />
+                        <div
+                          className="mt-3"
+                          style={{
+                            width: "81.5%",
+                          }}
+                        >
+                          <TextField
+                            style={{
+                              width: "100%",
+                              height: "60px",
+                            }}
+                            disabled
+                            id="filled-disabled"
+                            label={
+                              <div
+                                style={{
+                                  flexDirection: "column",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    fontSize: font13.fontSize,
+                                    position: "relative",
+                                    bottom: "5px",
+                                  }}
+                                >
+                                  Organization @handle
+                                </div>
+                                <div
+                                  style={{
+                                    position: "relative",
+                                    bottom: "5px",
+                                  }}
+                                >
+                                  {`@${userInfo.username}`}
+                                </div>
+                              </div>
+                            }
+                            variant="filled"
+                            InputLabelProps={{
+                              style: {
+                                color:
+                                  themeName === "dark-theme"
+                                    ? "#3C3F41"
+                                    : "#999A9B",
+                              },
+                            }}
+                            InputProps={{
+                              disableUnderline: true, // Alt çizgiyi kaldırır
+                            }}
+                            sx={{
+                              "& .MuiFilledInput-root": {
+                                background:
+                                  themeName === "dark-theme"
+                                    ? "#0D0E11 !important"
+                                    : "#f7f9fa !important",
+                                height: "60px",
+                                borderRadius: "initial !important",
+                              },
+                            }}
+                          />
+                        </div>
+                        <TextField
+                          className="mt-3"
+                          type="text"
+                          id="outlined-basic"
+                          variant={"outlined"}
+                          label={`Your full name`}
+                          style={{
+                            width: "81.5%",
+                            height: "58px",
+                          }}
+                          value={yourFullName}
+                          onChange={(e) => setYourFullName(e.target.value)}
+                          error={
+                            organizationYourFullNameFilled && !yourFullName
+                          }
+                          InputLabelProps={{
+                            style: {
+                              color: themeName === "dark-theme" ? "white" : "",
+                            },
+                          }}
+                          InputProps={{
+                            style: {
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
+                            },
+                          }}
+                          sx={{
+                            "& .Mui-focused input + fieldset": {
+                              border:
+                                organizationYourFullNameFilled && !yourFullName
+                                  ? "2px solid rgb(244, 33, 46)!important"
+                                  : "2px solid #1d9bf0 !important",
+                            },
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderRadius: "initial !important",
+
+                              borderColor:
+                                organizationYourFullNameFilled && !yourFullName
+                                  ? "rgb(244, 33, 46)!important"
+                                  : themeName !== "dark-theme"
+                                  ? "#cfd9de !important"
+                                  : "#333639 !important",
+                            },
+                            "& .MuiInputLabel-shrink": {
+                              color:
+                                organizationYourFullNameFilled && !yourFullName
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#1f9cf0 !important",
+                            },
+                          }}
+                        />
+                        <TextField
+                          className="mt-3"
+                          type="text"
+                          id="outlined-basic"
+                          variant={"outlined"}
+                          label={`Organization email address`}
+                          style={{
+                            width: "81.5%",
+                            height: "58px",
+                          }}
+                          value={organizationEmailAdress}
+                          onChange={(e) =>
+                            setOrganizationEmailAdress(e.target.value)
+                          }
+                          error={
+                            (organizationEmailAdressFilled &&
+                              !organizationEmailAdress) ||
+                            invalidEmailError
+                          }
+                          InputLabelProps={{
+                            style: {
+                              color: themeName === "dark-theme" ? "white" : "",
+                            },
+                          }}
+                          InputProps={{
+                            style: {
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
+                            },
+                          }}
+                          sx={{
+                            "& .Mui-focused input + fieldset": {
+                              border:
+                                (organizationEmailAdressFilled &&
+                                  !organizationEmailAdress) ||
+                                invalidEmailError
+                                  ? "2px solid rgb(244, 33, 46)!important"
+                                  : "2px solid #1d9bf0 !important",
+                            },
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderRadius: "initial !important",
+
+                              borderColor:
+                                (organizationEmailAdressFilled &&
+                                  !organizationEmailAdress) ||
+                                invalidEmailError
+                                  ? "rgb(244, 33, 46) !important"
+                                  : themeName !== "dark-theme"
+                                  ? "#cfd9de !important"
+                                  : "#333639 !important",
+                            },
+                            "& .MuiInputLabel-shrink": {
+                              color:
+                                (organizationEmailAdressFilled &&
+                                  !organizationEmailAdress) ||
+                                invalidEmailError
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#1f9cf0 !important",
+                            },
+                          }}
+                        />
+                        {invalidEmailError && organizationEmailAdress ? (
+                          <div
+                            className="chirp-regular-font"
+                            style={{
+                              color: "rgb(244, 33, 46)",
+                              fontSize: font13.fontSize,
+                              lineHeight: font13.lineHeight,
                               width: "81.5%",
+                              position: "relative",
+                              left: "10px",
+                              top: "2px",
+                            }}
+                          >
+                            {invalidEmailError}
+                          </div>
+                        ) : null}
+                        <TextField
+                          className="mt-3"
+                          type="text"
+                          id="outlined-basic"
+                          variant={"outlined"}
+                          label={`Organization website`}
+                          style={{
+                            width: "81.5%",
+                            height: "58px",
+                          }}
+                          value={organizationWebSite}
+                          onChange={(e) =>
+                            setOrganizationWebSite(e.target.value)
+                          }
+                          error={
+                            organizationWebSiteFilled && !organizationWebSite
+                          }
+                          InputLabelProps={{
+                            style: {
+                              color: themeName === "dark-theme" ? "white" : "",
+                            },
+                          }}
+                          InputProps={{
+                            style: {
+                              color:
+                                themeName === "dark-theme" ? "white" : "black",
+                            },
+                          }}
+                          sx={{
+                            "& .Mui-focused input + fieldset": {
+                              border:
+                                organizationWebSiteFilled &&
+                                !organizationWebSite
+                                  ? "2px solid rgb(244, 33, 46)!important"
+                                  : "2px solid #1d9bf0 !important",
+                            },
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderRadius: "initial !important",
+
+                              borderColor:
+                                organizationWebSiteFilled &&
+                                !organizationWebSite
+                                  ? "rgb(244, 33, 46)!important"
+                                  : themeName !== "dark-theme"
+                                  ? "#cfd9de !important"
+                                  : "#333639 !important",
+                            },
+                            "& .MuiInputLabel-shrink": {
+                              color:
+                                organizationWebSiteFilled &&
+                                !organizationWebSite
+                                  ? "rgb(244, 33, 46)!important"
+                                  : "#1f9cf0 !important",
+                            },
+                          }}
+                        />
+                        {/* organization type  start to check  */}
+                        <PopupState
+                          variant="popover"
+                          popupId="demo-popup-popover"
+                        >
+                          {(popupState) => (
+                            <div
+                              style={{
+                                width: "81.5%",
+                              }}
+                            >
+                              <div
+                                {...bindTrigger(popupState)}
+                                className="mt-3"
+                                style={{
+                                  borderRadius: "4px",
+                                  cursor: "pointer",
+                                  color: "#536471",
+                                  width: "100%",
+                                  minHeight: "58px",
+                                  padding: "4px",
+                                  border:
+                                    themeName === "dark-theme"
+                                      ? "1px solid #cfd9de"
+                                      : "1px solid rgb(207, 217, 222)",
+                                  borderWidth: showOrganizationTypeContent
+                                    ? "2px"
+                                    : "1px",
+                                  borderColor:
+                                    organizationDisplayedOrganizationTypeFilled &&
+                                    !displayedOrganizationType
+                                      ? "rgb(244, 33, 46)"
+                                      : showOrganizationTypeContent
+                                      ? "#1d9bf0"
+                                      : themeName === "dark-theme"
+                                      ? "#333639"
+                                      : "#cfd9de",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    display: "inline-block",
+                                    float: "left",
+                                  }}
+                                >
+                                  <div
+                                    className="main-outline-text-year-picker chirp-regular-font"
+                                    style={{
+                                      position: "relative",
+                                      left: "10px",
+                                      top: "5px",
+                                      fontSize: font14.fontSize,
+                                      lineHeight: font14.lineHeight,
+                                      color: showOrganizationTypeContent
+                                        ? "#1d9bf0"
+                                        : "rgba(83,100,113,1.00)",
+                                    }}
+                                  >
+                                    <span
+                                      style={{
+                                        color:
+                                          organizationDisplayedOrganizationTypeFilled &&
+                                          !displayedOrganizationType
+                                            ? "rgb(244, 33, 46)"
+                                            : themeName === "dark-theme"
+                                            ? "#71767A"
+                                            : "rgb(83, 100, 113)",
+                                      }}
+                                    >
+                                      Organization Type
+                                    </span>
+                                  </div>
+                                  <div
+                                    className="mt-2 selected-year-string-parent-div chirp-bold-font"
+                                    style={{
+                                      position: "relative",
+                                      left: "10px",
+                                      fontSize: font17.fontSize,
+                                      lineHeight: font17.lineHeight,
+                                      color:
+                                        themeName === "dark-theme"
+                                          ? "white"
+                                          : "black",
+                                    }}
+                                  >
+                                    {displayedOrganizationType}
+                                  </div>
+                                </div>
+                                <div
+                                  style={{
+                                    float: "right",
+                                    position: "relative",
+                                    // top: "30%",
+                                    minHeight: "50px",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <svg
+                                    width={`${1.5}em`}
+                                    height={`${1.5}em`}
+                                    color={
+                                      showOrganizationTypeContent
+                                        ? "#1d9bf0"
+                                        : "rgba(83,100,113,1.00)"
+                                    }
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    className="svg-year-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-1plcrui r-lrvibr r-14j79pv r-1pgswnq r-50lct3 r-fdch1b r-633pao r-u8s1d r-1v2oles"
+                                  >
+                                    <g className="path-parent-g-year-picker">
+                                      <path d="M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                              <Popover
+                                open={popupState.open}
+                                onClose={popupState.close}
+                                {...bindPopover(popupState)}
+                                anchorOrigin={{
+                                  vertical: "top",
+                                  horizontal: "center",
+                                }}
+                                transformOrigin={{
+                                  vertical: "bottom",
+                                  horizontal: "center",
+                                }}
+                                style={{
+                                  zIndex: 9999999,
+                                }}
+                                className={`${
+                                  themeName === "dark-theme"
+                                    ? "popover-material-ui-dark-theme-organization-type"
+                                    : themeName !== "dark-theme"
+                                    ? "popover-material-ui-light-theme-organization-type"
+                                    : "hideshowMessageDeletePopover"
+                                }`}
+                              >
+                                <div
+                                  onMouseEnter={() => {
+                                    sethoveredOrganizationType("business");
+                                  }}
+                                  onClick={() => {
+                                    setshowOrganizationTypeContent(false);
+                                    popupState.close();
+                                    setTimeout(() => {
+                                      setdisplayedOrganizationType("Business");
+                                    }, 150);
+                                  }}
+                                  style={{
+                                    padding: "8px",
+                                    cursor: "pointer",
+                                    backgroundColor:
+                                      hoveredOrganizationType === "business"
+                                        ? "#5aa0ff"
+                                        : "",
+                                    borderRadius: "4px",
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "white"
+                                        : "black",
+                                  }}
+                                >
+                                  Business
+                                </div>
+                                <div
+                                  onMouseEnter={() => {
+                                    sethoveredOrganizationType("government");
+                                  }}
+                                  onClick={() => {
+                                    setshowOrganizationTypeContent(false);
+                                    popupState.close();
+                                    setTimeout(() => {
+                                      setdisplayedOrganizationType(
+                                        "Government"
+                                      );
+                                    }, 150);
+                                  }}
+                                  style={{
+                                    padding: "8px",
+                                    cursor: "pointer",
+                                    backgroundColor:
+                                      hoveredOrganizationType === "government"
+                                        ? "#5aa0ff"
+                                        : "",
+                                    borderRadius: "4px",
+                                    color:
+                                      themeName === "dark-theme"
+                                        ? "white"
+                                        : "black",
+                                  }}
+                                >
+                                  Government
+                                </div>
+                              </Popover>
+                            </div>
+                          )}
+                        </PopupState>
+                        {/* </div> */}
+                        {/* organization type  finish to check  */}
+                        {/* text fields finish to check  */}
+                        <div
+                          className="mt-3"
+                          style={{
+                            width: "81.5%",
+                            gap: "2.5%",
+                            display: "flex",
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: "50px",
+                            }}
+                          >
+                            <div
+                              onClick={() => setClicked(!clicked)}
+                              style={{
+                                width: "36px",
+                                height: "36px",
+                                borderRadius: "50%",
+                                cursor: "pointer",
+                                marginBlock: "0.5em",
+                              }}
+                              className={
+                                themeName === "dark-theme" && clicked
+                                  ? "hover-background-effect-clicked-dark-theme"
+                                  : themeName !== "dark-theme" && clicked
+                                  ? "hover-background-effect-clicked-light-theme"
+                                  : themeName === "dark-theme" && !clicked
+                                  ? "hover-background-effect-dark-theme"
+                                  : themeName !== "dark-theme" && !clicked
+                                  ? "hover-background-effect-light-theme"
+                                  : ""
+                              }
+                            >
+                              <div
+                                style={{
+                                  backgroundColor: clicked
+                                    ? "#1d9bf0"
+                                    : "transparent",
+                                  border: clicked
+                                    ? ""
+                                    : themeName === "dark-theme"
+                                    ? "2px solid rgb(70,70,70)"
+                                    : "2px solid #536471",
+
+                                  borderWidth: "2px ",
+                                  width: "20px",
+                                  height: "20px",
+                                  position: "relative",
+                                  left: "8px",
+                                  top: "8px",
+                                  borderRadius: "3px",
+                                }}
+                              >
+                                <svg
+                                  style={{
+                                    position: "relative",
+                                    left: "2px",
+                                    bottom: "4px",
+                                    display: clicked ? "initial" : "none",
+                                  }}
+                                  width={16}
+                                  height={16}
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
+                                  color="white"
+                                  fill="currentColor"
+                                >
+                                  <g>
+                                    <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
+                                  </g>
+                                </svg>
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            className="mt-2 chirp-regular-font"
+                            style={{
                               color:
                                 themeName === "dark-theme"
                                   ? "#71767A"
                                   : "rgb(83, 100, 113)",
                               fontSize: font15.fontSize,
                               lineHeight: font15.lineHeight,
+                              position: "relative",
+                              bottom: "4px",
                             }}
                           >
-                            We’ll use this information to assess your
-                            application. Upon receipt of payment and if
-                            eligible, you’ll be invited to activate your
-                            account. For information learn more{" "}
+                            By checking this box you indicate you have read and
+                            agree to the terms and conditions available{" "}
                             <span
-                              className="apply-for-access-text-underline"
                               style={{
                                 color: "rgb(29, 155, 240)",
                                 cursor: "pointer",
@@ -16508,678 +17074,55 @@ function RightSideColumn({
                             </span>
                             .
                           </div>
-                          {/* text fields start to check  */}
-                          <TextField
-                            className="mt-3"
-                            value={organizationName}
-                            onChange={(e) =>
-                              setOrganizationName(e.target.value)
-                            }
-                            type="text"
-                            id="outlined-basic"
-                            variant={"outlined"}
-                            label={`Organization name`}
-                            style={{
-                              width: "81.5%",
-                              height: "58px",
-                            }}
-                            error={organizationNameFilled && !organizationName}
-                            InputLabelProps={{
-                              style: {
-                                color:
-                                  themeName === "dark-theme" ? "white" : "",
-                              },
-                            }}
-                            InputProps={{
-                              style: {
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "white"
-                                    : "black",
-                              },
-                            }}
-                            sx={{
-                              color: "green",
-                              "& .Mui-focused input + fieldset": {
-                                border:
-                                  organizationNameFilled && !organizationName
-                                    ? "2px solid rgb(244, 33, 46)!important"
-                                    : "2px solid #1d9bf0 !important",
-                              },
-                              "& .MuiOutlinedInput-notchedOutline": {
-                                borderRadius: "initial !important",
-                                borderColor:
-                                  organizationNameFilled && !organizationName
-                                    ? "rgb(244, 33, 46)!important"
-                                    : themeName !== "dark-theme"
-                                    ? "#cfd9de !important"
-                                    : "#333639 !important",
-                              },
-                              "& .MuiInputLabel-shrink": {
-                                color:
-                                  organizationNameFilled && !organizationName
-                                    ? "rgb(244, 33, 46)!important"
-                                    : "#1f9cf0 !important",
-                              },
-                            }}
-                          />
-                          <div
-                            className="mt-3"
-                            style={{
-                              width: "81.5%",
-                            }}
-                          >
-                            <TextField
-                              style={{
-                                width: "100%",
-                                height: "60px",
-                              }}
-                              disabled
-                              id="filled-disabled"
-                              label={
-                                <div
-                                  style={{
-                                    flexDirection: "column",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <div
-                                    style={{
-                                      fontSize: font13.fontSize,
-                                      position: "relative",
-                                      bottom: "5px",
-                                    }}
-                                  >
-                                    Organization @handle
-                                  </div>
-                                  <div
-                                    style={{
-                                      position: "relative",
-                                      bottom: "5px",
-                                    }}
-                                  >
-                                    {`@${userInfo.username}`}
-                                  </div>
-                                </div>
-                              }
-                              variant="filled"
-                              InputLabelProps={{
-                                style: {
-                                  color:
-                                    themeName === "dark-theme"
-                                      ? "#3C3F41"
-                                      : "#999A9B",
-                                },
-                              }}
-                              InputProps={{
-                                disableUnderline: true, // Alt çizgiyi kaldırır
-                              }}
-                              sx={{
-                                "& .MuiFilledInput-root": {
-                                  background:
-                                    themeName === "dark-theme"
-                                      ? "#0D0E11 !important"
-                                      : "#f7f9fa !important",
-                                  height: "60px",
-                                  borderRadius: "initial !important",
-                                },
-                              }}
-                            />
-                          </div>
-                          <TextField
-                            className="mt-3"
-                            type="text"
-                            id="outlined-basic"
-                            variant={"outlined"}
-                            label={`Your full name`}
-                            style={{
-                              width: "81.5%",
-                              height: "58px",
-                            }}
-                            value={yourFullName}
-                            onChange={(e) => setYourFullName(e.target.value)}
-                            error={
-                              organizationYourFullNameFilled && !yourFullName
-                            }
-                            InputLabelProps={{
-                              style: {
-                                color:
-                                  themeName === "dark-theme" ? "white" : "",
-                              },
-                            }}
-                            InputProps={{
-                              style: {
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "white"
-                                    : "black",
-                              },
-                            }}
-                            sx={{
-                              "& .Mui-focused input + fieldset": {
-                                border:
-                                  organizationYourFullNameFilled &&
-                                  !yourFullName
-                                    ? "2px solid rgb(244, 33, 46)!important"
-                                    : "2px solid #1d9bf0 !important",
-                              },
-                              "& .MuiOutlinedInput-notchedOutline": {
-                                borderRadius: "initial !important",
-
-                                borderColor:
-                                  organizationYourFullNameFilled &&
-                                  !yourFullName
-                                    ? "rgb(244, 33, 46)!important"
-                                    : themeName !== "dark-theme"
-                                    ? "#cfd9de !important"
-                                    : "#333639 !important",
-                              },
-                              "& .MuiInputLabel-shrink": {
-                                color:
-                                  organizationYourFullNameFilled &&
-                                  !yourFullName
-                                    ? "rgb(244, 33, 46)!important"
-                                    : "#1f9cf0 !important",
-                              },
-                            }}
-                          />
-                          <TextField
-                            className="mt-3"
-                            type="text"
-                            id="outlined-basic"
-                            variant={"outlined"}
-                            label={`Organization email address`}
-                            style={{
-                              width: "81.5%",
-                              height: "58px",
-                            }}
-                            value={organizationEmailAdress}
-                            onChange={(e) =>
-                              setOrganizationEmailAdress(e.target.value)
-                            }
-                            error={
-                              (organizationEmailAdressFilled &&
-                                !organizationEmailAdress) ||
-                              invalidEmailError
-                            }
-                            InputLabelProps={{
-                              style: {
-                                color:
-                                  themeName === "dark-theme" ? "white" : "",
-                              },
-                            }}
-                            InputProps={{
-                              style: {
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "white"
-                                    : "black",
-                              },
-                            }}
-                            sx={{
-                              "& .Mui-focused input + fieldset": {
-                                border:
-                                  (organizationEmailAdressFilled &&
-                                    !organizationEmailAdress) ||
-                                  invalidEmailError
-                                    ? "2px solid rgb(244, 33, 46)!important"
-                                    : "2px solid #1d9bf0 !important",
-                              },
-                              "& .MuiOutlinedInput-notchedOutline": {
-                                borderRadius: "initial !important",
-
-                                borderColor:
-                                  (organizationEmailAdressFilled &&
-                                    !organizationEmailAdress) ||
-                                  invalidEmailError
-                                    ? "rgb(244, 33, 46) !important"
-                                    : themeName !== "dark-theme"
-                                    ? "#cfd9de !important"
-                                    : "#333639 !important",
-                              },
-                              "& .MuiInputLabel-shrink": {
-                                color:
-                                  (organizationEmailAdressFilled &&
-                                    !organizationEmailAdress) ||
-                                  invalidEmailError
-                                    ? "rgb(244, 33, 46)!important"
-                                    : "#1f9cf0 !important",
-                              },
-                            }}
-                          />
-                          {invalidEmailError && organizationEmailAdress ? (
-                            <div
-                              className="chirp-regular-font"
-                              style={{
-                                color: "rgb(244, 33, 46)",
-                                fontSize: font13.fontSize,
-                                lineHeight: font13.lineHeight,
-                                width: "81.5%",
-                                position: "relative",
-                                left: "10px",
-                                top: "2px",
-                              }}
-                            >
-                              {invalidEmailError}
-                            </div>
-                          ) : null}
-                          <TextField
-                            className="mt-3"
-                            type="text"
-                            id="outlined-basic"
-                            variant={"outlined"}
-                            label={`Organization website`}
-                            style={{
-                              width: "81.5%",
-                              height: "58px",
-                            }}
-                            value={organizationWebSite}
-                            onChange={(e) =>
-                              setOrganizationWebSite(e.target.value)
-                            }
-                            error={
-                              organizationWebSiteFilled && !organizationWebSite
-                            }
-                            InputLabelProps={{
-                              style: {
-                                color:
-                                  themeName === "dark-theme" ? "white" : "",
-                              },
-                            }}
-                            InputProps={{
-                              style: {
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "white"
-                                    : "black",
-                              },
-                            }}
-                            sx={{
-                              "& .Mui-focused input + fieldset": {
-                                border:
-                                  organizationWebSiteFilled &&
-                                  !organizationWebSite
-                                    ? "2px solid rgb(244, 33, 46)!important"
-                                    : "2px solid #1d9bf0 !important",
-                              },
-                              "& .MuiOutlinedInput-notchedOutline": {
-                                borderRadius: "initial !important",
-
-                                borderColor:
-                                  organizationWebSiteFilled &&
-                                  !organizationWebSite
-                                    ? "rgb(244, 33, 46)!important"
-                                    : themeName !== "dark-theme"
-                                    ? "#cfd9de !important"
-                                    : "#333639 !important",
-                              },
-                              "& .MuiInputLabel-shrink": {
-                                color:
-                                  organizationWebSiteFilled &&
-                                  !organizationWebSite
-                                    ? "rgb(244, 33, 46)!important"
-                                    : "#1f9cf0 !important",
-                              },
-                            }}
-                          />
-                          {/* organization type  start to check  */}
-                          <PopupState
-                            variant="popover"
-                            popupId="demo-popup-popover"
-                          >
-                            {(popupState) => (
-                              <div
-                                style={{
-                                  width: "81.5%",
-                                }}
-                              >
-                                <div
-                                  {...bindTrigger(popupState)}
-                                  className="mt-3"
-                                  style={{
-                                    borderRadius: "4px",
-                                    cursor: "pointer",
-                                    color: "#536471",
-                                    width: "100%",
-                                    minHeight: "58px",
-                                    padding: "4px",
-                                    border:
-                                      themeName === "dark-theme"
-                                        ? "1px solid #cfd9de"
-                                        : "1px solid rgb(207, 217, 222)",
-                                    borderWidth: showOrganizationTypeContent
-                                      ? "2px"
-                                      : "1px",
-                                    borderColor:
-                                      organizationDisplayedOrganizationTypeFilled &&
-                                      !displayedOrganizationType
-                                        ? "rgb(244, 33, 46)"
-                                        : showOrganizationTypeContent
-                                        ? "#1d9bf0"
-                                        : themeName === "dark-theme"
-                                        ? "#333639"
-                                        : "#cfd9de",
-                                  }}
-                                >
-                                  <div
-                                    style={{
-                                      display: "inline-block",
-                                      float: "left",
-                                    }}
-                                  >
-                                    <div
-                                      className="main-outline-text-year-picker chirp-regular-font"
-                                      style={{
-                                        position: "relative",
-                                        left: "10px",
-                                        top: "5px",
-                                        fontSize: font14.fontSize,
-                                        lineHeight: font14.lineHeight,
-                                        color: showOrganizationTypeContent
-                                          ? "#1d9bf0"
-                                          : "rgba(83,100,113,1.00)",
-                                      }}
-                                    >
-                                      <span
-                                        style={{
-                                          color:
-                                            organizationDisplayedOrganizationTypeFilled &&
-                                            !displayedOrganizationType
-                                              ? "rgb(244, 33, 46)"
-                                              : themeName === "dark-theme"
-                                              ? "#71767A"
-                                              : "rgb(83, 100, 113)",
-                                        }}
-                                      >
-                                        Organization Type
-                                      </span>
-                                    </div>
-                                    <div
-                                      className="mt-2 selected-year-string-parent-div chirp-bold-font"
-                                      style={{
-                                        position: "relative",
-                                        left: "10px",
-                                        fontSize: font17.fontSize,
-                                        lineHeight: font17.lineHeight,
-                                        color:
-                                          themeName === "dark-theme"
-                                            ? "white"
-                                            : "black",
-                                      }}
-                                    >
-                                      {displayedOrganizationType}
-                                    </div>
-                                  </div>
-                                  <div
-                                    style={{
-                                      float: "right",
-                                      position: "relative",
-                                      // top: "30%",
-                                      minHeight: "50px",
-                                      display: "flex",
-                                      justifyContent: "center",
-                                      alignItems: "center",
-                                    }}
-                                  >
-                                    <svg
-                                      width={`${1.5}em`}
-                                      height={`${1.5}em`}
-                                      color={
-                                        showOrganizationTypeContent
-                                          ? "#1d9bf0"
-                                          : "rgba(83,100,113,1.00)"
-                                      }
-                                      fill="currentColor"
-                                      viewBox="0 0 24 24"
-                                      aria-hidden="true"
-                                      className="svg-year-picker r-4qtqp9 r-yyyyoo r-dnmrzs r-1plcrui r-lrvibr r-14j79pv r-1pgswnq r-50lct3 r-fdch1b r-633pao r-u8s1d r-1v2oles"
-                                    >
-                                      <g className="path-parent-g-year-picker">
-                                        <path d="M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z"></path>
-                                      </g>
-                                    </svg>
-                                  </div>
-                                </div>
-                                <Popover
-                                  open={popupState.open}
-                                  onClose={popupState.close}
-                                  {...bindPopover(popupState)}
-                                  anchorOrigin={{
-                                    vertical: "top",
-                                    horizontal: "center",
-                                  }}
-                                  transformOrigin={{
-                                    vertical: "bottom",
-                                    horizontal: "center",
-                                  }}
-                                  style={{
-                                    zIndex: 9999999,
-                                  }}
-                                  className={`${
-                                    themeName === "dark-theme"
-                                      ? "popover-material-ui-dark-theme-organization-type"
-                                      : themeName !== "dark-theme"
-                                      ? "popover-material-ui-light-theme-organization-type"
-                                      : "hideshowMessageDeletePopover"
-                                  }`}
-                                >
-                                  <div
-                                    onMouseEnter={() => {
-                                      sethoveredOrganizationType("business");
-                                    }}
-                                    onClick={() => {
-                                      setshowOrganizationTypeContent(false);
-                                      popupState.close();
-                                      setTimeout(() => {
-                                        setdisplayedOrganizationType(
-                                          "Business"
-                                        );
-                                      }, 150);
-                                    }}
-                                    style={{
-                                      padding: "8px",
-                                      cursor: "pointer",
-                                      backgroundColor:
-                                        hoveredOrganizationType === "business"
-                                          ? "#5aa0ff"
-                                          : "",
-                                      borderRadius: "4px",
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "white"
-                                          : "black",
-                                    }}
-                                  >
-                                    Business
-                                  </div>
-                                  <div
-                                    onMouseEnter={() => {
-                                      sethoveredOrganizationType("government");
-                                    }}
-                                    onClick={() => {
-                                      setshowOrganizationTypeContent(false);
-                                      popupState.close();
-                                      setTimeout(() => {
-                                        setdisplayedOrganizationType(
-                                          "Government"
-                                        );
-                                      }, 150);
-                                    }}
-                                    style={{
-                                      padding: "8px",
-                                      cursor: "pointer",
-                                      backgroundColor:
-                                        hoveredOrganizationType === "government"
-                                          ? "#5aa0ff"
-                                          : "",
-                                      borderRadius: "4px",
-                                      color:
-                                        themeName === "dark-theme"
-                                          ? "white"
-                                          : "black",
-                                    }}
-                                  >
-                                    Government
-                                  </div>
-                                </Popover>
-                              </div>
-                            )}
-                          </PopupState>
-                          {/* </div> */}
-                          {/* organization type  finish to check  */}
-                          {/* text fields finish to check  */}
-                          <div
-                            className="mt-3"
-                            style={{
-                              width: "81.5%",
-                              gap: "2.5%",
-                              display: "flex",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "50px",
-                              }}
-                            >
-                              <div
-                                onClick={() => setClicked(!clicked)}
-                                style={{
-                                  width: "36px",
-                                  height: "36px",
-                                  borderRadius: "50%",
-                                  cursor: "pointer",
-                                  marginBlock: "0.5em",
-                                }}
-                                className={
-                                  themeName === "dark-theme" && clicked
-                                    ? "hover-background-effect-clicked-dark-theme"
-                                    : themeName !== "dark-theme" && clicked
-                                    ? "hover-background-effect-clicked-light-theme"
-                                    : themeName === "dark-theme" && !clicked
-                                    ? "hover-background-effect-dark-theme"
-                                    : themeName !== "dark-theme" && !clicked
-                                    ? "hover-background-effect-light-theme"
-                                    : ""
-                                }
-                              >
-                                <div
-                                  style={{
-                                    backgroundColor: clicked
-                                      ? "#1d9bf0"
-                                      : "transparent",
-                                    border: clicked
-                                      ? ""
-                                      : themeName === "dark-theme"
-                                      ? "2px solid rgb(70,70,70)"
-                                      : "2px solid #536471",
-
-                                    borderWidth: "2px ",
-                                    width: "20px",
-                                    height: "20px",
-                                    position: "relative",
-                                    left: "8px",
-                                    top: "8px",
-                                    borderRadius: "3px",
-                                  }}
-                                >
-                                  <svg
-                                    style={{
-                                      position: "relative",
-                                      left: "2px",
-                                      bottom: "4px",
-                                      display: clicked ? "initial" : "none",
-                                    }}
-                                    width={16}
-                                    height={16}
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                    className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-jwli3a r-1hjwoze r-12ym1je"
-                                    color="white"
-                                    fill="currentColor"
-                                  >
-                                    <g>
-                                      <path d="M9.64 18.952l-5.55-4.861 1.317-1.504 3.951 3.459 8.459-10.948L19.4 6.32 9.64 18.952z"></path>
-                                    </g>
-                                  </svg>
-                                </div>
-                              </div>
-                            </div>
-                            <div
-                              className="mt-2 chirp-regular-font"
-                              style={{
-                                color:
-                                  themeName === "dark-theme"
-                                    ? "#71767A"
-                                    : "rgb(83, 100, 113)",
-                                fontSize: font15.fontSize,
-                                lineHeight: font15.lineHeight,
-                                position: "relative",
-                                bottom: "4px",
-                              }}
-                            >
-                              By checking this box you indicate you have read
-                              and agree to the terms and conditions available{" "}
-                              <span
-                                style={{
-                                  color: "rgb(29, 155, 240)",
-                                  cursor: "pointer",
-                                }}
-                              >
-                                here
-                              </span>
-                              .
-                            </div>
-                          </div>
-                          <Button
-                            onClick={
+                        </div>
+                        <Button
+                          onClick={
+                            clicked && !checkoutProcessLoadingBar
+                              ? () =>
+                                  handleSubmitOrganizationInformationForFullAccessSubscription(
+                                    organizationName,
+                                    yourFullName,
+                                    organizationEmailAdress,
+                                    organizationWebSite,
+                                    displayedOrganizationType
+                                  )
+                              : ""
+                          }
+                          //   className={`login-button next-btn mt-4 mb-5
+                          // }`}
+                          className={`mt-4 subscribe-btn-full-access-plan subscribe-btn-full-access-plan-${themeName}`}
+                          variant="dark"
+                          style={{
+                            outlineStyle: "none",
+                            borderStyle: "none",
+                            transitionDuration: "0.2s",
+                            border: " none",
+                            width: "81.5%",
+                            height: "36px",
+                            color: themeName === "dark-theme" ? "black" : "",
+                            backgroundColor:
+                              themeName === "dark-theme"
+                                ? "rgb(239,243,244)"
+                                : "#0f1518",
+                            opacity:
                               clicked && !checkoutProcessLoadingBar
-                                ? () =>
-                                    handleSubmitOrganizationInformationForFullAccessSubscription(
-                                      organizationName,
-                                      yourFullName,
-                                      organizationEmailAdress,
-                                      organizationWebSite,
-                                      displayedOrganizationType
-                                    )
-                                : ""
-                            }
-                            //   className={`login-button next-btn mt-4 mb-5
-                            // }`}
-                            className={`mt-4 subscribe-btn-full-access-plan subscribe-btn-full-access-plan-${themeName}`}
-                            variant="dark"
-                            style={{
-                              outlineStyle: "none",
-                              borderStyle: "none",
-                              transitionDuration: "0.2s",
-                              border: " none",
-                              width: "81.5%",
-                              height: "36px",
-                              color: themeName === "dark-theme" ? "black" : "",
-                              backgroundColor:
-                                themeName === "dark-theme"
-                                  ? "rgb(239,243,244)"
-                                  : "#0f1518",
-                              opacity:
-                                clicked && !checkoutProcessLoadingBar
-                                  ? "1"
-                                  : "0.5",
-                            }}
-                          >
-                            {checkoutProcessLoadingBar ? (
-                              <LoadingSpinner
-                                isCheckoutProcess={true}
-                                strokeColor={"rgb(29, 155, 240)"}
-                                fontSize={true}
-                              ></LoadingSpinner>
-                            ) : (
-                              <span>Submit</span>
-                            )}
-                          </Button>
-                        </>
-                      ) : null}
-                    </Modal.Body>
-                  </>
+                                ? "1"
+                                : "0.5",
+                          }}
+                        >
+                          {checkoutProcessLoadingBar ? (
+                            <LoadingSpinner
+                              isCheckoutProcess={true}
+                              strokeColor={"rgb(29, 155, 240)"}
+                              fontSize={true}
+                            ></LoadingSpinner>
+                          ) : (
+                            <span>Submit</span>
+                          )}
+                        </Button>
+                      </>
+                    ) : null}
+                  </Modal.Body>
                 </>
               ) : tabIndex === 2 &&
                 !phoneVerified &&
@@ -18959,14 +18902,14 @@ function RightSideColumn({
                                       style={{
                                         fontSize: font15.fontSize,
                                         lineHeight: font15.lineHeight,
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis",
-                                        whiteSpace: "nowrap",
-                                        width: "120px",
                                         color:
                                           themeName === "dark-theme"
                                             ? "white"
                                             : "black",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                        whiteSpace: "nowrap",
+                                        width: "120px",
                                       }}
                                     >
                                       <div
@@ -18975,7 +18918,17 @@ function RightSideColumn({
                                           alignItems: "center",
                                         }}
                                       >
-                                        <span>{eachUser.fullname}</span>
+                                        <span
+                                          style={{
+                                            minWidth: 0,
+                                            flexShrink: 1,
+                                            overflow: "hidden",
+                                            textOverflow: "ellipsis",
+                                            whiteSpace: "nowrap",
+                                          }}
+                                        >
+                                          {eachUser.fullname}
+                                        </span>
                                         {eachUser.isPrivate && (
                                           <span
                                             style={{
@@ -19003,39 +18956,39 @@ function RightSideColumn({
                                           </span>
                                         )}
                                         {eachUser.hasSubscription ||
-                                        (!subscription?.isActive &&
-                                          subscription?.remainingTimeSubscription &&
-                                          subscription?.cancelledDate &&
-                                          subscription?.owner ===
-                                            eachUser._id) ||
-                                        remainingTimeSubscriptionsOwnerIds.includes(
-                                          eachUser._id
-                                        ) ? (
-                                          <span
-                                            style={{
-                                              marginLeft: "5px",
-                                            }}
-                                          >
-                                            {/* start to check  */}{" "}
-                                            <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
-                                              <svg
-                                                width={`${1.25}em`}
-                                                height={`${1.25}em`}
-                                                viewBox="0 0 22 22"
-                                                aria-label="Verified account"
-                                                role="img"
-                                                className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
-                                                data-testid="verified-icon"
-                                                color="rgba(29,155,240,1.00)"
-                                                fill="currentColor"
-                                              >
-                                                <g>
-                                                  <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
-                                                </g>
-                                              </svg>
-                                            </span>{" "}
-                                          </span>
-                                        ) : null}
+                                          (!subscription?.isActive &&
+                                            subscription?.remainingTimeSubscription &&
+                                            subscription?.cancelledDate &&
+                                            subscription?.owner ===
+                                              eachUser._id) ||
+                                          (remainingTimeSubscriptionsOwnerIds.includes(
+                                            eachUser._id
+                                          ) && (
+                                            <span
+                                              style={{
+                                                marginLeft: "5px",
+                                              }}
+                                            >
+                                              {/* start to check  */}{" "}
+                                              <span className="css-1qaijid r-bcqeeo r-qvutc0 r-poiln3 r-1awozwy r-xoduu5">
+                                                <svg
+                                                  width={`${1.25}em`}
+                                                  height={`${1.25}em`}
+                                                  viewBox="0 0 22 22"
+                                                  aria-label="Verified account"
+                                                  role="img"
+                                                  className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-1plcrui r-lrvibr r-1cvl2hr r-f9ja8p r-og9te1 r-9cviqr"
+                                                  data-testid="verified-icon"
+                                                  color="rgba(29,155,240,1.00)"
+                                                  fill="currentColor"
+                                                >
+                                                  <g>
+                                                    <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"></path>
+                                                  </g>
+                                                </svg>
+                                              </span>{" "}
+                                            </span>
+                                          ))}
                                       </div>
                                     </div>
                                   </Link>

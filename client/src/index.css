@@ -3114,12 +3114,12 @@ select {
 
 .logout-modal-variant-parent .modal-content {
   min-width: 322px;
-  min-height: 358px !important;
+  /* min-height: 358px !important; */
 }
 
 .logout-modal-variant-parent-dark-theme .modal-content {
   min-width: 322px;
-  min-height: 358px;
+  /* min-height: 358px; */
   background-color: black;
 }
 
@@ -3357,23 +3357,21 @@ select {
 
 .unfollow-modal-dark-theme {
   width: 320px !important;
-  height: 300px !important;
   background-color: black !important;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 32px;
+  padding: 20px 32px 0px 32px;
 }
 
 .unfollow-modal {
   width: 320px !important;
-  height: 300px !important;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 32px;
+  padding: 20px 32px 0px 32px;
 }
 .unfollow-modal div,
 .unfollow-modal-dark-theme div {
