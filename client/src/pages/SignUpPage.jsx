@@ -3967,7 +3967,7 @@ function SignUpPage() {
                     Privacy Policy
                   </span>
                 </a>
-                ,including{" "}
+                , including{" "}
                 <a href="">
                   <span style={{ color: " rgb(29, 155, 240)" }}>Cokie Use</span>
                 </a>
