@@ -306,7 +306,7 @@ function ChangeYourPasswordMain() {
               </div>
             </>
           ) : null}{" "}
-          <div
+          {/* <div
             className="mt-1 chirp-regular-font"
             onClick={() => {
               navigate("/account/send_password_reset");
@@ -331,7 +331,7 @@ function ChangeYourPasswordMain() {
             >
               Forgot password?
             </span>{" "}
-          </div>
+          </div> */}
         </div>{" "}
         <div
           style={{

@@ -19617,6 +19617,7 @@ function RightSideColumn({
                                               width={`${1.25}em`}
                                               height={`${1.25}em`}
                                               isCutePopoverOnRightSide={true}
+                                              refreshPosts={getActivities}
                                             />
                                           </div>
                                           <div
@@ -19634,6 +19635,7 @@ function RightSideColumn({
                                               width={`${1.25}em`}
                                               height={`${1.25}em`}
                                               isCutePopoverOnRightSide={true}
+                                              refreshPosts={getActivities}
                                             />
                                           </div>
                                           <div
@@ -19651,6 +19653,7 @@ function RightSideColumn({
                                               width={`${1.25}em`}
                                               height={`${1.25}em`}
                                               isCutePopoverOnRightSide={true}
+                                              refreshPosts={getActivities}
                                             />
                                           </div>{" "}
                                         </div>

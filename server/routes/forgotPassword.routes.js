@@ -16,6 +16,7 @@ router.post(
   "/forgot-password-change-password",
   forgotPasswordController.handleChangePasswordForgotPasswordTab
 );
+
 router.post(
   "/login-after-forgot-password-process",
   forgotPasswordController.handleLoginAfterForgotPasswordProcess

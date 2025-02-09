@@ -1004,7 +1004,7 @@ function AccountInformationMain() {
                       left: "10px",
                     }}
                   >
-                    Forgot password?
+                    Forgot password?asd
                   </span>{" "}
                   {verifyPasswordErrorMessage &&
                     verifyPasswordInput?.length > 0 && (
