@@ -363,9 +363,7 @@ function AddYourPhoneNumber() {
                   }}
                   className="mt-2 chirp-regular-font"
                 >
-                  {
-                    "We'll send your verification code to {phoneNumber}. Standard SMS, call and data fees may apply."
-                  }
+                  {`We'll send your verification code to ${phoneNumber}. Standard SMS, call and data fees may apply.`}
                 </div>
               </div>
               <div
