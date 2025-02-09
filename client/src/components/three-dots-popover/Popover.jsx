@@ -10,6 +10,7 @@ import { useAntdMessageHandler } from "../../utils/useAntdMessageHandler";
 import BootstrapTooltip from "../BootstrapToolTip/BootstrapToolTip";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
 import { useNavigate } from "react-router-dom";
+import { StateRefreshTriggersContext } from "../../context/State-refresh-triggers-Context";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
@@ -39,6 +40,10 @@ function PostPopover({
     createdAnimationForClosingDeletePostModal,
     setCreatedAnimationForClosingDeletePostModal,
   ] = useState(null);
+
+  const { setTriggerRefreshWhoToFollow } = useContext(
+    StateRefreshTriggersContext
+  );
 
   const handleShowPostOptionsWithThreeDots = () => {
     setshowPostOptionsThreeDots(!showPostOptionsThreeDots);
@@ -134,9 +139,9 @@ function PostPopover({
     }
   };
 
-  const handleUnfollow = () => {
-    axios
-      .post(
+  const handleUnfollow = async () => {
+    try {
+      await axios.post(
         `${API_URL}/unfollow
           `,
         {
@@ -148,19 +153,19 @@ function PostPopover({
             Authorization: `Bearer ${getToken()}`,
           },
         }
-      )
-      .then(() => {
-        refreshPosts();
-        showCustomMessage(`You unfollowed @${post?.userId?.username}`, 6);
-      })
-      .catch((error) => {
-        console.error("Error =>", error);
-      });
+      );
+
+      refreshPosts();
+      setTriggerRefreshWhoToFollow((prev) => prev + 1);
+      showCustomMessage(`You unfollowed @${post?.userId?.username}`, 6);
+    } catch (error) {
+      console.error("Error =>", error);
+    }
   };
 
-  const handleFollow = () => {
-    axios
-      .post(
+  const handleFollow = async () => {
+    try {
+      await axios.post(
         `${API_URL}/follow`,
         {
           activeUserId: userInfo._id,
@@ -171,14 +176,14 @@ function PostPopover({
             Authorization: `Bearer ${getToken()}`,
           },
         }
-      )
-      .then(() => {
-        refreshPosts();
-        showCustomMessage(`You followed @${post?.userId?.username}`, 6);
-      })
-      .catch((error) => {
-        console.error("Error =>", error);
-      });
+      );
+
+      refreshPosts();
+      setTriggerRefreshWhoToFollow((prev) => prev + 1);
+      showCustomMessage(`You followed @${post?.userId?.username}`, 6);
+    } catch (error) {
+      console.error("Error =>", error);
+    }
   };
 
   // {profileInfo.followers

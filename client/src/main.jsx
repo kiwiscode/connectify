@@ -8,6 +8,7 @@ import { NavigationHistoryProvider } from "./context/NavigationHistoryContext.js
 import { FontSizeProvider } from "./context/FontSizeContext.jsx";
 import { ColorContextProvider } from "./context/ColorContext.jsx";
 import { UserProvider } from "./context/UserContext.jsx";
+import { StateRefreshTriggersContextProvider } from "./context/State-refresh-triggers-Context.jsx";
 import "./index.css";
 import "react-toastify/dist/ReactToastify.css";
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -19,7 +20,9 @@ root.render(
           <FontSizeProvider>
             <ColorContextProvider>
               <ModalVisibilityProvider>
-                <App />
+                <StateRefreshTriggersContextProvider>
+                  <App />
+                </StateRefreshTriggersContextProvider>
               </ModalVisibilityProvider>
             </ColorContextProvider>
           </FontSizeProvider>

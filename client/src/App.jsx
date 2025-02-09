@@ -6,6 +6,7 @@ import { Container, Row } from "react-bootstrap";
 import { SubscriptionStatusProvider } from "./context/SubscriptionStatusContext";
 import io from "socket.io-client";
 import { NavigationHistoryContext } from "./context/NavigationHistoryContext";
+import { StateRefreshTriggersContext } from "./context/State-refresh-triggers-Context";
 import { UserContext } from "./context/UserContext";
 
 import axios from "axios";
@@ -529,6 +530,34 @@ function App() {
     }
   }, [location.pathname, getToken()]);
 
+  // hmmm start to check
+  const { triggerRefreshWhoToFollow } = useContext(StateRefreshTriggersContext);
+  const [first3User, setFirst3User] = useState([]);
+
+  const getWhoToFollowFirst3 = async () => {
+    console.log("trigger refresh who to follow:", triggerRefreshWhoToFollow);
+    try {
+      const response = await axios.get(`${API_URL}/get-most-followed-3-user`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+
+      setFirst3User(response.data.first3User);
+      console.log(
+        "response after trigger who to follow refresh:",
+        response.data
+      );
+    } catch (error) {
+      console.error("Error =>", error);
+    }
+  };
+
+  useEffect(() => {
+    getWhoToFollowFirst3();
+  }, [triggerRefreshWhoToFollow]);
+  // hmmm finish to check
+
   return (
     <>
       <div
@@ -891,6 +920,7 @@ function App() {
                         openIndividualEligibilityVerifyNumberScreen
                       }
                       premiumInfoFromParentAppJsx={premiumInfo}
+                      first3User={first3User}
                     />
                   )}
               </Row>

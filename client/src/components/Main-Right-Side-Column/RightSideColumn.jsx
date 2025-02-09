@@ -55,6 +55,7 @@ function RightSideColumn({
   isVerifiedOrgsSignUpRoute,
   isSubscriptionEligibilityCheckRouteForIndividualSubscription,
   premiumInfoFromParentAppJsx,
+  first3User,
 }) {
   const { subscription, remainingTimeSubscriptionsOwnerIds } = useContext(
     SubcsriptionStatusContext
@@ -171,8 +172,6 @@ function RightSideColumn({
   const [stopAnimation, setStopAnimation] = useState(false);
   // finish to check search implementation for main component right side column
 
-  const [first3User, setFirst3User] = useState([]);
-
   // sticky position implementation start to check
   const [scrollPosition, setScrollPosition] = useState(0);
   useEffect(() => {
@@ -187,20 +186,25 @@ function RightSideColumn({
   };
   // sticky position implementation finish to check
 
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/get-most-followed-3-user`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
-      .then((response) => {
-        setFirst3User(response.data.first3User);
-      })
-      .catch((error) => {
-        console.error("Error =>", error);
-      });
-  }, []);
+  // lifted the state up for general control over who to follow section start to check
+  // const [first3User, setFirst3User] = useState([]);
+  // useEffect(() => {
+  //   axios
+  //     .get(`${API_URL}/get-most-followed-3-user`, {
+  //       headers: {
+  //         Authorization: `Bearer ${getToken()}`,
+  //       },
+  //     })
+  //     .then((response) => {
+  //       setFirst3User(response.data.first3User);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error =>", error);
+  //     });
+  // }, []);
+  // lifted the state up for general control over who to follow section finish to check
+
+  console.log("first 3 user from right side column component:", first3User);
 
   const refreshActiveUser = () => {
     axios
@@ -18817,12 +18821,13 @@ function RightSideColumn({
               {first3User
                 ? first3User.map((eachUser, index) => {
                     const buttonId = `followButton_${index}`;
-                    const isFollowing = allFollowingsFromActiveUser()?.includes(
-                      eachUser._id
+                    // const isFollowing = allFollowingsFromActiveUser()?.includes(
+                    //   eachUser._id
+                    // );
+                    const isFollowing = eachUser.followers.includes(
+                      userInfo._id
                     );
-                    if (isFollowing) {
-                      null;
-                    }
+
                     return (
                       <div key={eachUser._id}>
                         {eachUser._id !== userInfo._id && (
