@@ -11,6 +11,7 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 
 import { SubcsriptionStatusContext } from "../../context/SubscriptionStatusContext";
 import { useFontSizeHandler } from "../../utils/useFontSizeHandler";
+import { StateRefreshTriggersContext } from "../../context/State-refresh-triggers-Context";
 
 function PostEngagements({
   detailedPost,
@@ -55,7 +56,7 @@ function PostEngagements({
     setshowReposts(false);
   };
 
-  const [isHovered, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = useState(null);
 
   const getTabStyle = (tab) => {
     return {
@@ -124,9 +125,13 @@ function PostEngagements({
   const [selectedUser, setSelectedUser] = useState("");
   const [showUnfollowModal, setshowUnfollowModal] = useState(false);
 
+  const { setTriggerRefreshWhoToFollow } = useContext(
+    StateRefreshTriggersContext
+  );
+
   const openUnfollowModal = (selectedUser) => {
     setSelectedUser(selectedUser);
-    setIsHovered(false);
+    setIsHovered(null);
     setshowUnfollowModal(true);
   };
 
@@ -147,10 +152,11 @@ function PostEngagements({
           },
         }
       )
-      .then((res) => {
+      .then(() => {
         getActiveUser();
         setClicked(!clicked);
-        setIsHovered(false);
+        setIsHovered(null);
+        setTriggerRefreshWhoToFollow((prev) => prev + 1);
         handleCloseUnfollowModal();
       })
       .catch((error) => {
@@ -302,7 +308,7 @@ function PostEngagements({
                     };
 
                     const handleMouseLeave = () => {
-                      setIsHovered(false);
+                      setIsHovered(null);
                     };
                     const buttonStyles = {
                       transitionDuration: "0.2s",
@@ -312,9 +318,11 @@ function PostEngagements({
                       display: "inline",
                       maxWidth: "107px",
                       border:
-                        isHovered && isFollowing && themeName !== "dark-theme"
+                        isHovered === buttonId &&
+                        isFollowing &&
+                        themeName !== "dark-theme"
                           ? "1px solid rgba(253,201,206,255)"
-                          : isHovered &&
+                          : isHovered === buttonId &&
                             isFollowing &&
                             themeName === "dark-theme"
                           ? "1px solid #e71f2c"
@@ -324,11 +332,11 @@ function PostEngagements({
                       backgroundColor:
                         !isFollowing && themeName === "dark-theme"
                           ? "white"
-                          : isHovered &&
+                          : isHovered === buttonId &&
                             isFollowing &&
                             themeName !== "dark-theme"
                           ? "rgba(255,234,235,255)"
-                          : isHovered &&
+                          : isHovered === buttonId &&
                             isFollowing &&
                             themeName === "dark-theme"
                           ? "#230608"
@@ -340,7 +348,7 @@ function PostEngagements({
                       color:
                         !isFollowing && themeName === "dark-theme"
                           ? "black"
-                          : isHovered && isFollowing
+                          : isHovered === buttonId && isFollowing
                           ? "rgba(244,34,45,255)"
                           : isFollowing && themeName !== "dark-theme"
                           ? "black"
@@ -364,8 +372,8 @@ function PostEngagements({
                         .then(() => {
                           // getActiveUser();
                           setClicked(!clicked);
-
-                          setIsHovered(false);
+                          setIsHovered(null);
+                          setTriggerRefreshWhoToFollow((prev) => prev + 1);
                         })
                         .catch((error) => {
                           console.error(error);
@@ -430,12 +438,13 @@ function PostEngagements({
                             className="p-0"
                           >
                             <Link
+                              className="flex justify-start items-center"
                               to={`/profile/${eachReposter._id}`}
                               style={{
                                 textDecoration: "none",
                               }}
                             >
-                              <span
+                              <div
                                 className="hover-fullname chirp-bold-font"
                                 style={{
                                   color:
@@ -448,7 +457,29 @@ function PostEngagements({
                                 }}
                               >
                                 {eachReposter.fullname}
-                              </span>
+                              </div>
+                              {eachReposter.isPrivate && (
+                                <div className="ml-[5px] flex">
+                                  <svg
+                                    fill={
+                                      themeName === "dark-theme"
+                                        ? "#E6E9EA"
+                                        : "#0F141A"
+                                    }
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    viewBox="0 0 24 24"
+                                    aria-label="Protected account"
+                                    role="img"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-lrvibr r-m6rgpd r-3t4u6i r-18jsvk2 r-f9ja8p r-og9te1"
+                                    data-testid="icon-lock"
+                                  >
+                                    <g>
+                                      <path d="M17.5 7H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.39 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.89 7 17.5 7zM13 14.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2 0 .74-.4 1.39-1 1.73zM15 7H9v-.25c0-1.66 1.35-3 3-3 1.66 0 3 1.34 3 3V7z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              )}
                               {/* Verified Account Icon (Assuming 'verified' is a boolean property) start to check */}
                               {eachReposter.hasSubscription ||
                               (!subscription?.isActive &&
@@ -638,7 +669,7 @@ function PostEngagements({
                     };
 
                     const handleMouseLeave = () => {
-                      setIsHovered(false);
+                      setIsHovered(null);
                     };
                     const buttonStyles = {
                       transitionDuration: "0.2s",
@@ -649,9 +680,11 @@ function PostEngagements({
                       maxWidth: "107px",
 
                       border:
-                        isHovered && isFollowing && themeName !== "dark-theme"
+                        isHovered === buttonId &&
+                        isFollowing &&
+                        themeName !== "dark-theme"
                           ? "1px solid rgba(253,201,206,255)"
-                          : isHovered &&
+                          : isHovered === buttonId &&
                             isFollowing &&
                             themeName === "dark-theme"
                           ? "1px solid #e71f2c"
@@ -661,11 +694,11 @@ function PostEngagements({
                       backgroundColor:
                         !isFollowing && themeName === "dark-theme"
                           ? "white"
-                          : isHovered &&
+                          : isHovered === buttonId &&
                             isFollowing &&
                             themeName !== "dark-theme"
                           ? "rgba(255,234,235,255)"
-                          : isHovered &&
+                          : isHovered === buttonId &&
                             isFollowing &&
                             themeName === "dark-theme"
                           ? "#230608"
@@ -677,7 +710,7 @@ function PostEngagements({
                       color:
                         !isFollowing && themeName === "dark-theme"
                           ? "black"
-                          : isHovered && isFollowing
+                          : isHovered === buttonId && isFollowing
                           ? "rgba(244,34,45,255)"
                           : isFollowing && themeName !== "dark-theme"
                           ? "black"
@@ -701,8 +734,8 @@ function PostEngagements({
                         .then(() => {
                           // getActiveUser();
                           setClicked(!clicked);
-
-                          setIsHovered(false);
+                          setIsHovered(null);
+                          setTriggerRefreshWhoToFollow((prev) => prev + 1);
                         })
                         .catch((error) => {
                           console.error("error =>", error);
@@ -767,12 +800,13 @@ function PostEngagements({
                             className="p-0"
                           >
                             <Link
+                              className="flex justify-start items-center"
                               to={`/profile/${eachLiker._id}`}
                               style={{
                                 textDecoration: "none",
                               }}
                             >
-                              <span
+                              <div
                                 className="hover-fullname chirp-bold-font"
                                 style={{
                                   color:
@@ -784,7 +818,29 @@ function PostEngagements({
                                 }}
                               >
                                 {eachLiker.fullname}
-                              </span>
+                              </div>
+                              {eachLiker.isPrivate && (
+                                <div className="ml-[5px] flex">
+                                  <svg
+                                    fill={
+                                      themeName === "dark-theme"
+                                        ? "#E6E9EA"
+                                        : "#0F141A"
+                                    }
+                                    width={`${1.25}em`}
+                                    height={`${1.25}em`}
+                                    viewBox="0 0 24 24"
+                                    aria-label="Protected account"
+                                    role="img"
+                                    className="r-4qtqp9 r-yyyyoo r-1xvli5t r-bnwqim r-lrvibr r-m6rgpd r-3t4u6i r-18jsvk2 r-f9ja8p r-og9te1"
+                                    data-testid="icon-lock"
+                                  >
+                                    <g>
+                                      <path d="M17.5 7H17v-.25c0-2.76-2.24-5-5-5s-5 2.24-5 5V7h-.5C5.12 7 4 8.12 4 9.5v9C4 19.88 5.12 21 6.5 21h11c1.39 0 2.5-1.12 2.5-2.5v-9C20 8.12 18.89 7 17.5 7zM13 14.73V17h-2v-2.27c-.59-.34-1-.99-1-1.73 0-1.1.9-2 2-2 1.11 0 2 .9 2 2 0 .74-.4 1.39-1 1.73zM15 7H9v-.25c0-1.66 1.35-3 3-3 1.66 0 3 1.34 3 3V7z"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              )}
                             </Link>
                             {/* Verified Account Icon (Assuming 'verified' is a boolean property) start to check */}
                             {eachLiker.hasSubscription ||

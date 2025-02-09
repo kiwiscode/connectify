@@ -315,8 +315,9 @@ function MobileTopNavigation({ noIcon, navigationBarOpenedStatus }) {
                       {userInfo.fullname}
                     </div>
                     <div
+                      className="flex"
                       style={{
-                        marginLeft: "2px",
+                        marginLeft: "5px",
                       }}
                     >
                       {userInfo?.isPrivate && (

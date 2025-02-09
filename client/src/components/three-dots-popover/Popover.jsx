@@ -186,16 +186,6 @@ function PostPopover({
     }
   };
 
-  // {profileInfo.followers
-  //   ? getFollowerIds(profileInfo.followers).includes(
-  //       userInfo._id
-  //     )
-  //     ? isHovered
-  //       ? "Unfollow"
-  //       : "Following"
-  //     : "Follow"
-  //   : null}
-
   return (
     <>
       {contextHolder}

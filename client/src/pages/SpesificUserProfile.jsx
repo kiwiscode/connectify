@@ -23,8 +23,13 @@ import { SubcsriptionStatusContext } from "../context/SubscriptionStatusContext"
 import { useFontSizeHandler } from "../utils/useFontSizeHandler";
 import lightThemeCoverBG from "../assets/cover-backgrounds/ligh-theme-no-cover.png";
 import darkThemeCoverBG from "../assets/cover-backgrounds/dark-theme-no-cover.png";
+import { StateRefreshTriggersContext } from "../context/State-refresh-triggers-Context";
 function SpesificUserProfile({ isNewPostShared }) {
   const [{ themeName }] = useContext(ThemeContext);
+
+  const { setTriggerRefreshWhoToFollow } = useContext(
+    StateRefreshTriggersContext
+  );
 
   const { subscription, remainingTimeSubscriptionsOwnerIds } = useContext(
     SubcsriptionStatusContext
@@ -156,6 +161,7 @@ function SpesificUserProfile({ isNewPostShared }) {
           }
         )
         .then(() => {
+          setTriggerRefreshWhoToFollow((prev) => prev + 1);
           getFollowingArray();
           // start to check animation basic
           if (postsWindow === "hide") {
@@ -213,6 +219,7 @@ function SpesificUserProfile({ isNewPostShared }) {
           }
         )
         .then(() => {
+          setTriggerRefreshWhoToFollow((prev) => prev + 1);
           getFollowingArray();
           if (postsWindow === "hide") {
             handleShowSpesificUserProfilePageFavorites();

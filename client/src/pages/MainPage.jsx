@@ -2637,18 +2637,14 @@ function MainPage({ isNewPostShared }) {
                                           overflow: "hidden",
                                           textOverflow: "ellipsis",
                                           whiteSpace: "nowrap",
-                                          width: "120px",
+                                          maxWidth: "120px",
                                         }}
                                       >
                                         {post.authorFullName}
                                       </span>
                                     </Link>{" "}
                                     {post?.userId?.isPrivate && (
-                                      <span
-                                        style={{
-                                          marginRight: "5px",
-                                        }}
-                                      >
+                                      <span>
                                         <svg
                                           fill={
                                             themeName === "dark-theme"
