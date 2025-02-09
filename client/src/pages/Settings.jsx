@@ -509,7 +509,7 @@ function Settings() {
                 </svg>
               </div>
             </div>
-            <div
+            {/* <div
               onClick={() => {
                 navigate("/settings/security_and_account_access");
               }}
@@ -546,7 +546,7 @@ function Settings() {
                   </g>
                 </svg>
               </div>
-            </div>
+            </div> */}
             <div
               onClick={() => {
                 navigate("/settings/privacy_and_safety");
@@ -579,7 +579,7 @@ function Settings() {
                 </svg>
               </div>
             </div>
-            <div
+            {/* <div
               onClick={() => {
                 navigate("/settings/notifications");
               }}
@@ -609,7 +609,7 @@ function Settings() {
                   </g>
                 </svg>
               </div>
-            </div>
+            </div> */}
             <div
               onClick={() => {
                 navigate("/settings/accessibility_display_and_languages");
@@ -644,7 +644,7 @@ function Settings() {
                 </svg>
               </div>
             </div>
-            <div
+            {/* <div
               onClick={() => {
                 navigate("/settings/about");
               }}
@@ -674,8 +674,8 @@ function Settings() {
                   </g>
                 </svg>
               </div>
-            </div>
-            <div
+            </div> */}
+            {/* <div
               className="has-children"
               style={{
                 display: "flex",
@@ -690,7 +690,7 @@ function Settings() {
                   </g>
                 </svg>
               </div>
-            </div>
+            </div> */}
           </div>
           {/* setting options ...finish to check  */}
         </Stack>
