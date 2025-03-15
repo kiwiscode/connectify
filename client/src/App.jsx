@@ -535,7 +535,6 @@ function App() {
   const [first3User, setFirst3User] = useState([]);
 
   const getWhoToFollowFirst3 = async () => {
-    console.log("trigger refresh who to follow:", triggerRefreshWhoToFollow);
     try {
       const response = await axios.get(`${API_URL}/get-most-followed-3-user`, {
         headers: {
@@ -544,10 +543,6 @@ function App() {
       });
 
       setFirst3User(response.data.first3User);
-      console.log(
-        "response after trigger who to follow refresh:",
-        response.data
-      );
     } catch (error) {
       console.error("Error =>", error);
     }

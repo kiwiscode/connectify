@@ -209,8 +209,6 @@ function RightSideColumn({
   // }, []);
   // lifted the state up for general control over who to follow section finish to check
 
-  console.log("first 3 user from right side column component:", first3User);
-
   const refreshActiveUser = () => {
     axios
       .get(`${API_URL}/profile`, {
@@ -1212,9 +1210,7 @@ function RightSideColumn({
           },
         }
       )
-      .then((response) => {
-        console.log("Response =>", response);
-      })
+      .then((response) => {})
       .catch((error) => {
         console.error("Error =>", error);
       });

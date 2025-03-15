@@ -44,12 +44,6 @@ function ConfirmPinResetMain() {
       });
   };
 
-  console.log(
-    "response received verification code for password change:",
-    receivedVerificationCodeForPasswordChange
-  );
-  console.log("verificationCodeInput:", verificationCodeInput);
-
   const {
     getFontSizeAndLineHeight31,
     getFontSizeAndLineHeight15,
