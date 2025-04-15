@@ -82,19 +82,6 @@ router.post(
         ""
       ),
     };
-
-    console.log(
-      "Before qr code ! =>",
-      premiumInfoGlobal,
-      premiumRoleGlobal,
-      verifyPhoneCodeGlobal,
-      countryShortCutGlobal,
-      countryPhoneCodeGlobal,
-      selectedCountryGlobal,
-      phoneNumberGlobal,
-      resultPhoneNumberGlobal
-    );
-    console.log("Şu anda buradayız !!!");
   }
 );
 
@@ -105,54 +92,6 @@ router.post("/sms", async (req, res) => {
     const userMessageContent = req.body.Body;
     const userPhoneNumber = req.body.From;
 
-    console.log("User verify phone number code input =>", userMessageContent);
-
-    console.log("Received number from user =>", req.body.From);
-    console.log(
-      "Received number from verify phone number input by user with plus sign and without plus sign =>",
-      resultPhoneNumberGlobal ? resultPhoneNumberGlobal : null
-    );
-
-    console.log(
-      "After sms ! =>",
-      premiumInfoGlobal,
-      premiumRoleGlobal,
-      verifyPhoneCodeGlobal,
-      countryShortCutGlobal,
-      countryPhoneCodeGlobal,
-      selectedCountryGlobal,
-      phoneNumberGlobal
-    );
-    console.log(
-      "After sms ! =>",
-      resultPhoneNumberGlobal ? resultPhoneNumberGlobal : null
-    );
-
-    console.log(
-      "Verify phone code from global variable =>",
-      verifyPhoneCodeGlobal
-    );
-    console.log("User send this code =>", userMessageContent);
-    console.log("User phone number:", userPhoneNumber);
-    console.log(
-      "Result phone number global with plus sign =>",
-      resultPhoneNumberGlobal.withPlusSign
-    );
-    console.log(
-      "Result phone number global without plus sign =>",
-      resultPhoneNumberGlobal.withoutPlusSign
-    );
-    console.log(
-      "First condition =>",
-      userMessageContent === verifyPhoneCodeGlobal
-    );
-
-    console.log(
-      "Second condition =>",
-      userPhoneNumber === resultPhoneNumberGlobal.withPlusSign ||
-        userPhoneNumber === resultPhoneNumberGlobal.withoutPlusSign
-    );
-
     if (
       userMessageContent === verifyPhoneCodeGlobal &&
       (userPhoneNumber === resultPhoneNumberGlobal.withPlusSign ||
@@ -160,17 +99,9 @@ router.post("/sms", async (req, res) => {
     ) {
       isVerifyCodeCorrect = true;
       isPhoneNumberMatch = true;
-      console.log(
-        "User send a correct verification code => ",
-        isVerifyCodeCorrect
-      );
     } else {
       isVerifyCodeCorrect = false;
       isPhoneNumberMatch = false;
-      console.log(
-        "User send a correct verification code => ",
-        isVerifyCodeCorrect
-      );
     }
 
     return res.type("text/xml").send(twiml.toString());
@@ -182,21 +113,6 @@ router.post("/sms", async (req, res) => {
 
 router.post("/verify-phone-for-individual-subscription", async (req, res) => {
   try {
-    console.log(
-      "After finishing sms process ! =>",
-      premiumInfoGlobal,
-      premiumRoleGlobal,
-      verifyPhoneCodeGlobal,
-      countryShortCutGlobal,
-      countryPhoneCodeGlobal,
-      selectedCountryGlobal,
-      phoneNumberGlobal
-    );
-    console.log(
-      "After finishing sms process ! =>",
-      resultPhoneNumberGlobal ? resultPhoneNumberGlobal : null
-    );
-
     if (isVerifyCodeCorrect && isPhoneNumberMatch) {
       subscriptionProcessError = false;
       individualSubscriptionCanStart = true;
@@ -302,25 +218,8 @@ router.post(
   async (request, response) => {
     try {
       const event = request.body;
-      console.log("User info =>", userInfoGlobal, premiumInfoGlobal);
       const userId = premiumInfoGlobal?.user._id || userInfoGlobal?._id;
       const findedUser = await User.findById(userId);
-      console.log("Got payload ", JSON.stringify(event, null, 2));
-
-      console.log(
-        "Premium role for individual in general =>",
-        premiumInfoGlobal?.premiumRole
-      );
-      console.log(
-        "Premium role organization basic =>",
-        organizationSubPremiumRoleGlobal,
-        organizationSubPremiumTypeGlobal
-      );
-      console.log(
-        "Premium role organization full access =>",
-        organizationSubPremiumRoleGlobal,
-        organizationSubPremiumTypeGlobal
-      );
 
       const premiumRole = premiumInfoGlobal?.premiumRole;
 
@@ -340,8 +239,6 @@ router.post(
         await pastSubscription[0].save();
       }
 
-      console.log("Has past subscription =>", pastSubscription);
-
       // Handle the event
       switch (event.type) {
         case "payment_intent.succeeded":
@@ -350,9 +247,7 @@ router.post(
 
           if (!subscriptionProcessError) {
             if (premiumRole === "Individual") {
-              console.log("Individual subscription processing !");
               if (!findedUser.hasSubscription) {
-                console.log("Buradaki condition çalışıyor şu anda !");
                 findedUser.isPhoneVerified = true;
                 findedUser.phoneNumber.unshift(resultPhoneNumberGlobal);
                 findedUser.verifiedPhoneNumberDetail = {
@@ -400,18 +295,6 @@ router.post(
                   },
                 });
               } else {
-                console.log("Buradaki condition çalışıyor şu anda 2 !");
-                console.log(
-                  resultPhoneNumberGlobal,
-                  countryShortCutGlobal,
-                  countryPhoneCodeGlobal,
-                  selectedCountryGlobal,
-                  verifyPhoneCodeGlobal,
-                  premiumRoleGlobal,
-                  premiumInfoGlobal.premiumType,
-                  premiumInfoGlobal.planType,
-                  premiumInfoGlobal.planPrice
-                );
                 if (
                   resultPhoneNumberGlobal &&
                   countryShortCutGlobal &&
@@ -423,7 +306,6 @@ router.post(
                   premiumInfoGlobal.planType &&
                   premiumInfoGlobal.planPrice
                 ) {
-                  console.log("And now we are here after condition !!!");
                   findedUser.phoneNumber[0] = resultPhoneNumberGlobal;
                   findedUser.verifiedPhoneNumberDetail = {
                     user: userId,
@@ -486,12 +368,8 @@ router.post(
               organizationSubPremiumRoleGlobal === "Organization" &&
               organizationSubPremiumTypeGlobal === "Basic"
             ) {
-              console.log(
-                "Organization basic type subscription ready to process"
-              );
               if (!findedUser.hasSubscription) {
                 findedUser.hasSubscription = true;
-                console.log("We are here right now first if condition !!!");
 
                 const createdSubscription = await Subscription.create({
                   owner: findedUser._id.toString(),
@@ -532,17 +410,7 @@ router.post(
                   organizationSubPlanPriceBasicGlobal
                 ) {
                   findedUser.successSubscriptionModalShown = false;
-                  console.log(
-                    "We are here right now if condition from else condition for parent if statement !!!"
-                  );
 
-                  console.log(
-                    "Info for creating subscription =>",
-                    organizationSubPremiumRoleGlobal,
-                    organizationSubPremiumTypeGlobal,
-                    organizationSubPlanTypeBasicGlobal,
-                    organizationSubPlanPriceBasicGlobal
-                  );
                   if (activeSubscription[0]) {
                     activeSubscription[0].isActive = false;
                     activeSubscription[0].cancelledDate = new Date();
@@ -561,10 +429,6 @@ router.post(
                     isActive: true,
                   });
 
-                  console.log(
-                    "Created subscription collection =>",
-                    createdSubscription
-                  );
                   findedUser.subscriptions.unshift(
                     createdSubscription._id.toString()
                   );
@@ -596,24 +460,9 @@ router.post(
               organizationSubPremiumRoleGlobal === "Organization" &&
               organizationSubPremiumTypeGlobal === "Full Access"
             ) {
-              console.log(
-                "Organization full access type subscription ready to process"
-              );
               if (!findedUser.hasSubscription) {
                 findedUser.hasSubscription = true;
-                console.log(
-                  "Global variable values inside organization full access subscription first condition =>",
-                  userInfoGlobal.username,
-                  organizationSubPremiumRoleGlobal,
-                  organizationSubPremiumTypeGlobal,
-                  organizationSubPlanTypeFullAccessGlobal,
-                  organizationSubPlanPriceFullAccessGlobal,
-                  organizationNameGlobal,
-                  yourFullNameGlobal,
-                  organizationEmailAdressGlobal,
-                  organizationWebSiteGlobal,
-                  displayedOrganizationTypeGlobal
-                );
+
                 const createdSubscription = await Subscription.create({
                   owner: findedUser._id.toString(),
                   role: organizationSubPremiumRoleGlobal,
@@ -633,10 +482,6 @@ router.post(
                   },
                 });
 
-                console.log(
-                  "Created subscription with organization info =>",
-                  createdSubscription
-                );
                 findedUser.subscriptions.unshift(
                   createdSubscription._id.toString()
                 );
@@ -676,19 +521,6 @@ router.post(
                   organizationWebSiteGlobal &&
                   displayedOrganizationTypeGlobal
                 ) {
-                  console.log(
-                    "Global variable values inside organization full access subscription second condition =>",
-                    userInfoGlobal.username,
-                    organizationSubPremiumRoleGlobal,
-                    organizationSubPremiumTypeGlobal,
-                    organizationSubPlanTypeFullAccessGlobal,
-                    organizationSubPlanPriceFullAccessGlobal,
-                    organizationNameGlobal,
-                    yourFullNameGlobal,
-                    organizationEmailAdressGlobal,
-                    organizationWebSiteGlobal,
-                    displayedOrganizationTypeGlobal
-                  );
                   findedUser.successSubscriptionModalShown = false;
                   if (activeSubscription[0]) {
                     activeSubscription[0].isActive = false;
@@ -719,10 +551,7 @@ router.post(
                   findedUser.subscriptions.unshift(
                     createdSubscription._id.toString()
                   );
-                  console.log(
-                    "Created subscription with organization info =>",
-                    createdSubscription
-                  );
+
                   await findedUser.save();
                   // clean all global variables for every checkout success process start to check
                   userInfoGlobal = undefined;
@@ -753,8 +582,6 @@ router.post(
                 }
               }
             }
-          } else {
-            console.log("Buradaki condition çalışıyor şu anda 3 !");
           }
 
           break;
@@ -763,7 +590,6 @@ router.post(
       }
       response.status(200).end();
     } catch (error) {
-      console.log("Buradaki durum çalışıyor şu anda stripe-webhook içerisi !");
       response.status(500).json({
         errorMessage:
           "An error occurred. Subscription process could not be completed. -1",
@@ -786,34 +612,12 @@ router.post(
       organizationSubPlanPriceBasic,
     } = request.body;
 
-    console.log("Burası çalışıyor şu an !");
-
     userInfoGlobal = userInfo;
     organizationSubPremiumRoleGlobal = organizationSubPremiumRole;
     organizationSubPremiumTypeGlobal = organizationSubPremiumType;
     organizationSubPlanTypeBasicGlobal = organizationSubPlanTypeBasic;
     organizationSubPlanPriceBasicGlobal = organizationSubPlanPriceBasic;
 
-    console.log(
-      "organization sub plan type basic global =>",
-      organizationSubPlanTypeBasicGlobal
-    );
-    console.log(
-      "organization sub plan price basic global =>",
-      organizationSubPlanPriceBasicGlobal
-    );
-
-    console.log(
-      "Global variable values =>",
-      userInfoGlobal.username,
-      userInfoGlobal._id,
-      "organizationSubPremiumRoleGlobal =>",
-      organizationSubPremiumRoleGlobal,
-      "organizationSubPremiumTypeGlobal =>",
-      organizationSubPremiumTypeGlobal,
-      organizationSubPlanTypeBasicGlobal,
-      organizationSubPlanPriceBasicGlobal
-    );
     const line_items = [
       {
         price_data: {
@@ -898,22 +702,6 @@ router.post(
     organizationWebSiteGlobal = organizationWebSite;
     displayedOrganizationTypeGlobal = displayedOrganizationType;
 
-    console.log("organizationSubPremiumRole =>", organizationSubPremiumRole);
-    console.log("organizationSubPremiumType =>", organizationSubPremiumType);
-
-    console.log(
-      "Global variable values =>",
-      userInfoGlobal.username,
-      organizationSubPremiumRoleGlobal,
-      organizationSubPremiumTypeGlobal,
-      organizationSubPlanTypeFullAccessGlobal,
-      organizationSubPlanPriceFullAccessGlobal,
-      organizationNameGlobal,
-      yourFullNameGlobal,
-      organizationEmailAdressGlobal,
-      organizationWebSiteGlobal,
-      displayedOrganizationTypeGlobal
-    );
     const line_items = [
       {
         price_data: {
@@ -1007,7 +795,6 @@ router.post(
           message: "Subscription modal has been shown to the user previously.",
         });
       } else if (!user.successSubscriptionModalShown && user.hasSubscription) {
-        console.log("Here 3");
         // clean all global variables for every checkout success process start to check
         premiumInfoGlobal = undefined;
         premiumRoleGlobal = undefined;
@@ -1080,7 +867,6 @@ router.post(
         });
       }
     } catch {
-      console.log("Here 1");
       res.status(500).json({
         success: true,
         message: "User not found!",

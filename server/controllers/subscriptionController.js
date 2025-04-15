@@ -3,13 +3,7 @@ const User = require("../models/User.model");
 const handleThisUserPhoneVerified = async (req, res) => {
   const { isPhoneVerifiedThisUser } = req.body;
 
-  console.log("Is phone verified check user =>", isPhoneVerifiedThisUser);
   try {
-    console.log(
-      "Is phone verified username =>",
-      isPhoneVerifiedThisUser.username
-    );
-
     const findedUser = await User.findById(isPhoneVerifiedThisUser._id);
 
     const isPhoneVerified = findedUser.isPhoneVerified;
@@ -26,13 +20,6 @@ const handleThisUserPhoneVerified = async (req, res) => {
         info: "Your phone number could not be found. Please make sure you have provided a valid phone number.",
       });
     }
-
-    console.log(
-      "Phone verified =>",
-      isPhoneVerified,
-      "Phone number (current) =>",
-      isPhoneNumberExist
-    );
   } catch (error) {
     console.error("Error =>", error);
     res.status(500).json({ error: "User not found !" });

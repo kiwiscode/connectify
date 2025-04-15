@@ -13,9 +13,6 @@ const handleGetForgotPasswordProcessUser = async (req, res) => {
   try {
     const { findConnectifyAccount, userId } = req.body;
 
-    console.log("user id:", userId);
-    console.log("find connectify account:", findConnectifyAccount);
-
     const emailRegex =
       /^[a-zA-Z0-9._%+-]+@(gmail|outlook|hotmail|yahoo|proton|zoho|mail|aol|yandex)\.(com|org|net|gov|edu|mil|co|info|de|co.uk|ca|me|tr|com.tr)$/;
 
@@ -45,7 +42,6 @@ const handleGetForgotPasswordProcessUser = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log("Error:", error);
     res.status(501).json({ errorMessage: "Internal server error!" });
   }
 };

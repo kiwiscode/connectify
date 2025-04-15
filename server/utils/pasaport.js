@@ -37,11 +37,6 @@ passport.use(
         });
 
         if (!existingUser) {
-          console.log(
-            "google profile during log in when user not exist :",
-            profile
-          );
-
           const fullname = profile.displayName;
           let username =
             fullname.split(/\s+/).join("") +
@@ -77,13 +72,9 @@ passport.use(
             },
           });
 
-          console.log("user created");
-
           // Google ID'yi callback'e dahil ederek geri dön
           return callback(null, newUser, { googleId: profile.id });
         } else {
-          console.log("google profile during log in when user exist:", profile);
-
           if (!existingUser.googleId) {
             const googleId = profile.id;
 
@@ -113,7 +104,6 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (id, done) => {
   try {
     const existingUser = await User.findById(id);
-    console.log("deserialize user:", existingUser);
     done(null, existingUser);
   } catch (err) {
     done(err, null);

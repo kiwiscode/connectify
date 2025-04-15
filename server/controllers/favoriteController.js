@@ -658,12 +658,8 @@ const handleDeleteFavorite = (req, res) => {
 
                     user.favorites = filteredFavoritesUserArray;
                     user.save();
-                  } else {
-                    console.log(
-                      "Error occured while deleting the notification !"
-                    );
-                    return;
                   }
+                  return;
                 })
                 .catch(() => {
                   res.status(404).json({
@@ -686,7 +682,7 @@ const handleDeleteFavorite = (req, res) => {
                     const mainId = foundItem._id;
                     Favorite.findByIdAndDelete(mainId)
                       .then(() => {
-                        console.log("Belirtilen favori başarıyla silindi.");
+                        console.log("Favorite deleted.");
                       })
                       .catch((error) => {
                         console.error("Hata oluştu:", error.message);

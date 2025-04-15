@@ -90,17 +90,12 @@ const handleSignup = async (req, res, next) => {
 
   const userIp = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
 
-  console.log("User IP:", userIp);
-  console.log(signedUserInfo);
-
   let fullname = signedUserInfo.fullname;
   const email = signedUserInfo.email;
   const password = signedUserInfo.password;
   const birthMonth = signedUserInfo.selectedMonth;
   const birthDay = signedUserInfo.selectedDay;
   const birthYear = signedUserInfo.selectedYear;
-
-  console.log(fullname, email, password, birthMonth, birthDay, birthYear);
 
   const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
   if (!regex.test(password) || password.length < 8) {
@@ -130,7 +125,6 @@ const handleSignup = async (req, res, next) => {
         .then((salt) => bcrypt.hash(password, salt))
         .then((hashedPassword) => {
           fullname = capitalize(fullname);
-          console.log("THIS LINE IS WORKING 3");
           return User.create({
             fullname,
             username: username + generate5DifferentNumbers().join(""),
@@ -158,8 +152,6 @@ const handleSignup = async (req, res, next) => {
             expiresIn: "7d",
           });
           res.status(201).json({ token: token });
-          console.log("THIS LINE IS WORKING 5");
-          console.log("Token =>", token);
         })
         .catch((error) => {
           next(error);
@@ -172,8 +164,6 @@ const handleSignup = async (req, res, next) => {
 
 const handleLogin = (req, res, next) => {
   const { authentication, password } = req.body;
-
-  console.log("Signed user =>", authentication);
 
   const email = authentication.email;
 
@@ -190,14 +180,9 @@ const handleLogin = (req, res, next) => {
       bcrypt
         .compare(password, user.password)
         .then((isSamePassword) => {
-          console.log(
-            "Is same password auth controller section ?",
-            isSamePassword
-          );
           if (!isSamePassword) {
             res.status(401).json({ errorMessage: "Wrong password!" });
           } else if (user.isDeactivated) {
-            console.log("Deactivated user is here !");
             res.status(400).json({
               errorMessage: "Deactivated user !",
               user: user,
@@ -253,7 +238,6 @@ const handleLogin = (req, res, next) => {
                   }
                 );
 
-                console.log("Logged in user username =>", username);
                 res.json({
                   token,
                   user: {
@@ -290,9 +274,6 @@ const handleLogin = (req, res, next) => {
               });
             } else {
               if (user.isDeactivated) {
-                console.log(
-                  "This user deactivated user you need to do something else for him !"
-                );
                 res.status(501).json({
                   errorMessage:
                     "This user deactivated user you need to do something else for him/her!",
@@ -335,8 +316,6 @@ const handleLogin = (req, res, next) => {
                       expiresIn: "7d",
                     }
                   );
-
-                  console.log("Logged in user username =>", username);
 
                   res.json({
                     token,
@@ -415,11 +394,6 @@ const handleDeactivatedUserLoginBack = (req, res) => {
     .populate("messages")
     .populate("automated_account")
     .then((userRequestingReactivation) => {
-      console.log(
-        "User ready to come back :) =>",
-        userRequestingReactivation.username
-      );
-
       bcrypt
         .compare(userFirstInfoUserPassword, userRequestingReactivation.password)
         .then((isSamePassword) => {
@@ -456,10 +430,6 @@ const handleDeactivatedUserLoginBack = (req, res) => {
                       eachMember._id.toString() ===
                       userRequestingReactivation._id.toString()
                     ) {
-                      console.log("Room =>", message);
-
-                      console.log("This line is working  1 !!!");
-
                       if (
                         user._id.toString() !==
                         userRequestingReactivation._id.toString()
@@ -508,7 +478,6 @@ const handleDeactivatedUserLoginBack = (req, res) => {
                   }
                 );
 
-                console.log("Logged in user username =>", username);
                 res.json({
                   token,
                   user: {
@@ -615,20 +584,14 @@ const handleEmailVerificationCode = (req, res) => {
     randomCode.push(characters[generateRandomCode()]);
   }
 
-  console.log("Random code =>", randomCode.join(""));
-
-  console.log("Email received =>", receiverEmail);
   sendVerificationCodeToEmail(receiverEmail, randomCode.join(""))
     .then((result) => {
-      console.log("RESULT AFTER EMAIL VERIFICATION SEND =>", result);
-
       res.status(201).json({
         code: randomCode.join(""),
         message: "Verification code to email sent",
       });
     })
     .catch((error) => {
-      console.log("ERROR SENDING VERIFICATION EMAIL =>", error);
       res.status(500).json({
         errorMessage: "Error sending verification email.",
       });
@@ -637,7 +600,6 @@ const handleEmailVerificationCode = (req, res) => {
 
 // start to check modal status changing for pick a profile picture and what should we call you modal
 const handleChangeModalStatusVariantOne = (req, res) => {
-  console.log(req.body);
   const { userId } = req.body;
 
   User.findById(userId)
@@ -664,7 +626,6 @@ const handleChangeModalStatusVariantOne = (req, res) => {
     });
 };
 const handleChangeModalStatusVariantOneModal2 = (req, res) => {
-  console.log(req.body);
   const { userId } = req.body;
 
   User.findById(userId)
@@ -756,15 +717,6 @@ const handleUserPasswordCheck = async (req, res) => {
       user.password
     );
 
-    console.log(
-      "Inputs from req.body =>",
-      premiumInfo,
-      userId,
-      verifyPasswordInput,
-      forAccountInfoDetail,
-      isPasswordMatch
-    );
-
     if (isPasswordMatch) {
       if (forAccountInfoDetail) {
         user.hasPhoneVerifiedForAccountInformationDetail = true;
@@ -843,10 +795,8 @@ const handleUsernameChange = async (req, res) => {
 
 const handleLoginVariantOne = (req, res) => {
   const { authentication } = req.body;
-  console.log("Authentication login variant one =>", authentication);
 
   const userFirstInfo = authentication.multi_factor_authentication;
-  console.log("User first info =>", userFirstInfo);
   User.findOne({
     $or: [
       { email: userFirstInfo },
@@ -895,7 +845,6 @@ const handleLoginVariantOne = (req, res) => {
     })
     .then((user) => {
       // variant one login implementation devam et !
-      console.log("User =>", user);
       if (!user) {
         res.status(400).json({
           errorMessage: "Sorry, we could not find your account.",
@@ -916,11 +865,6 @@ const handleLoginVariantOne = (req, res) => {
 const handleLoginVariantOneResult = (req, res) => {
   const { authentication } = req.body;
   isVariantOneResultRouteSuccess = true;
-  console.log("Authentication login variant one result =>", authentication);
-  console.log(
-    "Variant one route akıbeti result route içerisi =>",
-    isVariantOneResultRouteSuccess
-  );
 
   const userFirstInfoFromStepOne = authentication.multi_factor_authentication;
 
@@ -962,17 +906,13 @@ const handleLoginVariantOneResult = (req, res) => {
     .populate("messages")
     .populate("automated_account")
     .then((user) => {
-      console.log("User =>", user.username);
-      console.log("User password =>", passwordFromReqBody);
       bcrypt
         .compare(passwordFromReqBody, user.password)
         .then((result) => {
-          console.log("Result =>", result);
           if (!result) {
             res.status(501).json({ errorMessage: "Wrong password!" });
           } else {
             if (user.isDeactivated) {
-              console.log("Deactivated user is here !");
               res.status(400).json({
                 errorMessage: "Deactivated user!",
                 user: user,
@@ -1017,7 +957,6 @@ const handleLoginVariantOneResult = (req, res) => {
                   }
                 );
 
-                console.log("Logged in user username =>", username);
                 res.status(201).json({
                   token,
                   user: {

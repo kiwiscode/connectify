@@ -80,9 +80,6 @@ module.exports = (io) => {
         const activeUser1Id = activeUser1Info?._id.toString();
         const activeUser2Id = activeUser2Info?._id.toString();
 
-        console.log("active user 1 id:", activeUser1Id?.toString());
-        console.log("active user 2 id:", activeUser2Id?.toString());
-
         // Eğer hem activeUser1 hem de activeUser2 aktifse, her iki kullanıcı için mesajları "readed: true" işaretle
         if (activeUser1Id && activeUser2Id) {
           await User.findByIdAndUpdate(
@@ -110,8 +107,6 @@ module.exports = (io) => {
               new: true,
             }
           );
-
-          console.log("burası çalıştı ve bitti.");
         } else if (activeUser1Id) {
           // Sadece activeUser1 aktifse onun mesajlarını okundu olarak işaretle, activeUser2'nin mesajlarını okundu değil olarak tut
 
@@ -140,11 +135,6 @@ module.exports = (io) => {
               new: true,
             }
           );
-
-          console.log("burası çalıştı ve bitti 2. condition");
-
-          console.log("receiver user id:", receiverUserId);
-          console.log("active user id:", activeUser1Id);
         } else if (activeUser2Id) {
           // Sadece activeUser1 aktifse onun mesajlarını okundu olarak işaretle, activeUser2'nin mesajlarını okundu değil olarak tut
 
@@ -173,8 +163,6 @@ module.exports = (io) => {
               new: true,
             }
           );
-
-          console.log("burası çalıştı ve bitti 3. condition");
         }
       }
     } catch (err) {
@@ -183,11 +171,8 @@ module.exports = (io) => {
   };
 
   io.on("connection", (socket) => {
-    console.log("A new user connected :", socket.id);
-
     socket.on("addUser", (userId) => {
       addUser(userId, socket.id);
-      console.log("online users:", users);
       io.emit("getUsers", users);
     });
 
@@ -196,10 +181,6 @@ module.exports = (io) => {
 
       addRoom(roomName, userName); // Odaya kullanıcıyı ekle
 
-      console.log("rooms after user joined:", rooms);
-
-      console.log("userJoined", `${userName} odaya katıldı`);
-
       // Odaya katılma bilgisini yayınlama
       io.to(roomName).emit("userJoined", `${userName} odaya katıldı`);
     });
@@ -207,11 +188,8 @@ module.exports = (io) => {
     // Kullanıcı odadan ayrıldığında
     socket.on("userLeft", (roomName, userName) => {
       socket.leave(roomName);
-      console.log(`${userName} left room: ${roomName}`);
 
       removeUserFromRoom(roomName, userName); // Kullanıcıyı odadan çıkar
-
-      console.log("rooms after user left:", rooms);
 
       // Odayı terk ettiğini diğer kullanıcılara bildir
       io.to(roomName).emit("userLeft", `${userName} left the room`);
@@ -219,9 +197,6 @@ module.exports = (io) => {
 
     // Mesaj alındığında
     socket.on("chatMessage", (roomName, message) => {
-      console.log("room name:", roomName);
-      console.log("message:", message);
-
       const senderId = message.sender;
       // Mesaj gönderildiğinde anlık olarak mesaj okuma durumu güncellenir
       updateMessageStatus(roomName, senderId);
@@ -232,7 +207,6 @@ module.exports = (io) => {
 
     socket.on("disconnect", () => {
       removeUser(socket.id);
-      console.log("User disconnected :", socket.id);
     });
   });
 };

@@ -216,12 +216,6 @@ const handleAddMessageToRoom = async (req, res) => {
       user2.messages.unshift(currentMessageForUser2);
     }
 
-    console.log("user 1 id:", user1._id.toString());
-    console.log("user 2 id:", user2._id.toString());
-
-    console.log("chat room index for user 1:", chatRoomIndexForUser1);
-    console.log("chat room index for user 2:", chatRoomIndexForUser2);
-
     await user1.save();
     await user2.save();
 
@@ -272,8 +266,6 @@ const handleGetChat = async (req, res) => {
 
     const activeUser = await User.findById(userId);
 
-    console.log("active user:", activeUser.username);
-
     // Kullanıcının messages'ını filtrele ve odayı bul
     const userSpecificMessage = activeUser.messages.filter(
       (message) =>
@@ -287,8 +279,6 @@ const handleGetChat = async (req, res) => {
     //     message.room === roomIdArray.join("-") ||
     //     message.room === roomIdArray.reverse().join("-")
     // )[0];
-
-    console.log("user 1 messages:", userSpecificMessage);
 
     // Odaya ait mesajları JSON olarak döndür
     res.status(200).json({ chatRoomId, messages: userSpecificMessage });
