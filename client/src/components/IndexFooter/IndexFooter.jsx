@@ -8,6 +8,7 @@ function IndexFooter() {
   const { getFontSizeAndLineHeight13 } = useFontSizeHandler();
   const font13 = getFontSizeAndLineHeight13();
   const { width } = useWindowDimensions();
+  const currentYear = new Date().getFullYear();
   return (
     <>
       <div
@@ -91,7 +92,7 @@ function IndexFooter() {
             color: "rgb(83, 100, 113)",
           }}
         >
-          © 2025 C
+          © {currentYear} C
         </span>{" "}
         <a
           style={{
